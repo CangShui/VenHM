@@ -1,0 +1,634 @@
+{
+  "scope": "Host-only exact installed public-rule replay and independent libxml2 selectors; no credentials, app build, or device claim",
+  "hashes": {
+    "source": "545a6d818d012c1e5799d6aaf7ecd09798969acb840166ee7c56de6d02201df0",
+    "init": "a999b38801d5f754c2682a3f1905f5ff820fa9517df71608015151f088531098",
+    "engine": "5a024a88dc7832bf944237a71fa0e0bd41ecc87c1ab52f10b43a443ba1267be7"
+  },
+  "runtimes": [
+    {
+      "name": "Node VM + production init/HTML engine",
+      "selectors": [
+        {
+          "file": "logs/upstream/wnacg-search-page.html",
+          "sha256": "380f6bb9a4c57d4192cc17953140a2db366480222f1c2baab3879a4472827577",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 2,
+              "texts": [
+                "40,386",
+                "337,577"
+              ]
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 24
+            },
+            {
+              "selector": "a[href]",
+              "count": 96
+            }
+          ],
+          "mismatches": []
+        },
+        {
+          "file": "logs/upstream/wnacg-domain-page.html",
+          "sha256": "2a8f01376dd4f1043aa8788c0c3e63b49e278ced897e4408073b84c72659f0a5",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0,
+              "texts": []
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "a[href]",
+              "count": 6
+            }
+          ],
+          "mismatches": []
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-home.html",
+          "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0,
+              "texts": []
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "a[href]",
+              "count": 0
+            }
+          ],
+          "mismatches": []
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-search-a.html",
+          "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0,
+              "texts": []
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "a[href]",
+              "count": 0
+            }
+          ],
+          "mismatches": []
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-search-cjk.html",
+          "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0,
+              "texts": []
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "a[href]",
+              "count": 0
+            }
+          ],
+          "mismatches": []
+        },
+        {
+          "file": "tools/wnacg_html_reference/domains.html",
+          "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0,
+              "texts": []
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "a[href]",
+              "count": 0
+            }
+          ],
+          "mismatches": []
+        }
+      ],
+      "ruleReplay": [
+        {
+          "file": "logs/upstream/wnacg-search-page.html",
+          "fixtureStatus": 200,
+          "capturedHttpStatus": null,
+          "call": "fixtureSource.search.load(\"a\",[],1)",
+          "comics": 24,
+          "validComicFields": true,
+          "maxPage": 1683
+        },
+        {
+          "file": "logs/upstream/wnacg-domain-page.html",
+          "fixtureStatus": 200,
+          "capturedHttpStatus": null,
+          "call": "fixtureSource.explore[0].load(null)",
+          "parts": 0
+        },
+        {
+          "file": "logs/upstream/wnacg-domain-page.html",
+          "call": "fixtureSource.search.load(\"a\",[],1)",
+          "error": "TypeError: Cannot read properties of undefined (reading 'text')"
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-home.html",
+          "call": "fixtureSource.explore[0].load(null)",
+          "error": "Invalid Status Code 403"
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-search-a.html",
+          "call": "fixtureSource.search.load(\"a\",[],1)",
+          "error": "Invalid Status Code 403"
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-search-cjk.html",
+          "call": "fixtureSource.search.load(\"a\",[],1)",
+          "error": "Invalid Status Code 403"
+        }
+      ],
+      "microcases": [
+        {
+          "name": "spaced adjacent and general combinators",
+          "expected": {
+            "adjacent": [
+              "adjacent"
+            ],
+            "general": [
+              "adjacent",
+              "later"
+            ]
+          },
+          "actual": {
+            "adjacent": [
+              "adjacent"
+            ],
+            "general": [
+              "adjacent",
+              "later"
+            ]
+          },
+          "pass": true
+        },
+        {
+          "name": "node_toElement contract",
+          "expected": {
+            "nodeTypes": [
+              "text",
+              "comment",
+              "element",
+              "text",
+              "element"
+            ],
+            "elementNames": [
+              null,
+              null,
+              "a",
+              null,
+              "b"
+            ],
+            "childNames": [
+              "a",
+              "b"
+            ],
+            "dotHref": "/x",
+            "bracketHref": "/x",
+            "nextName": "b",
+            "texts": [
+              "before",
+              "note",
+              null,
+              "after",
+              null
+            ]
+          },
+          "actual": {
+            "nodeTypes": [
+              "text",
+              "comment",
+              "element",
+              "text",
+              "element"
+            ],
+            "elementNames": [
+              null,
+              null,
+              "a",
+              null,
+              "b"
+            ],
+            "childNames": [
+              "a",
+              "b"
+            ],
+            "dotHref": "/x",
+            "bracketHref": "/x",
+            "nextName": "b",
+            "texts": [
+              "before",
+              "note",
+              null,
+              "after",
+              null
+            ]
+          },
+          "pass": true
+        },
+        {
+          "name": "spaced child combinator must exclude nested descendant",
+          "expected": [
+            "direct"
+          ],
+          "actual": [
+            "direct"
+          ],
+          "pass": true
+        }
+      ]
+    },
+    {
+      "name": "Actual prebuilt production NAPI/QuickJS addon (no rebuild)",
+      "selectors": [
+        {
+          "file": "logs/upstream/wnacg-search-page.html",
+          "sha256": "380f6bb9a4c57d4192cc17953140a2db366480222f1c2baab3879a4472827577",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 2,
+              "texts": [
+                "40,386",
+                "337,577"
+              ]
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 24
+            },
+            {
+              "selector": "a[href]",
+              "count": 96
+            }
+          ],
+          "mismatches": []
+        },
+        {
+          "file": "logs/upstream/wnacg-domain-page.html",
+          "sha256": "2a8f01376dd4f1043aa8788c0c3e63b49e278ced897e4408073b84c72659f0a5",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0,
+              "texts": []
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "a[href]",
+              "count": 6
+            }
+          ],
+          "mismatches": []
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-home.html",
+          "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0,
+              "texts": []
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "a[href]",
+              "count": 0
+            }
+          ],
+          "mismatches": []
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-search-a.html",
+          "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0,
+              "texts": []
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "a[href]",
+              "count": 0
+            }
+          ],
+          "mismatches": []
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-search-cjk.html",
+          "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0,
+              "texts": []
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "a[href]",
+              "count": 0
+            }
+          ],
+          "mismatches": []
+        },
+        {
+          "file": "tools/wnacg_html_reference/domains.html",
+          "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+          "actual": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0,
+              "texts": []
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "a[href]",
+              "count": 0
+            }
+          ],
+          "mismatches": []
+        }
+      ],
+      "ruleReplay": [
+        {
+          "file": "logs/upstream/wnacg-search-page.html",
+          "fixtureStatus": 200,
+          "capturedHttpStatus": null,
+          "call": "fixtureSource.search.load(\"a\",[],1)",
+          "comics": 24,
+          "validComicFields": true,
+          "maxPage": 1683
+        },
+        {
+          "file": "logs/upstream/wnacg-domain-page.html",
+          "fixtureStatus": 200,
+          "capturedHttpStatus": null,
+          "call": "fixtureSource.explore[0].load(null)",
+          "parts": 0
+        },
+        {
+          "file": "logs/upstream/wnacg-domain-page.html",
+          "call": "fixtureSource.search.load(\"a\",[],1)",
+          "error": "TypeError: cannot read property 'text' of undefined"
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-home.html",
+          "call": "fixtureSource.explore[0].load(null)",
+          "error": "Invalid Status Code 403"
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-search-a.html",
+          "call": "fixtureSource.search.load(\"a\",[],1)",
+          "error": "Invalid Status Code 403"
+        },
+        {
+          "file": "tools/wnacg_html_reference/default-search-cjk.html",
+          "call": "fixtureSource.search.load(\"a\",[],1)",
+          "error": "Invalid Status Code 403"
+        }
+      ],
+      "microcases": [
+        {
+          "name": "spaced adjacent and general combinators",
+          "expected": {
+            "adjacent": [
+              "adjacent"
+            ],
+            "general": [
+              "adjacent",
+              "later"
+            ]
+          },
+          "actual": {
+            "adjacent": [
+              "adjacent"
+            ],
+            "general": [
+              "adjacent",
+              "later"
+            ]
+          },
+          "pass": true
+        },
+        {
+          "name": "node_toElement contract",
+          "expected": {
+            "nodeTypes": [
+              "text",
+              "comment",
+              "element",
+              "text",
+              "element"
+            ],
+            "elementNames": [
+              null,
+              null,
+              "a",
+              null,
+              "b"
+            ],
+            "childNames": [
+              "a",
+              "b"
+            ],
+            "dotHref": "/x",
+            "bracketHref": "/x",
+            "nextName": "b",
+            "texts": [
+              "before",
+              "note",
+              null,
+              "after",
+              null
+            ]
+          },
+          "actual": {
+            "nodeTypes": [
+              "text",
+              "comment",
+              "element",
+              "text",
+              "element"
+            ],
+            "elementNames": [
+              null,
+              null,
+              "a",
+              null,
+              "b"
+            ],
+            "childNames": [
+              "a",
+              "b"
+            ],
+            "dotHref": "/x",
+            "bracketHref": "/x",
+            "nextName": "b",
+            "texts": [
+              "before",
+              "note",
+              null,
+              "after",
+              null
+            ]
+          },
+          "pass": true
+        },
+        {
+          "name": "spaced child combinator must exclude nested descendant",
+          "expected": [
+            "direct"
+          ],
+          "actual": [
+            "direct"
+          ],
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

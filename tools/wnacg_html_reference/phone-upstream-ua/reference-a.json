@@ -1,0 +1,30 @@
+[
+  {
+    "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-1.html",
+    "sha256": "ca3851f7bb1ee1db24fdb4a88130e1f8fe14850c723f9d9bf629a979d8db00b8",
+    "parser": "lxml.html/libxml2 independent XPath",
+    "capturedHttpStatus": 200,
+    "httpProof": "tools\\wnacg_html_reference\\phone-upstream-ua\\phone-1.proof.json",
+    "selectors": {
+      "div.title_sort": {
+        "count": 0
+      },
+      "div.bodywrap": {
+        "count": 0
+      },
+      "p.result > b": {
+        "count": 2,
+        "texts": [
+          "40,494",
+          "337,802"
+        ]
+      },
+      "div.grid div.gallary_wrap > ul.cc > li": {
+        "count": 24
+      },
+      "a[href]": {
+        "count": 97
+      }
+    }
+  }
+]

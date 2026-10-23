@@ -1,0 +1,58 @@
+{
+  "wnacg": {
+    "finding": "已确认迁移默认Phone UA与固定原版VeneraNext/v1.17.0不一致。恢复源UA后同手机公开200搜索返回24条桌面结构，真实UI搜索24→48、详情和121页正文1→2；最新20源run分类9个取样目标成功、两词前两页24/24且不同、阅读链路成功。探索首页仍空，不能宣称整个源全功能通过；旧源过期归因已撤回。",
+    "limit": "276个selector同导出响应文本比较在lxml/生产HTML/实际主机NAPI一致；不代表原始wire字节、所有页面、所有UA/域名或详情阅读均通过。未自动覆盖安装源脚本。",
+    "files": [
+      "tools/wnacg_html_reference/MOBILE_ATTRIBUTION.md",
+      "tools/wnacg_html_reference/mobile-replay.json",
+      "tools/wnacg_html_reference/phone/phone-1.proof.json",
+      "logs/upstream/app_dio-7110c19.dart",
+      "tools/wnacg_html_reference/phone-upstream-ua/phone-1.proof.json",
+      "logs/user8-ui/verified-ui-evidence-20261015.json"
+    ]
+  },
+  "Komiic": {
+    "finding": "安装源search.load虽然接收page参数，但只发送keyword变量且明确返回maxPage:1。这是有限的一次性搜索，不应强求第二页不同；此前矩阵的分页失败是验证器误判，已修正并加回归。最新手机run实际记录p1=100 declaredEnd=true，分类/探索/搜索与取样阅读链路成功。",
+    "limit": "不改写旧JSONL中different=false的历史观察；不能由源静态契约直接把新的手机搜索标成PASS。",
+    "files": [
+      "logs/user8-installed-scripts/Komiic.js",
+      "tools/wnacg_html_reference/MOBILE_ATTRIBUTION.md",
+      "tools/deep_matrix_cases.js"
+    ]
+  },
+  "ehentai": {
+    "finding": "已复现迁移层未支持explore.loadNext和未填multi-select默认JSON值导致调用前失败；这些调用契约已修。新包不再出现相同错误，但0结果尚不能推定为登录问题。默认Phone UA也可能改变HTML，按原版UA复测后再归因。",
+    "limit": "单元控制HTTP证明的是调用契约修复，不等于真实EH账号/搜索/阅读通过。",
+    "files": [
+      "logs/user8-installed-scripts/ehentai.js",
+      "tools/source_contract_ui_cases.js",
+      "tools/wnacg_html_reference/MOBILE_ATTRIBUTION.md"
+    ]
+  },
+  "shonen_jump_plus": {
+    "finding": "旧矩阵只有JSON '<'错误；后来的另一次手机日志在同Trace的POST后记录HTTP403再发生JSON错误。源token函数未检查status就JSON.parse。仅能说明那次观察到403 HTML，不能凭主机不同网络403就给旧矩阵定责，更不能证明具体WAF或排除请求适配。",
+    "limit": "SDK code401 Parameter error不是HTTP401；真实令牌/账号/后续GraphQL路径未验证。",
+    "files": [
+      "logs/user8-installed-scripts/shonen_jump_plus.js",
+      "logs/user8-newbuild-startup-20261014.log",
+      "tools/wnacg_html_reference/MOBILE_ATTRIBUTION.md"
+    ]
+  },
+  "nhentai": {
+    "finding": "旧run阅读链路成功但分类FAIL_TARGETS，不能整体标为无公开失败；最新原版UA手机run分类实际目标成功，探索/两词取样/阅读链路成功。两轮网络时点不同，不能把所有变化直接算单项修复因果。",
+    "limit": "手机phase日志需重跑新包后确认是目标协议、动态选项、网络还是源错误。",
+    "files": [
+      "logs/user8-device-matrix/deep-1792033074497.jsonl"
+    ]
+  },
+  "ykmh": {
+    "finding": "最新手机run分类phase=load报ReferenceError: temp is not defined。完整安装脚本的categoryComics.load第303行直接赋值未声明temp；标准Node VM与实际NAPI在清洁全局环境均发HTTP前复现，只有内存测试加入let后才到达模拟网络。这是可复现的源脚本变量缺陷，未改安装源；搜索/阅读链路成功不能掩盖该分类失败。",
+    "limit": "只记录观测结果，不凭异常字符串豁免迁移缺口。",
+    "files": [
+      "logs/user8-device-matrix/deep-1792033074497.jsonl",
+      "logs/user8-installed-scripts/ykmh.js",
+      "logs/ykmh-category-attribution-20261015.json",
+      "tools/ykmh_category_attribution_cases.js"
+    ]
+  }
+}

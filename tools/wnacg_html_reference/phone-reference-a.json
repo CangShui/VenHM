@@ -1,0 +1,27 @@
+[
+  {
+    "file": "tools/wnacg_html_reference/phone/phone-1.html",
+    "sha256": "b8d93b73885626984ced93067aa87c55cc36e39b64635cbf1a53e25c3ff4fc9a",
+    "parser": "lxml.html/libxml2 independent XPath",
+    "capturedHttpStatus": 200,
+    "httpProof": "tools\\wnacg_html_reference\\phone\\phone-1.proof.json",
+    "selectors": {
+      "div.title_sort": {
+        "count": 0
+      },
+      "div.bodywrap": {
+        "count": 0
+      },
+      "p.result > b": {
+        "count": 0,
+        "texts": []
+      },
+      "div.grid div.gallary_wrap > ul.cc > li": {
+        "count": 0
+      },
+      "a[href]": {
+        "count": 58
+      }
+    }
+  }
+]

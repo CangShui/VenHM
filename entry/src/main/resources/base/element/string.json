@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "Venera HM main module"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Venera HM comic reader"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "Venera HM"
+    }
+  ]
+}

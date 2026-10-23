@@ -1,0 +1,30 @@
+[
+  {
+    "file": "logs/upstream/wnacg-search-page.html",
+    "sha256": "380f6bb9a4c57d4192cc17953140a2db366480222f1c2baab3879a4472827577",
+    "parser": "lxml.html/libxml2 independent XPath",
+    "capturedHttpStatus": null,
+    "httpProof": null,
+    "selectors": {
+      "div.title_sort": {
+        "count": 0
+      },
+      "div.bodywrap": {
+        "count": 0
+      },
+      "p.result > b": {
+        "count": 2,
+        "texts": [
+          "40,386",
+          "337,577"
+        ]
+      },
+      "div.grid div.gallary_wrap > ul.cc > li": {
+        "count": 24
+      },
+      "a[href]": {
+        "count": 96
+      }
+    }
+  }
+]

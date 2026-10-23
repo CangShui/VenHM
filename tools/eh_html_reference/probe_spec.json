@@ -1,0 +1,32 @@
+{
+  "scope": "OFFLINE only. Capture specification for parent authorization; this directory makes no HTTP/device/build calls.",
+  "source": "logs/user8-installed-scripts/ehentai.js",
+  "sourceVersion": "1.2.0",
+  "settings": {"domain":"e-hentai.org","ehevent":false,"hvevent":false},
+  "defaultOptions": ["[\"0\",\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"]",null,null],
+  "publicInitialRequests": [
+    {"call":"explore[0].loadNext(null)","url":"https://e-hentai.org"},
+    {"call":"explore[1].loadNext(null)","url":"https://e-hentai.org/popular"},
+    {"call":"search.loadNext('a',defaultOptions,null)","url":"https://e-hentai.org/?f_search=a"},
+    {"call":"search.loadNext('魔法',defaultOptions,null)","url":"https://e-hentai.org/?f_search=%E9%AD%94%E6%B3%95"}
+  ],
+  "requestPolicy": {
+    "method":"GET",
+    "sourceHeaders":{},
+    "effectiveExplicitHeaders":{"User-Agent":"VeneraNext/v1.17.0","Accept-Encoding":"identity"},
+    "cookies":"Do not read account/source data or cookie jars. Disable cookie attachment AND jar updates. Never log Cookie, Set-Cookie, Authorization, credentials or gallery/cursor URLs.",
+    "validation":"Require HTTPS, hostname exactly e-hentai.org, no userinfo, no port, no fragment, URL in exact publicInitialRequests allowlist (root trailing slash normalization only). Reject any other request before HTTP; intercept source requests locally, not by making remote requests.",
+    "redirects":"Disable redirects or validate every redirect before following; reject any outside exact allowlist, do not log rejected destination.",
+    "bounds":"At most four requests; retries=0; decoded bytes<=2097152; connect<=8000ms, read<=12000ms. Stop on 401/403; no bypass/login.",
+    "capture":"Write response HTML only into local private fixture file, not console/body logs. Metadata allowlist: case label, initial allowlisted URL, final URL only if allowlisted, status, content-type, UTF-8 byte length, decoded character count, SHA256, requestUserAgent, cookieJarSent=false,cookieJarUpdated=false. Never dump all headers. Save non-200 body privately if authorized to diagnose parser guards. Hash raw original HTML before any redaction; if redacted note not byte-identical.",
+    "warning":"Credential-free public capture can differ from the original matrix response if matrix used stored preferences/cookies. It is a template comparator, not reproduction of unknown original HTTP state. No auth/site conclusion follows from zero parsed items."
+  },
+  "selectors": [
+    "table.itg.gltc > tbody > tr", "div.gl1t", "a", "div.gl5t > div > div.cs", "div.gl5t > div > div", "img", "div.gl5t > div > div.ir",
+    "table.itg.glte > tbody > tr", "td.gl2e > div > a > div > div.glink", "td.gl2e > div > div.gl3e > div.cn", "td.gl2e > div > div.gl3e > div", "td.gl2e > div > div.gl3e > div > a", "td.gl1e > div > a > img", "td.gl2e > div > div.gl3e > div.ir", "td.gl1e > div > a", "div.gt, div.gtl",
+    "table.itg.gltm > tbody > tr", "td.gl3m > a > div.glink", "td.gl1m > div.cs", "td.gl2m > div", "td.gl5m > div > a", "td.gl2m > div > div > img", "td.gl4m > div.ir", "td.gl3m > a", "a#dnext"
+  ],
+  "landmarks": ["html","head","title","body","table.itg","table.itg > tr","table.itg > tbody","table.itg > tbody > tr",".gltc",".glte",".gltm",".gl1t",".glink",".gl5t","#dnext","form","#searchbox","#nb","#gdt","#eventpane"],
+  "modeRoots": {"compact":"table.itg.gltc > tbody > tr","thumbnail":"div.gl1t","extended":"table.itg.glte > tbody > tr","minimal":"table.itg.gltm > tbody > tr"},
+  "safeCountQuery": "(function(html,spec){const d=new HtmlDocument(html);const count=q=>d.querySelectorAll(q).length;const structure=(e,depth)=>({tag:e.localName,children:e.children.length,nodes:e.nodes.map(n=>n.type),hasSrc:typeof e.attributes.src==='string',hasDataSrc:typeof e.attributes['data-src']==='string',hasHref:typeof e.attributes.href==='string',hasTitle:typeof e.attributes.title==='string',hasStyle:typeof e.attributes.style==='string',descendants:depth?e.children.slice(0,6).map(c=>structure(c,depth-1)):[]});try{return {counts:Object.fromEntries(spec.selectors.concat(spec.landmarks).map(q=>[q,count(q)])),modes:Object.fromEntries(Object.entries(spec.modeRoots).map(([mode,q])=>{const rows=d.querySelectorAll(q);return [mode,{count:rows.length,first:rows[0]?structure(rows[0],4):null}]})),nextPresent:!!d.querySelector('a#dnext')};}finally{d.dispose();}})"
+}

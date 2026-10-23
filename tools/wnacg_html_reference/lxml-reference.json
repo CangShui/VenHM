@@ -1,0 +1,152 @@
+[
+  {
+    "file": "logs/upstream/wnacg-search-page.html",
+    "sha256": "380f6bb9a4c57d4192cc17953140a2db366480222f1c2baab3879a4472827577",
+    "parser": "lxml.html/libxml2 independent XPath",
+    "selectors": {
+      "div.title_sort": {
+        "count": 0
+      },
+      "div.bodywrap": {
+        "count": 0
+      },
+      "p.result > b": {
+        "count": 2,
+        "texts": [
+          "40,386",
+          "337,577"
+        ]
+      },
+      "div.grid div.gallary_wrap > ul.cc > li": {
+        "count": 24
+      },
+      "a[href]": {
+        "count": 96
+      }
+    }
+  },
+  {
+    "file": "logs/upstream/wnacg-domain-page.html",
+    "sha256": "2a8f01376dd4f1043aa8788c0c3e63b49e278ced897e4408073b84c72659f0a5",
+    "parser": "lxml.html/libxml2 independent XPath",
+    "selectors": {
+      "div.title_sort": {
+        "count": 0
+      },
+      "div.bodywrap": {
+        "count": 0
+      },
+      "p.result > b": {
+        "count": 0,
+        "texts": []
+      },
+      "div.grid div.gallary_wrap > ul.cc > li": {
+        "count": 0
+      },
+      "a[href]": {
+        "count": 6,
+        "hrefs": [
+          "/cdn-cgi/l/email-protection#5b2c353a383c75373235301b3c363a323775383436",
+          "https://wnacg01.link/",
+          "https://wnacg02.link/",
+          "https://www.wn001.cfd/",
+          "https://www.wn002.cfd/",
+          "https://www.google.cn/chrome/"
+        ]
+      }
+    }
+  },
+  {
+    "file": "tools/wnacg_html_reference/default-home.html",
+    "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+    "parser": "lxml.html/libxml2 independent XPath",
+    "selectors": {
+      "div.title_sort": {
+        "count": 0
+      },
+      "div.bodywrap": {
+        "count": 0
+      },
+      "p.result > b": {
+        "count": 0,
+        "texts": []
+      },
+      "div.grid div.gallary_wrap > ul.cc > li": {
+        "count": 0
+      },
+      "a[href]": {
+        "count": 0
+      }
+    }
+  },
+  {
+    "file": "tools/wnacg_html_reference/default-search-a.html",
+    "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+    "parser": "lxml.html/libxml2 independent XPath",
+    "selectors": {
+      "div.title_sort": {
+        "count": 0
+      },
+      "div.bodywrap": {
+        "count": 0
+      },
+      "p.result > b": {
+        "count": 0,
+        "texts": []
+      },
+      "div.grid div.gallary_wrap > ul.cc > li": {
+        "count": 0
+      },
+      "a[href]": {
+        "count": 0
+      }
+    }
+  },
+  {
+    "file": "tools/wnacg_html_reference/default-search-cjk.html",
+    "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+    "parser": "lxml.html/libxml2 independent XPath",
+    "selectors": {
+      "div.title_sort": {
+        "count": 0
+      },
+      "div.bodywrap": {
+        "count": 0
+      },
+      "p.result > b": {
+        "count": 0,
+        "texts": []
+      },
+      "div.grid div.gallary_wrap > ul.cc > li": {
+        "count": 0
+      },
+      "a[href]": {
+        "count": 0
+      }
+    }
+  },
+  {
+    "file": "tools/wnacg_html_reference/domains.html",
+    "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+    "parser": "lxml.html/libxml2 independent XPath",
+    "selectors": {
+      "div.title_sort": {
+        "count": 0
+      },
+      "div.bodywrap": {
+        "count": 0
+      },
+      "p.result > b": {
+        "count": 0,
+        "texts": []
+      },
+      "div.grid div.gallary_wrap > ul.cc > li": {
+        "count": 0
+      },
+      "a[href]": {
+        "count": 0,
+        "hrefs": []
+      }
+    }
+  }
+]

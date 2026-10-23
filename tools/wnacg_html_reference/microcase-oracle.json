@@ -1,0 +1,47 @@
+{
+  "parser": "independent lxml.html/libxml2, no production JS reuse",
+  "cases": {
+    "node_toElement contract": {
+      "nodeTypes": [
+        "text",
+        "comment",
+        "element",
+        "text",
+        "element"
+      ],
+      "elementNames": [
+        null,
+        null,
+        "a",
+        null,
+        "b"
+      ],
+      "childNames": [
+        "a",
+        "b"
+      ],
+      "dotHref": "/x",
+      "bracketHref": "/x",
+      "nextName": "b",
+      "texts": [
+        "before",
+        "note",
+        null,
+        "after",
+        null
+      ]
+    },
+    "spaced child combinator must exclude nested descendant": [
+      "direct"
+    ],
+    "spaced adjacent and general combinators": {
+      "adjacent": [
+        "adjacent"
+      ],
+      "general": [
+        "adjacent",
+        "later"
+      ]
+    }
+  }
+}

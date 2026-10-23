@@ -1,0 +1,58 @@
+[
+  {
+    "label": "default-home",
+    "requested": "https://wnacg.com",
+    "timestampUtc": "2026-10-14T08:44:56.363836+00:00",
+    "proofSource": "Installed wnacg.js default domain0 and public endpoint templates",
+    "privateHeaders": false,
+    "status": 403,
+    "finalUrl": "https://www.wnacg.com/",
+    "contentType": "text/plain; charset=UTF-8",
+    "byteCount": 17,
+    "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+    "captureFile": "tools/wnacg_html_reference/default-home.html",
+    "blockedHttp": true
+  },
+  {
+    "label": "default-search-a",
+    "requested": "https://wnacg.com/search/?q=a&f=_all&s=create_time_DESC&syn=yes&p=1",
+    "timestampUtc": "2026-10-14T08:44:58.725730+00:00",
+    "proofSource": "Installed wnacg.js default domain0 and public endpoint templates",
+    "privateHeaders": false,
+    "status": 403,
+    "finalUrl": "https://www.wnacg.com/search/?q=a&f=_all&s=create_time_DESC&syn=yes&p=1",
+    "contentType": "text/plain; charset=UTF-8",
+    "byteCount": 17,
+    "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+    "captureFile": "tools/wnacg_html_reference/default-search-a.html",
+    "blockedHttp": true
+  },
+  {
+    "label": "default-search-cjk",
+    "requested": "https://wnacg.com/search/?q=%E9%AD%94%E6%B3%95&f=_all&s=create_time_DESC&syn=yes&p=1",
+    "timestampUtc": "2026-10-14T08:45:01.378247+00:00",
+    "proofSource": "Installed wnacg.js default domain0 and public endpoint templates",
+    "privateHeaders": false,
+    "status": 403,
+    "finalUrl": "https://www.wnacg.com/search/?q=%E9%AD%94%E6%B3%95&f=_all&s=create_time_DESC&syn=yes&p=1",
+    "contentType": "text/plain; charset=UTF-8",
+    "byteCount": 17,
+    "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+    "captureFile": "tools/wnacg_html_reference/default-search-cjk.html",
+    "blockedHttp": true
+  },
+  {
+    "label": "domains",
+    "requested": "https://wn01.link/",
+    "timestampUtc": "2026-10-14T08:45:03.478327+00:00",
+    "proofSource": "Installed wnacg.js default domain0 and public endpoint templates",
+    "privateHeaders": false,
+    "status": 403,
+    "finalUrl": "https://wnacg01.link//",
+    "contentType": "text/plain; charset=UTF-8",
+    "byteCount": 17,
+    "sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+    "captureFile": "tools/wnacg_html_reference/domains.html",
+    "blockedHttp": true
+  }
+]

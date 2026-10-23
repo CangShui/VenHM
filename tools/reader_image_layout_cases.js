@@ -1,0 +1,18 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const {stripTypeScriptTypes}=require('node:module');const root=path.resolve(__dirname,'..');
+const text=fs.readFileSync(path.join(root,'entry/src/main/ets/features/ReaderImageLayout.ets'),'utf8').replace(/\bexport /g,'');
+const ctx=vm.createContext({});vm.runInContext(stripTypeScriptTypes(text,{mode:'transform'})+'\nglobalThis.Subject=ReaderImageLayout;',ctx);
+const L=ctx.Subject;let count=0;const log=path.join(root,'logs/reader-image-layout-cases.log');fs.writeFileSync(log,'Production geometry only; GPU clipping/interpolation not device-verified.\n');
+function test(name,run){run();count++;fs.appendFileSync(log,`TraceID=reader-layout-tests [PASS] ${name}\n`)}
+test('strict width>height predicate leaves square/portrait unmodified',()=>{assert.equal(L.isWide(4,2),true);assert.equal(L.isWide(2,2),false);assert.equal(L.isWide(2,4),false)});
+test('upstream wide presentation is width/2 by twice height, same logical image',()=>{assert.equal(L.displayRatio(8,2,true),1);assert.equal(L.displayRatio(8,2,false),4);assert.equal(L.displayRatio(2,8,true),.25)});
+test('odd source widths retain fractional center boundary without dropped column',()=>{const r=L.sourceRects(5,2,false);assert.equal(r[0].x,2.5);assert.equal(r[0].width,2.5);assert.equal(r[1].x,0);assert.equal(r[1].width,2.5);assert.equal(L.displayRatio(5,2,true),.625)});
+test('default is right above left, inverse is left above right',()=>{assert.deepEqual(Array.from(L.sourceRects(8,2,false),r=>r.x),[4,0]);assert.deepEqual(Array.from(L.sourceRects(8,2,true),r=>r.x),[0,4])});
+test('portrait/square produces exactly one original source rect',()=>{const r=L.sourceRects(2,4,false);assert.equal(r.length,1);assert.deepEqual([r[0].x,r[0].y,r[0].width,r[0].height],[0,0,2,4])});
+test('clip geometry covers source halves exactly for every tested odd/even size',()=>{for(let w=3;w<40;w++)for(let h=1;h<w;h++){const r=L.sourceRects(w,h,false);assert.equal(r[0].x+r[0].width,w);assert.equal(r[1].x+r[1].width,r[0].x);assert.equal(r[0].width+r[1].width,w);assert.equal(r[0].height,h)}});
+test('right-pane offset exactly negative viewport width with optional swap',()=>{assert.equal(L.paneOffset(320,true,false),-320);assert.equal(L.paneOffset(320,false,false),0);assert.equal(L.paneOffset(320,true,true),0);assert.equal(L.paneOffset(320,false,true),-320)});
+test('invalid sizes reject rather than generate Infinity/NaN layout',()=>{for(const pair of [[0,2],[2,0],[NaN,2],[2,Infinity],[-1,2]]){assert.equal(L.isWide(...pair),false);assert.throws(()=>L.displayRatio(...pair,true));assert.throws(()=>L.sourceRects(...pair,false))}});
+test('component shares same PixelMap for both halves without crop/copy/packing',()=>{const raw=fs.readFileSync(path.join(root,'entry/src/main/ets/components/ComicWidgets.ets'),'utf8');assert.match(raw,/this\.splitPane\(true\)[\s\S]*this\.splitPane\(false\)/);assert.match(raw,/Image\(this\.pixelMap\)[\s\S]*\.width\('200%'\)/);assert.match(raw,/\.height\('50%'\)\.clip\(true\)/);assert.doesNotMatch(raw,/\.crop\(|readPixelsToBuffer|packToData/)});
+test('split feature wired only for upstream vertical-flow modes; source URLs untouched',()=>{const raw=fs.readFileSync(path.join(root,'entry/src/main/ets/pages/ReaderPage.ets'),'utf8');assert.match(raw,/splitWideImage: this\.isVerticalFlow\(\) && this\.options\.splitDualPage/);assert.match(raw,/splitWideImageInvert: this\.isVerticalFlow\(\) && this\.options\.splitDualPageInvert/);assert.doesNotMatch(raw,/split:\/\/|#reader-half|modifyImage.*splitDualPage/)});
+console.log(`PASS ${count} production wide-image geometry/source contracts; ArkUI GPU rendering still pending.`);

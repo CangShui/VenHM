@@ -1,0 +1,44 @@
+﻿{
+  app: {
+    products: [
+      {
+        name: 'default',
+        targetSdkVersion: '6.0.1(21)',
+        compatibleSdkVersion: '6.0.1(21)',
+        runtimeOS: 'HarmonyOS',
+        buildOption: {
+          strictMode: {
+            caseSensitiveCheck: true,
+            useNormalizedOHMUrl: true,
+          },
+        },
+      },
+    ],
+    buildModeSet: [
+      {
+        name: 'debug',
+      },
+      {
+        name: 'release',
+      },
+    ],
+    // Signing material is intentionally NOT committed. Configure it locally in
+    // DevEco Studio (File > Project Structure > Signing Configs) or via your own
+    // untracked build profile; otherwise `assembleHap` produces an unsigned HAP.
+    signingConfigs: [],
+  },
+  modules: [
+    {
+      name: 'entry',
+      srcPath: './entry',
+      targets: [
+        {
+          name: 'default',
+          applyToProducts: [
+            'default',
+          ],
+        },
+      ],
+    },
+  ],
+}

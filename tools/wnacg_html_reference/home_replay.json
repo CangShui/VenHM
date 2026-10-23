@@ -1,0 +1,1143 @@
+{
+  "scope": "OFFLINE exact exported response-text fixtures, no network/device/build. This test never writes installed/production files. Candidate is actual current parent-repaired production; before reconstructs old last-wins hunk ONLY in-memory.",
+  "hashes": {
+    "engine": "87e13d3635fba7bbc500aab4b6659bf831fab84c6cfa210c67f8cccf27daec65",
+    "source": "545a6d818d012c1e5799d6aaf7ecd09798969acb840166ee7c56de6d02201df0",
+    "native": "0c3b3faaaf4efd92a1388012a128dbb299251b2fedf00297887cb25afe5992dc"
+  },
+  "runs": [
+    {
+      "runtime": "Node VM + production init/HTML API",
+      "variant": "before",
+      "duplicates": [
+        {
+          "html": "<div class=\"first\" CLASS=\"last\"></div>",
+          "actual": {
+            "class": "last"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"class\":\"last\"}"
+          }
+        },
+        {
+          "html": "<img src=\"\" SRC=\"evil\">",
+          "actual": {
+            "src": "evil"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"src\":\"evil\"}"
+          }
+        },
+        {
+          "html": "<a HREF=\"/safe\" href=\"javascript:evil\">x</a>",
+          "actual": {
+            "href": "javascript:evil"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"href\":\"javascript:evil\"}"
+          }
+        },
+        {
+          "html": "<div __proto__=\"safe\" __PROTO__=\"evil\" constructor=\"ok\"></div>",
+          "actual": {
+            "constructor": "ok"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"constructor\":\"ok\"}"
+          }
+        }
+      ],
+      "files": [
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-0.html",
+          "sha256": "df7fddaed8c6bd5a4dc9931e417708bc627b4e370cce8802eab15fa69697b5fd",
+          "title": "紳士漫畫-專註分享漢化本子|邪惡漫畫",
+          "selectors": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 6
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 66
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 0
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 0
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 0
+            }
+          ],
+          "lxmlSelectors": {
+            "div.title_sort": 6,
+            "div.bodywrap": 6,
+            "div.title_h2": 6,
+            "div.gallary_wrap > ul.cc > li": 6,
+            "div.imgBox": 0,
+            "div.Sub_H2": 0,
+            "ul.col_3_2 > li": 0
+          },
+          "home": [],
+          "requests": [
+            {
+              "url": "https://wnacg.com",
+              "headers": {}
+            }
+          ]
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone/phone-0.html",
+          "sha256": "796718b16bc3e2d153a69ceb3eab860b2caf195cb4df92cdd2bcfe1b867224b3",
+          "title": "紳士漫畫移動版-專注分享漢化本子",
+          "selectors": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 0
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 5
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 5
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 30
+            }
+          ],
+          "lxmlSelectors": {
+            "div.title_sort": 0,
+            "div.bodywrap": 0,
+            "div.title_h2": 0,
+            "div.gallary_wrap > ul.cc > li": 0,
+            "div.imgBox": 5,
+            "div.Sub_H2": 5,
+            "ul.col_3_2 > li": 30
+          },
+          "home": [],
+          "requests": [
+            {
+              "url": "https://wnacg.com",
+              "headers": {}
+            }
+          ]
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-1.html",
+          "sha256": "ca3851f7bb1ee1db24fdb4a88130e1f8fe14850c723f9d9bf629a979d8db00b8",
+          "searchCount": 24,
+          "maxPage": 1688,
+          "ids": [
+            "395901",
+            "395899",
+            "395898",
+            "395895",
+            "395886",
+            "395877",
+            "395876",
+            "395875",
+            "395865",
+            "395861",
+            "395859",
+            "395858",
+            "395856",
+            "395853",
+            "395847",
+            "395843",
+            "395842",
+            "395841",
+            "395839",
+            "395838",
+            "395837",
+            "395836",
+            "395834",
+            "395833"
+          ],
+          "allCardFieldsEqualIndependentLxml": true
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-2.html",
+          "sha256": "5480dd9b6b428cff280ebea0d40708e3be42105fd35f7feb5b451f04f8437137",
+          "searchCount": 24,
+          "maxPage": 249,
+          "ids": [
+            "395895",
+            "395886",
+            "395796",
+            "395794",
+            "395790",
+            "395788",
+            "395764",
+            "395703",
+            "395652",
+            "395622",
+            "395621",
+            "395519",
+            "395192",
+            "395015",
+            "394964",
+            "394206",
+            "394125",
+            "394043",
+            "394032",
+            "394006",
+            "393932",
+            "393885",
+            "393865",
+            "393691"
+          ],
+          "allCardFieldsEqualIndependentLxml": true
+        }
+      ],
+      "contracts": {
+        "publicBase": "https://wnacg.com",
+        "relativeHref": "albums.html",
+        "protocolRelativeSrc": "//img.example/a.webp",
+        "scriptExecuted": false,
+        "fakeNodes": 0,
+        "URLType": "undefined",
+        "defaultHttpPath": "/",
+        "unsetSelectionBase": "https://wnacg.com"
+      },
+      "desktopPositivePreserved": true
+    },
+    {
+      "runtime": "Node VM + production init/HTML API",
+      "variant": "candidate",
+      "duplicates": [
+        {
+          "html": "<div class=\"first\" CLASS=\"last\"></div>",
+          "actual": {
+            "class": "first"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"class\":\"first\"}"
+          }
+        },
+        {
+          "html": "<img src=\"\" SRC=\"evil\">",
+          "actual": {
+            "src": ""
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"src\":\"\"}"
+          }
+        },
+        {
+          "html": "<a HREF=\"/safe\" href=\"javascript:evil\">x</a>",
+          "actual": {
+            "href": "/safe"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"href\":\"/safe\"}"
+          }
+        },
+        {
+          "html": "<div __proto__=\"safe\" __PROTO__=\"evil\" constructor=\"ok\"></div>",
+          "actual": {
+            "__proto__": "safe",
+            "constructor": "ok"
+          },
+          "insideRuntime": {
+            "hasOwnProto": true,
+            "protoValue": "safe",
+            "json": "{\"__proto__\":\"safe\",\"constructor\":\"ok\"}"
+          }
+        }
+      ],
+      "files": [
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-0.html",
+          "sha256": "df7fddaed8c6bd5a4dc9931e417708bc627b4e370cce8802eab15fa69697b5fd",
+          "title": "紳士漫畫-專註分享漢化本子|邪惡漫畫",
+          "selectors": [
+            {
+              "selector": "div.title_sort",
+              "count": 6
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 6
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 6
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 66
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 0
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 0
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 0
+            }
+          ],
+          "lxmlSelectors": {
+            "div.title_sort": 6,
+            "div.bodywrap": 6,
+            "div.title_h2": 6,
+            "div.gallary_wrap > ul.cc > li": 6,
+            "div.imgBox": 0,
+            "div.Sub_H2": 0,
+            "ul.col_3_2 > li": 0
+          },
+          "home": [
+            {
+              "title": "最新更新",
+              "count": 6,
+              "ids": [
+                "395948",
+                "395902",
+                "395901",
+                "395900",
+                "395899",
+                "395898"
+              ]
+            },
+            {
+              "title": "同人誌CG畫集",
+              "count": 12,
+              "ids": [
+                "395948",
+                "395902",
+                "395900",
+                "395897",
+                "395896",
+                "395895",
+                "395894",
+                "395893",
+                "395892",
+                "395891",
+                "395890",
+                "395889"
+              ]
+            },
+            {
+              "title": "單行漫畫",
+              "count": 12,
+              "ids": [
+                "395880",
+                "395878",
+                "395859",
+                "395682",
+                "395616",
+                "395614",
+                "395464",
+                "395406",
+                "395387",
+                "395379",
+                "395374",
+                "395325"
+              ]
+            },
+            {
+              "title": "雜誌短篇",
+              "count": 12,
+              "ids": [
+                "395899",
+                "395898",
+                "395873",
+                "395872",
+                "395871",
+                "395870",
+                "395869",
+                "395868",
+                "395862",
+                "395855",
+                "395854",
+                "395852"
+              ]
+            },
+            {
+              "title": "韓國漫畫",
+              "count": 12,
+              "ids": [
+                "395674",
+                "394624",
+                "394610",
+                "390073",
+                "390064",
+                "390063",
+                "390056",
+                "390053",
+                "390042",
+                "390041",
+                "390038",
+                "390033"
+              ]
+            },
+            {
+              "title": "Cosplay寫真",
+              "count": 12,
+              "ids": [
+                "395879",
+                "395877",
+                "395863",
+                "395856",
+                "395845",
+                "395844",
+                "395772",
+                "395684",
+                "395683",
+                "395615",
+                "395472",
+                "395471"
+              ]
+            }
+          ],
+          "requests": [
+            {
+              "url": "https://wnacg.com",
+              "headers": {}
+            }
+          ],
+          "all66CardFieldsEqualIndependentLxml": true
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone/phone-0.html",
+          "sha256": "796718b16bc3e2d153a69ceb3eab860b2caf195cb4df92cdd2bcfe1b867224b3",
+          "title": "紳士漫畫移動版-專注分享漢化本子",
+          "selectors": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 0
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 5
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 5
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 30
+            }
+          ],
+          "lxmlSelectors": {
+            "div.title_sort": 0,
+            "div.bodywrap": 0,
+            "div.title_h2": 0,
+            "div.gallary_wrap > ul.cc > li": 0,
+            "div.imgBox": 5,
+            "div.Sub_H2": 5,
+            "ul.col_3_2 > li": 30
+          },
+          "home": [],
+          "requests": [
+            {
+              "url": "https://wnacg.com",
+              "headers": {}
+            }
+          ]
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-1.html",
+          "sha256": "ca3851f7bb1ee1db24fdb4a88130e1f8fe14850c723f9d9bf629a979d8db00b8",
+          "searchCount": 24,
+          "maxPage": 1688,
+          "ids": [
+            "395901",
+            "395899",
+            "395898",
+            "395895",
+            "395886",
+            "395877",
+            "395876",
+            "395875",
+            "395865",
+            "395861",
+            "395859",
+            "395858",
+            "395856",
+            "395853",
+            "395847",
+            "395843",
+            "395842",
+            "395841",
+            "395839",
+            "395838",
+            "395837",
+            "395836",
+            "395834",
+            "395833"
+          ],
+          "allCardFieldsEqualIndependentLxml": true
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-2.html",
+          "sha256": "5480dd9b6b428cff280ebea0d40708e3be42105fd35f7feb5b451f04f8437137",
+          "searchCount": 24,
+          "maxPage": 249,
+          "ids": [
+            "395895",
+            "395886",
+            "395796",
+            "395794",
+            "395790",
+            "395788",
+            "395764",
+            "395703",
+            "395652",
+            "395622",
+            "395621",
+            "395519",
+            "395192",
+            "395015",
+            "394964",
+            "394206",
+            "394125",
+            "394043",
+            "394032",
+            "394006",
+            "393932",
+            "393885",
+            "393865",
+            "393691"
+          ],
+          "allCardFieldsEqualIndependentLxml": true
+        }
+      ],
+      "contracts": {
+        "publicBase": "https://wnacg.com",
+        "relativeHref": "albums.html",
+        "protocolRelativeSrc": "//img.example/a.webp",
+        "scriptExecuted": false,
+        "fakeNodes": 0,
+        "URLType": "undefined",
+        "defaultHttpPath": "/",
+        "unsetSelectionBase": "https://wnacg.com"
+      },
+      "desktopPositivePreserved": true
+    },
+    {
+      "runtime": "actual prebuilt NAPI/QuickJS + production init/HTML API",
+      "variant": "before",
+      "duplicates": [
+        {
+          "html": "<div class=\"first\" CLASS=\"last\"></div>",
+          "actual": {
+            "class": "last"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"class\":\"last\"}"
+          }
+        },
+        {
+          "html": "<img src=\"\" SRC=\"evil\">",
+          "actual": {
+            "src": "evil"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"src\":\"evil\"}"
+          }
+        },
+        {
+          "html": "<a HREF=\"/safe\" href=\"javascript:evil\">x</a>",
+          "actual": {
+            "href": "javascript:evil"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"href\":\"javascript:evil\"}"
+          }
+        },
+        {
+          "html": "<div __proto__=\"safe\" __PROTO__=\"evil\" constructor=\"ok\"></div>",
+          "actual": {
+            "constructor": "ok"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"constructor\":\"ok\"}"
+          }
+        }
+      ],
+      "files": [
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-0.html",
+          "sha256": "df7fddaed8c6bd5a4dc9931e417708bc627b4e370cce8802eab15fa69697b5fd",
+          "title": "紳士漫畫-專註分享漢化本子|邪惡漫畫",
+          "selectors": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 6
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 66
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 0
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 0
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 0
+            }
+          ],
+          "lxmlSelectors": {
+            "div.title_sort": 6,
+            "div.bodywrap": 6,
+            "div.title_h2": 6,
+            "div.gallary_wrap > ul.cc > li": 6,
+            "div.imgBox": 0,
+            "div.Sub_H2": 0,
+            "ul.col_3_2 > li": 0
+          },
+          "home": [],
+          "requests": [
+            {
+              "url": "https://wnacg.com",
+              "headers": {}
+            }
+          ]
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone/phone-0.html",
+          "sha256": "796718b16bc3e2d153a69ceb3eab860b2caf195cb4df92cdd2bcfe1b867224b3",
+          "title": "紳士漫畫移動版-專注分享漢化本子",
+          "selectors": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 0
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 5
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 5
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 30
+            }
+          ],
+          "lxmlSelectors": {
+            "div.title_sort": 0,
+            "div.bodywrap": 0,
+            "div.title_h2": 0,
+            "div.gallary_wrap > ul.cc > li": 0,
+            "div.imgBox": 5,
+            "div.Sub_H2": 5,
+            "ul.col_3_2 > li": 30
+          },
+          "home": [],
+          "requests": [
+            {
+              "url": "https://wnacg.com",
+              "headers": {}
+            }
+          ]
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-1.html",
+          "sha256": "ca3851f7bb1ee1db24fdb4a88130e1f8fe14850c723f9d9bf629a979d8db00b8",
+          "searchCount": 24,
+          "maxPage": 1688,
+          "ids": [
+            "395901",
+            "395899",
+            "395898",
+            "395895",
+            "395886",
+            "395877",
+            "395876",
+            "395875",
+            "395865",
+            "395861",
+            "395859",
+            "395858",
+            "395856",
+            "395853",
+            "395847",
+            "395843",
+            "395842",
+            "395841",
+            "395839",
+            "395838",
+            "395837",
+            "395836",
+            "395834",
+            "395833"
+          ],
+          "allCardFieldsEqualIndependentLxml": true
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-2.html",
+          "sha256": "5480dd9b6b428cff280ebea0d40708e3be42105fd35f7feb5b451f04f8437137",
+          "searchCount": 24,
+          "maxPage": 249,
+          "ids": [
+            "395895",
+            "395886",
+            "395796",
+            "395794",
+            "395790",
+            "395788",
+            "395764",
+            "395703",
+            "395652",
+            "395622",
+            "395621",
+            "395519",
+            "395192",
+            "395015",
+            "394964",
+            "394206",
+            "394125",
+            "394043",
+            "394032",
+            "394006",
+            "393932",
+            "393885",
+            "393865",
+            "393691"
+          ],
+          "allCardFieldsEqualIndependentLxml": true
+        }
+      ],
+      "contracts": {
+        "publicBase": "https://wnacg.com",
+        "relativeHref": "albums.html",
+        "protocolRelativeSrc": "//img.example/a.webp",
+        "scriptExecuted": false,
+        "fakeNodes": 0,
+        "URLType": "undefined",
+        "defaultHttpPath": "/",
+        "unsetSelectionBase": "https://wnacg.com"
+      },
+      "desktopPositivePreserved": true
+    },
+    {
+      "runtime": "actual prebuilt NAPI/QuickJS + production init/HTML API",
+      "variant": "candidate",
+      "duplicates": [
+        {
+          "html": "<div class=\"first\" CLASS=\"last\"></div>",
+          "actual": {
+            "class": "first"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"class\":\"first\"}"
+          }
+        },
+        {
+          "html": "<img src=\"\" SRC=\"evil\">",
+          "actual": {
+            "src": ""
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"src\":\"\"}"
+          }
+        },
+        {
+          "html": "<a HREF=\"/safe\" href=\"javascript:evil\">x</a>",
+          "actual": {
+            "href": "/safe"
+          },
+          "insideRuntime": {
+            "hasOwnProto": false,
+            "protoValue": null,
+            "json": "{\"href\":\"/safe\"}"
+          }
+        },
+        {
+          "html": "<div __proto__=\"safe\" __PROTO__=\"evil\" constructor=\"ok\"></div>",
+          "actual": {
+            "constructor": "ok"
+          },
+          "insideRuntime": {
+            "hasOwnProto": true,
+            "protoValue": "safe",
+            "json": "{\"__proto__\":\"safe\",\"constructor\":\"ok\"}"
+          }
+        }
+      ],
+      "files": [
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-0.html",
+          "sha256": "df7fddaed8c6bd5a4dc9931e417708bc627b4e370cce8802eab15fa69697b5fd",
+          "title": "紳士漫畫-專註分享漢化本子|邪惡漫畫",
+          "selectors": [
+            {
+              "selector": "div.title_sort",
+              "count": 6
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 6
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 6
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 66
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 0
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 0
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 0
+            }
+          ],
+          "lxmlSelectors": {
+            "div.title_sort": 6,
+            "div.bodywrap": 6,
+            "div.title_h2": 6,
+            "div.gallary_wrap > ul.cc > li": 6,
+            "div.imgBox": 0,
+            "div.Sub_H2": 0,
+            "ul.col_3_2 > li": 0
+          },
+          "home": [
+            {
+              "title": "最新更新",
+              "count": 6,
+              "ids": [
+                "395948",
+                "395902",
+                "395901",
+                "395900",
+                "395899",
+                "395898"
+              ]
+            },
+            {
+              "title": "同人誌CG畫集",
+              "count": 12,
+              "ids": [
+                "395948",
+                "395902",
+                "395900",
+                "395897",
+                "395896",
+                "395895",
+                "395894",
+                "395893",
+                "395892",
+                "395891",
+                "395890",
+                "395889"
+              ]
+            },
+            {
+              "title": "單行漫畫",
+              "count": 12,
+              "ids": [
+                "395880",
+                "395878",
+                "395859",
+                "395682",
+                "395616",
+                "395614",
+                "395464",
+                "395406",
+                "395387",
+                "395379",
+                "395374",
+                "395325"
+              ]
+            },
+            {
+              "title": "雜誌短篇",
+              "count": 12,
+              "ids": [
+                "395899",
+                "395898",
+                "395873",
+                "395872",
+                "395871",
+                "395870",
+                "395869",
+                "395868",
+                "395862",
+                "395855",
+                "395854",
+                "395852"
+              ]
+            },
+            {
+              "title": "韓國漫畫",
+              "count": 12,
+              "ids": [
+                "395674",
+                "394624",
+                "394610",
+                "390073",
+                "390064",
+                "390063",
+                "390056",
+                "390053",
+                "390042",
+                "390041",
+                "390038",
+                "390033"
+              ]
+            },
+            {
+              "title": "Cosplay寫真",
+              "count": 12,
+              "ids": [
+                "395879",
+                "395877",
+                "395863",
+                "395856",
+                "395845",
+                "395844",
+                "395772",
+                "395684",
+                "395683",
+                "395615",
+                "395472",
+                "395471"
+              ]
+            }
+          ],
+          "requests": [
+            {
+              "url": "https://wnacg.com",
+              "headers": {}
+            }
+          ],
+          "all66CardFieldsEqualIndependentLxml": true
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone/phone-0.html",
+          "sha256": "796718b16bc3e2d153a69ceb3eab860b2caf195cb4df92cdd2bcfe1b867224b3",
+          "title": "紳士漫畫移動版-專注分享漢化本子",
+          "selectors": [
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 0
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 5
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 5
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 30
+            }
+          ],
+          "lxmlSelectors": {
+            "div.title_sort": 0,
+            "div.bodywrap": 0,
+            "div.title_h2": 0,
+            "div.gallary_wrap > ul.cc > li": 0,
+            "div.imgBox": 5,
+            "div.Sub_H2": 5,
+            "ul.col_3_2 > li": 30
+          },
+          "home": [],
+          "requests": [
+            {
+              "url": "https://wnacg.com",
+              "headers": {}
+            }
+          ]
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-1.html",
+          "sha256": "ca3851f7bb1ee1db24fdb4a88130e1f8fe14850c723f9d9bf629a979d8db00b8",
+          "searchCount": 24,
+          "maxPage": 1688,
+          "ids": [
+            "395901",
+            "395899",
+            "395898",
+            "395895",
+            "395886",
+            "395877",
+            "395876",
+            "395875",
+            "395865",
+            "395861",
+            "395859",
+            "395858",
+            "395856",
+            "395853",
+            "395847",
+            "395843",
+            "395842",
+            "395841",
+            "395839",
+            "395838",
+            "395837",
+            "395836",
+            "395834",
+            "395833"
+          ],
+          "allCardFieldsEqualIndependentLxml": true
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-2.html",
+          "sha256": "5480dd9b6b428cff280ebea0d40708e3be42105fd35f7feb5b451f04f8437137",
+          "searchCount": 24,
+          "maxPage": 249,
+          "ids": [
+            "395895",
+            "395886",
+            "395796",
+            "395794",
+            "395790",
+            "395788",
+            "395764",
+            "395703",
+            "395652",
+            "395622",
+            "395621",
+            "395519",
+            "395192",
+            "395015",
+            "394964",
+            "394206",
+            "394125",
+            "394043",
+            "394032",
+            "394006",
+            "393932",
+            "393885",
+            "393865",
+            "393691"
+          ],
+          "allCardFieldsEqualIndependentLxml": true
+        }
+      ],
+      "contracts": {
+        "publicBase": "https://wnacg.com",
+        "relativeHref": "albums.html",
+        "protocolRelativeSrc": "//img.example/a.webp",
+        "scriptExecuted": false,
+        "fakeNodes": 0,
+        "URLType": "undefined",
+        "defaultHttpPath": "/",
+        "unsetSelectionBase": "https://wnacg.com"
+      },
+      "desktopPositivePreserved": true
+    }
+  ]
+}

@@ -1,0 +1,335 @@
+﻿# migration_status.yaml — VeneraNext -> HarmonyOS (ArkTS/ArkUI)
+# Updated by the Planner Agent after each iteration.
+project:
+  name: "Venera HM"
+  source: "CyrilPeng/Venera-Next v1.17.0 commit 7110c19c4f3e342cf33d358d6be9058d8abc2505; selected baseline files preserved in logs/upstream"
+  target: "<repo>"
+  upstream_size:
+    dart_files: 230
+    physical_lines: 67420
+  route: "native ArkTS/ArkUI rewrite (not Flutter-on-OHOS)"
+  target_platform: "HarmonyOS 6.0.1(21), runtimeOS HarmonyOS"
+  bundle_name: "com.venerahm.reader"
+
+iteration:
+  current: 1
+  phase: "module_migration"
+  scope_this_round: "2026-10-16 user resumed full migration beyond WN source fixes. Implemented source search filter UI select/multi-select/dropdown, dynamic metadata/defaults/reset/errors and immutable options snapshots for page/cursor pagination; implemented source-locked category ranking adapter/session/page and rank-only category entry. Actual SDK/API21 signed build exit0;40JS suites+Python report/historicalUI evidence contractsPASS. Search production12/actualhostNAPI5; ranking production15/actualhostNAPI6 full unchanged installed WN/EH/Komiic sources with controlled HTTP fixtures only. New features NOT phone/live-site accepted and NOT installed. Prior JM reader local fix package overwrite-installed and first-screen verified; sustained JM pages/real FPS remain unverified. Full parity still incomplete."
+
+overall_progress:
+  total_modules: 23
+  completed_modules: 4
+  in_progress: "JS sources already load; full feature parity, deep source matrix, reader/download/sync features still incomplete"
+  completion_percentage: "not re-estimated; old 17% skeleton snapshot is obsolete"
+
+toolchain:
+  deveco_studio: "CURRENT HOST: 6.0.1.251, build243.24978.46.36.601251; older than historical root-user snapshot. Application target/compatible remains API21; SDK compile API23 Cookie facade/PATCH wire compatibility now verified."
+  hvigor: "6.21.1 (tools/hvigor)"
+  ohpm: "present (tools/ohpm)"
+  harmonyos_sdk: "bundled sdk/default - HarmonyOS 6.0.1.112, API 21, Release (matches project target)"
+  java: "DevEco JBR (jbr/bin/java.exe)"
+  device: "CONNECTED <device-id>; Venera-only PID/focus-guarded UI checks actual PASS21 (logs/user8-ui/verified-ui-evidence-20261015.json). Corrective original-UA signed package installed successfully, user manually unlocked after system launch10106102; no auto unlock/developer-mode change. WN actual search24->48 and reader121/side-tap1->2. Latest original-UA source run deep-1792051137357 completed20rows+END: readingchains7, all-public sampled-stage clean4; notL4/L5 or all-sourcePASS. Final verifier-only keyword-status patch subsequently signed/overwrite installed (artifact2 SHA99C5CBBF8CB28C5642011CF59FFA07E20164C3878F5857B543D96AC5214A6684), not falsely claimed as another complete phone rerun. No uninstall/data clear/real-account input; ordinary tested comics may add normal history entries, not claim unchanged history count."
+  emulator: "no system image deployed (only config files under LOCALAPPDATA/Huawei/Emulator)"
+  typescript_for_checks: "bundled: <DevEco>\\sdk\\default\\openharmony\\ets\\build-tools\\ets-loader\\node_modules\\typescript"
+  signing: "AVAILABLE - DevEco CLI 1.3.5 auth login --no-prompt + signature generate succeeded; p12/csr/cert/profile generated and project signing enabled; no GUI required"
+  node: "Host v24.14.1 for CLI and local tests; current DevEco bundled Node v18.20.1 drives hvigor. CLI1.3.5 requires host Node>=22."
+
+modules:
+  - name: "foundation"
+    status: "completed"
+    files:
+      - "foundation/Log.ets"
+      - "foundation/AppContext.ets"
+      - "foundation/Settings.ets"
+      - "foundation/AppInit.ets"
+      - "foundation/Extensions.ets"
+      - "foundation/Semver.ets"
+    issues: []
+
+  - name: "domain models"
+    status: "completed"
+    files:
+      - "model/Res.ets"
+      - "model/Comic.ets"
+      - "model/ComicDetails.ets"
+      - "model/ComicType.ets"
+      - "model/RouteParams.ets"
+    issues:
+      - type: "compat_note"
+        description: "ComicType uses FNV-1a 32-bit instead of Dart String.hashCode; DB is not binary compatible with the Flutter app"
+        priority: "medium"
+
+  - name: "storage layer"
+    status: "completed"
+    files:
+      - "storage/Database.ets"
+      - "storage/FavoritesDao.ets"
+      - "storage/HistoryDao.ets"
+    issues:
+      - type: "design_change"
+        description: "favorites use one table + folder column instead of one table per folder"
+        priority: "low"
+
+  - name: "network layer"
+    status: "in_progress"
+    files:
+      - "network/HttpClient.ets"
+      - "network/ImageLoader.ets"
+    issues:
+      - type: "missing_feature"
+        description: "Cookie jar, response cache, Cloudflare handling, proxy/DNS overrides not ported"
+        priority: "high"
+
+  - name: "comic source domain"
+    status: "in_progress"
+    files:
+      - "source/ComicSource.ets"
+      - "source/SourceManager.ets"
+      - "source/LocalSource.ets"
+      - "source/DemoApiSource.ets"
+      - "source/JsRuntime.ets"
+    issues:
+      - type: "unverified"
+        description: "RSA1024 single-block vector device-verified; other moduli/multiblock and failure vectors still pending"
+        priority: "high"
+      - type: "missing_feature"
+        description: "compute and per-job isolated image runtime implemented/build-installed, not new-device-tested; source hooks method/data/onResponse/onLoadFailed implemented. Persistent compute-isolate globals/nested compute/remote function callbacks, full progress/cache/performance parity still incomplete."
+        priority: "medium"
+
+  - name: "minimal closed loop UI"
+    status: "completed"
+    files:
+      - "pages/Index.ets"
+      - "features/BookshelfView.ets"
+      - "features/SearchView.ets"
+      - "features/SettingsView.ets"
+      - "pages/ComicDetailsPage.ets"
+      - "pages/ReaderPage.ets"
+      - "pages/SourceManagerPage.ets"
+      - "components/ComicWidgets.ets"
+    issues:
+      - type: "unverified"
+        description: "Signed builds/overwrite installation and selected device UI probes verified; full original UI parity and every interaction still unverified"
+        priority: "high"
+
+  - name: "reader enhancements"
+    status: "in_progress"
+    files: ["pages/ReaderPage.ets", "features/ReaderModes.ets", "features/ReaderSpreads.ets", "features/ReaderImageLayout.ets", "foundation/ReaderSettings.ets", "pages/ReaderSettingsPage.ets", "components/ComicWidgets.ets"]
+  - name: "settings / history / image favorites / follow updates / discovery"
+    status: "in_progress"
+    files: ["pages/HistoryPage.ets", "pages/SourceSettingsPage.ets", "pages/SearchPage.ets"]
+    limitations: "History/settings/search implemented and selected device regression verified; image favorites/follow updates/full discovery missing."
+  - name: "downloads + import/export (CBZ/EPUB/PDF)"
+    status: "in_progress"
+    files: ["features/DownloadQueue.ets", "pages/DownloadsPage.ets"]
+    limitations: "Owned checkpoint/missing-page repair verified in prior device iteration. New ability/page-hide pause, late response drop and no-auto-resume local tests passed; actual OS probe blocked by lock. No archive import/export/system background jobs."
+  - name: "WebDAV sync + library + deeplink + WebView login"
+    status: "in_progress"
+    files: ["features/DataSync.ets", "pages/SyncPage.ets"]
+    limitations: "Reading-data whitelist backup/insert-ignore only; real RDB probe passed but no real server/credentials, two-way conflict/delete propagation, library, deeplink or WebView login."
+
+verification:
+  type_check_non_ui:
+    tool: "tsc 4.9.5-r4 with SDK stubs"
+    scope: "21 files (model/foundation/network/storage/source)"
+    result: "PASS - 0 errors"
+  hvigor_build:
+    command: "devecocli build --product default --build-mode debug"
+    result: "PASS - final reader-layout signed build3 process exit0, logs/reader-layout-build3-20261014.log; gallery spreads/wide presentation/scoped SettingsPage/decoded-readiness packaged. Zero compile errors; existing SDK/deprecation lint warnings remain. Not phone ArkUI/GPU/render/persistence proof."
+    artifact: "entry/build/default/outputs/default/entry-default-signed.hap (automatic CLI signature enabled)"
+    bytecode: "ets/modules.abc (vm ark13.0.1.0)"
+    packaged_rawfile: "resources/rawfile/init.js 38.2 KB"
+    errors: 0
+    warnings: "pre-existing lint set; this round added only 3 'may throw' lint hits on the new RSA cryptoFramework calls (same category as the existing AES calls, inside try/catch). SourceSelfTest.ets has zero warnings."
+    warning_breakdown:
+      - "91 x 'Function may throw exceptions. Special handling is required.' (ArkTS lint on throwing SDK calls)"
+      - "18 x deprecated API (router.pushUrl/back/getParams, promptAction.showToast)"
+  offline_contract_tests:
+    - "node tools/rsa_reference_vectors.js -> PASS (128-byte block -> expected plaintext)"
+    - "node tools/aes_reference_vectors.js -> matches the four vectors embedded in JsEngine"
+    - "node tools/html_engine_cases.js -> ALL PASS"
+    - "node tools/history_reader_cases.js -> PASS 75"
+  device_existing_installation_20261013:
+    scope: "Existing phone build only; UI self-test/deep toggle absent. Latest workspace RSA/invokeFunction/UI/deep sampling not tested."
+    result: "Existing startup bridge/AES/GBK/Cookie passed; history 4 groups and favorites 10 cases passed. Before/after history=29; default favorites=0."
+    source_smoke: "4/22 (includes local/demo_api plus 20 JS sources), shallow sampling only: hcomic/hitomi/nhentai/ManHuaGui v1.2.1. Not full L0-L3 acceptance."
+    evidence: "docs/DEVICE_ACCEPTANCE_2026-10-13.md; logs/device-existing-app-evidence-20261013.log"
+  runtime_fixes_after_first_build:
+    - "BookshelfView/SettingsView/ComicDetailsPage/ReaderPage now await AppInit.init() before touching preferences/RDB/sources; the tabs are built before the async AppInit finishes, which previously could throw 'Database.init() has not been called' on first launch"
+  device_launch:
+      result: "Final runtime-lifetime overwrite install4 EXIT0 + explicit success text PASS; NO proactive launch/foreground acceptance by user choice. Historical screen-lock10106102/isolated install5 disconnect are not current blocks. Prior phone image/reader/download/matrix passes remain historical, not this package proof."
+  signing:
+    result: "PASS - DevEco CLI automatic signature generation, signed build, and overwrite deployment (no uninstall)"
+  cli_signing_and_deployment_20261013:
+    version: "@deveco/deveco-cli 1.3.5"
+    environment: "DEVECO_CLI_STUDIO_PATH=C:\\Program Files\\Huawei\\DevEco Studio"
+    commands: "auth login --no-prompt -> signature generate --product default -> build -> run --skip-build (no --uninstall)"
+    result: "Signed build and Smoke PASS; history=29 retained. RSA1024 reference and invokeFunction round-trip PASS."
+    ui_failure: "Historical builder-context TypeError FIXED: component-owned builder and scoped UIContext; final device regression PASS, see ui_dialog_fix_20261013"
+    evidence: "logs/devecocli-signature-result-20261013.log; logs/devecocli-deploy-20261013.log; logs/ui-dialog-jscrash-detail-20261013.log"
+  ui_dialog_fix_20261013:
+    code: "Index component-owned builder; scoped PromptAction; queued/pending-open loading cancellation; onCancel duplicate guard; unchanged upstream init.js"
+    build: "PASS - signed build logs/ui-host-build5-20261013.log, overwrite install Smoke PASS (no uninstall)"
+    offline: "Node production bridge 14 cases, history/reader 75 assertions, HTML cases PASS"
+    device: "Cold-start PID7940: validator rejection/input42, initial selection/choice2, async button, queued and visible loading cancellation, default action, input/select null cancellation, invalid initial index, onCancel once and no residual dialog PASS"
+    persistence: "auditFile=true - app reads its audit TraceID from actual filesDir/logs file; sensitive input content excluded"
+    regression: "Final device history4 groups and favorites10 cases PASS; isolated tests clean themselves; no reader fixture generated"
+    evidence: "logs/ui-dialog-device-final/; logs/ui-host-final-app-evidence.log"
+    limitations: "Real accounts/captcha images/site callbacks, dynamic settings, deep source matrix remain pending"
+  settings_html_search_20261014:
+    upstream: "Venera-Next v1.17.0 commit 7110c19c4f3e342cf33d358d6be9058d8abc2505; regex settings validator upstream, function validators/options explicit HM extensions"
+    changes: "Dynamic settings getter refresh, typed false/0 and stale choices, awaited ordered persistence/failure recovery; HTML live-document lifetime and Unicode/entity/serialization fixes; search pagination/cursor/race/source identity fixes"
+    offline: "settings28, search13, HTML11, UI bridge14, history/reader75, existing HTML cases PASS"
+    device_settings: "Fixture edit/cold persistence/cleanup PASS; history baseline36 unchanged; no real account/source settings changed"
+    device_search: "H-Comic first10 -> distinct second page cumulative20, source switch clears old grid PASS"
+    device_common: "Final PID46996 HTML12-live-document/Unicode startup contract, UI dialog auditFile=true, history4/favorites10 PASS"
+    source_matrix: "After common runtime changes: shallow22-source regression4/22; NOT full deep L0-L3. Source scripts20 plus local/demo_api."
+    limitations: "Real login/captcha/site callbacks, mature HTML5 parser and full deep matrix not verified; PC wnacg captured-page replay is not a device PASS"
+    evidence: "logs/source-settings-device/; logs/search-device/; logs/ui-dialog-settings-search-final/; logs/settings-final-pid-46996.log"
+  image_download_account_reader_20261014:
+    offline: "image transform13/cache10/deep12/download-sync19/reader-controls10/account8/settings29/history-reader75/search13/HTML11/UI14 and original HTML cases PASS"
+    image_device: "ImageKit+QuickJS asymmetric RGBA oracle/reorder remainder/crop/rotate/fill/reject/recover PASS; JM sampled modified images decoded, not human content or real login verification"
+    transfer_device: "Owned local2chapters x3pages, disk revalidation/missing-page rewind/recovery/completed ledger/cleanup and real RDB sync whitelist/duplicate merge PASS; history38 unchanged"
+    reader_device: "page forward/back, doubletap1->2->1, brightness35%, auto8s advance/pause10s invariant; SDK brightness/keep-screen restore calls completed; fixture cleanup history38 unchanged. No pinch/RTL/pan/system-state readback claim."
+    build: "Final signed build7/overwrite install Smoke PASS; artifacts/logs in HANDOVER"
+    final_matrix: "PID21512 final7 actual PixelMap sample20: chainOK5(hcomic/hitomi/nhentai/copy_manga/jm), searchBlocked13, FAIL2(ykmh403/zaimanhua details). L0 partial/mixed nonexhaustive/dynamic categories and L4-L5 not verified; no upstream exemptions."
+    evidence: "logs/image-deep-matrix-final7-rows-20261014.jsonl; logs/image-deep-matrix-final7-20261014.log; logs/image-reader-transfer-device-pid13931-20261014.log; logs/reader-controls-device/; logs/transfer-device/"
+    limitations: "Full L0-L5/real login/WebDAV server still unverified; current image script uses shared QuickJS, no timeout; UIAbility background pause for downloads pending"
+  pipeline_chapters_locked_20261014:
+    changes: "Unified ImageConfigParser/ImagePipeline method/data/onResponse/modifyImage/onLoadFailed5-recovery cap; native isFunction; exact byte view/empty-body/header-case HTTP adapter; ability/page download pause; owned dynamic PixelMap disposal; grouped stable chapters/detail reverse/collapse/recommendations and source/detail async guards"
+    offline: "17 groups ALL PASS: image-component5/page-life5/http7/chapter7/pipeline14/pixel13/cache12/download-sync21/deep12/account8/reader10/settings29/history-reader75/search13/HTML11/UI14 and original HTML"
+    build_install: "Signed build7 PASS; HDC install -r PASS. logs/pipeline-chapters-build7-20261014.log; logs/pipeline-chapters-install7-20261014.log; logs/pipeline-chapters-signed7-sha256.txt"
+    runtime: "NOT_TESTED - locked10106102. DevEco Smoke FAIL_CRASH label not crash proof; no unlock bypass/no developer-mode changes/no user-data clearing."
+    probe: "Loopback synthetic PNG server29091 via explicit HDC reverse; image HTTP and two-step real-background diagnostics implemented but not device-executed. Own helper/logger/reverse cleaned up."
+    evidence: "logs/pipeline-chapters-final-regression-20261014.log; logs/image-pipeline-deploy3-20261014.log; docs/HANDOVER.md latest section"
+  account_web_locked_20261014:
+    changes: "Three-path account page/parser; Cookie field-order strict validation; isolated Web check/capture/import/localStorage/awaited callback/marker with staging rollback; relogin tuple/registration; SameSite additive schema; source async-write failure barrier; protected source console during auth"
+    offline: "21 groups ALL PASS; account19/page9/browser-cookie17/schema4/auth-log3/settings31 plus prior regression. SQL/ArkWeb/network fakes do not prove real login."
+    build_install: "account-web build8 signed PASS; HDC install -r PASS; prior build7 start10106102 screen lock. logs/account-web-build8-20261014.log; logs/account-web-install8-20261014.log; logs/account-web-start7-20261014.log"
+    runtime: "Device API26 from HDC; >=23 structured capture, 21/22 upstream name/value/domain-compatible header transfer with observed attributes implemented. Old lifetime/SameSite unknown; all native paths unverified. Baseline21 preserved."
+    fixture: "Synthetic local auth UI/server added, owner/random-name scoped cleanup and cold registration; not device-run and never L4 real-login PASS."
+    evidence: "logs/account-web-final-regression-20261014.log; logs/device-sdk-api-20261014.txt; logs/account-web-signed8-sha256.txt; docs/HANDOVER.md"
+  runtime_trace_codec_20261014:
+    changes: "Embedding-only QuickJS job/reaction context captured at continuation registration, restored/freed/GC-marked; native callback owner + explicit Trace args; RPC HTTP/data/UI/settings/image propagation; owner-aware auth logging; SDK decoding kept, explicit native raw codecs"
+    host_native: "Actual production C/C++ compiled/executed locally: Trace37 assertions PASS; HTTP codec17 independent Node vectors PASS. Not phone ABI/NAPI/application acceptance."
+    offline: "23 groups ALL PASS incl rpc6/content6/auth-log4/http9 and earlier suite; logs/runtime-trace-codec-regression-20261014.log"
+    dependency: "Brotli v1.2.0 commit028fb5a23661f123017c060daa546b55cf4bde29 decoder/common/include/LICENSE only; git blob SHA1 verified; SDK zlib; host-only pinned zlib1.3.1"
+    source_evidence: "Pinned OpenHarmony NetStack sets CURLOPT_ACCEPT_ENCODING empty => libcurl decodes. Content-Encoding header not raw-body proof; default never double-decodes. Current SDK transport still untested."
+    build_install: "Signed build8/HDC replace PASS (MIT notice packaged); prior aa start build6 locked10106102; current app startup/native trace/NAPI codec/SDK compressed fixture checks NOT_TESTED"
+    refusal: "Device tmp executable Permission denied; generated test files cleaned, no root/policy/unlock bypass. Native host execution used instead."
+    evidence: "logs/native-runtime-host/audit.log; logs/native-http-codecs/audit.log; logs/runtime-trace-codec-build8-20261014.log; logs/runtime-trace-codec-install8-20261014.log; logs/runtime-trace-codec-start6-20261014.log"
+
+  isolated_compute_images_20261014:
+    upstream: "Fixed js_pool.dart/image_processing.dart baseline; upstream persistent isolate global semantics NOT fully copied. Current pool reuses threads only, fresh QuickJS per job."
+    changes: "Native source-compute interception before ArkTS conversion; structured clone args/results/cycles/maps/sets/subviews; 4 workers; timeout-aware bytecode+microtask pump; actual pixel/alpha work off main runtime; TSFN owner/ordered teardown; bounded RPC; matching Trace cancel"
+    limits: "10s execution default, excludes UI queue/SDK codec; JS image64MiB/compute128MiB, stack1MiB, image surface budget=min(128MiB,max(32MiB,4*inputRGBA)), bridge16384; native retained transport384MiB/32 jobs; ArkTS input128MiB+RGBA128MiB/32 requests; NOT total-process-memory guarantee"
+    image_lifecycle: "Release decoded ImageKit input before native dispatch; owned transformed UI request, queue/decode/native/encode late-drop, final PixelMap/packer disposal, reservations returned on all paths. Transformed component shared-cache bypass is explicit performance tradeoff."
+    host_native: "PASS production isolated/RPC82 assertions, Trace37, codec17 independent vectors; logs/isolated-native-host/audit.log; logs/native-runtime-host/audit.log; logs/native-http-codecs/audit.log. Not phone NAPI/ABI proof."
+    local: "PASS25 suites: isolated ArkTS18, worker SOURCE-CONTRACT7, browser cookies19 plus original regression; logs/isolated-final-regression-20261014.log. Mocks/source checks do not prove actual native device execution."
+    build_install: "Final signed build5 process exit0 PASS (logs/isolated-runtime-build5-20261014.log; signed5-sha256). build4 install -r success confirmed. install5 log reports E001005 Device not found despite exit0; target list Empty, NOT installed. Pending reconnect install -r only. No uninstall/data clear."
+    sdk_compat: "Current older compile declarations lack PATCH and API23 Cookies. PATCH exact wire string preserves method (SDK runtime acceptance untested); typed API23 facade+runtime presence check retains full modern Cookie path, legacy21/22 unchanged."
+    device: "User explicitly selected build/overwrite only, no foreground occupation. New package not proactively launched/tested; real NAPI/ImageKit/SDK transport/auth/RDB acceptance deferred to approved dedicated device window."
+    gaps: "Persistent upstream compute globals, nested compute and remote JS callbacks; host validation double-read assumes stable trusted host accessors/iterators; existing main QuickJS external-handle lifecycle remains process-retained; full cache/progress/performance parity and global migration still incomplete."
+
+  main_runtime_lifetime_20261014:
+    changes: "LifetimeRegistry roots+membership+generation; authentic type-tagged plain-object napi_wrap function handles; shared once-claimed QjsBridge with plain-object GC anchors; pending Promise roots; wrong-env guards; MainRuntimeLease deferred destruction after transient frames; callback args/onepass cycle/depth/node/byte guards; conversion error/reentrant winner+throw recovery"
+    worker: "Delivered deferred nulled immediately; no fallback double-settle; RPC claims/commit under mutex, marshalling/getters WITHOUT mutex; outer leases+dup local callee; completed-result byte reservation shrinks to actual payload while 32-job count and actual bytes retained until finalizer"
+    diagnostics: "runtimeStats counts generation/ownedRoots/externalHandles(opaque wrappers)/pendingCalls/active/activeEntries/ownershipUncertain/deferredCleanupFailures only; no user values or credential text"
+    native_helper: "PASS26 actual production registry boundary assertions, 130 synthetic QuickJS GC payloads released; logs/native-lifetime-host/audit.log/result.log; helper proof not phone NAPI ordering"
+    actual_napi_host: "PASS21 actual production NodeNAPI addon tests: all4 production CPP TUs+same QuickJS/Brotli/zlib; real TSFN/threads/GC/child env cleanup, foreign-pointer/alias wrapper, args/cycles/mutating getters/reentrant callbacks, fourcompute/images, timeout/cancel/heartbeat, codec exports; logs/napi-host/audit.log/integration.log. NOT phone ArkTS/ImageKit/SDK transport proof."
+    existing_regression: "PASS isolated82/Trace37/codec17 actual native +25 local suites (mock/source-contract); logs/runtime-lifetime-regression-20261014.log"
+    build_install: "Final runtime-lifetime build4 signed EXIT0/HDC install -r EXIT0 + explicit install bundle successfully PASS after reconnect; logs/runtime-lifetime-build4-20261014.log; logs/runtime-lifetime-install4-20261014.log; logs/runtime-lifetime-signed4-sha256.txt"
+    stable_artifact: "dist/venera-hm-runtime-lifetime-20261014-signed.hap SHA256 B36FD44FCE929575661EB49587F2969845B13A0E665655DC0D2459B73CDF9A0C; logs/runtime-lifetime-package-audit-20261014.json verifies native/lifetime symbols and original init bytes"
+    install_safety: "tools/install_verified.ps1 verifies exit+success text and rejects disconnect/empty/failure even exit0; PASS5 evidence contracts. No uninstall/data clear/proactive launch or foreground use."
+    platform_audit: "Current arkui_napi implementation differs old ace_napi mirror; use real plain objects for tag/wrap/finalizer anchors, Symbol property compatible with current source. Public source review does NOT prove current phone ABI."
+    residuals: "Normal root shutdown destroys main runtime; ownershipUncertain conservatively retains on legacy C++allocation fault/transient roots not all RAII. Backend may refuse pending-deferred cleanup; failure counted, no portable destructor guarantee. No multienv/reinit support; still-pending calls retain roots until settle/cleanup. Real phone teardown/null-env/fault injection pending."
+    device_scope: "Latest package installed but NOT foreground-started/tested by explicit user choice; no phone native/wrapper/ImageKit/SDK network/auth/DB acceptance claimed."
+
+  reader_layout_scoped_settings_20261014:
+    upstream: "23 fixed reader/settings/appdata reference blobs all SHA1 verified commit7110c19c4f3e342cf33d358d6be9058d8abc2505; logs/reader-upstream-audit-20261014.json"
+    gallery: "Real1-5-image Row/Column spread, portrait/landscape independent, first-alone/RTL group+internal order, O(1) mapping/nextSource/counter. Source currentPage/epId/images/maxPage unchanged, same-group callback preserves restored source anchor. Controls/auto advance group, not repeated same-screen image."
+    wide: "Only vertical continuous/waterfall width>height; one logical source image painted right(top)/left(bottom) default, invert optional; exactfractional half boundary/width-half height-double geometry. Same PixelMap twice with GPU clipping, no extra RGBA/crop/PNG/HTTP/source-hook or synthetic URLs/cache/download identity changes."
+    settings: "ReaderSettingsV1 Preferences doc global-device-comic resolution withfalse/0, independentcomic modeoverride/default, typedbounds, locallyrandom deviceidentity, ordered awaitedput/flush withmemory confirmation+best-effort rollback, active scopechoseninsidecommit; realReaderSettingsPage route+global/reader entry. New1-20s interval butexplicitlegacyHM1-60 alias preserved untilchanged."
+    guards: "Generation-specific sibling zoom aggregate; autoRead waitsALLvisiblegallery decoded/current flow image, ignoreshidden/stale; cached readiness re-emitsafterpropupdatewithrequest/generationguard withoutrefetchingPOST. Hide/showcurrentreadiness preserved, loading/scroll/layout/zoom block auto. Lateheight relayout anchorssameSOURCEtop, avoidsactivelyscrolling/touching."
+    regression: "PASS28 local suites: spread575/scoped settings14/wide geometry+source10/component7/controls10/history75 plus originaltests; logs/reader-layout-regression-20261014.log. MockPreferences/ArkUI/GPU scopesNOTphoneevidence. RealNodeNAPI21 rerunPASS unchangednative code."
+    build_install: "Final reader-layout signed build3 EXIT0 + install_verified EXIT0/explicit install success PASS; logs/reader-layout-build3-20261014.log; logs/reader-layout-install3-20261014.log. No proactive launch/foreground use/uninstall/data clear."
+    artifact: "dist/venera-hm-reader-layout-20261014-signed.hap SHA256 E646906C129B9CAD746D226E18666EC2F24CC302597F5AAFC205A9C068EF7B0E; logs/reader-layout-package-audit-20261014.json"
+    residuals: "PhoneGPUpercentclip/oddwidth interpolation/rotations/gesture/siblingready/Preferencescold persistenceNOT_TESTED. Gallerylastgroup historycompletion differsupstream(end image specialcase pending). HMreaderSettingsV1notupstream appdata backup/sync; DataSynclegacy mode metadata notmigrated. Auto smooth/stepped continuous pixel scroll, crosschapterwaterfall/preload/layoutdetection/fullgestures/volume/eInk/brightness/comments remain."
+
+  user_reported_eight_defects_20261014:
+    scope: "User-authorized public-request device verification; no real account, no uninstall, no user-data clear."
+    device_verified: "New build on-device startup contracts PASS: bridge/native trace/HTML lifetime/rdb/cookie + source compute acceptance (native entry/concurrency/main-engine isolation/HTML/sync+async host RPC/Map+Set/subview/exception recovery) + isolated pixel acceptance (2x3 real native RGBA rotate, matching-trace cancel, unrelated trace continues). logs/user8-newbuild-appdev-20261014.log, logs/user8-newbuild-startup-20261014.log. NOT real ImageKit/site/JM human acceptance."
+    fixed_1_shared_source: "features/SelectedSource.ets singleton (persisted stable sourceKey, subscribe/unsubscribe, ALL installed sources); ExploreView+CategoryView share it; capability mismatch explicit, no silent source switch. Device UI NOT_TESTED."
+    fixed_2_tag_routing: "features/TagRouting.ets + pages/CategoryComicsPage.ets; upstream PageJumpTarget modern/legacy/string parsing; namespace and colon-containing tags preserved; missing onClickTag falls back to original-source namespaced search, never guesses a category; E-Hentai Category tag keyword:'' + options:['2','',''] filter supported. New ComicSource.tagTarget/optionsLoader/showWhen/notShowWhen/CategoryItem.initialOptions parsed by JsComicSource. Device click NOT_TESTED."
+    fixed_4_category_loading: "CategoryView + CategoryComicsPage set loading synchronously, end only in the current request finally, and surface visible error+retry for missing capability/throw/empty/unmigrated target with redacted audit. Device visual NOT_TESTED."
+    fixed_5_tap_turn: "features/ReaderTapPolicy.ets; image-local 30% side regions, center no-op, RTL left=next/right=prev, other modes (incl. vertical) left=prev/right=next per explicit user request; whole-spread normalized coords; 200ms single/double arbitration cancels on drag/pinch/cancel/reload/dispose/zoom/loading/hidden/scroll/overlay/not-ready; enable/reverse keys in scoped settings. Device gesture NOT_TESTED."
+    fixed_6_longpress_copy: "Detail title/author metadata and tags long-press write full strings to system clipboard; mutually exclusive LongPress/Tap recognizers so long-press copy does not also navigate. Device clipboard NOT_TESTED."
+    fixed_7_reader_to_details: "Reader '详情' action stops auto-read, flushes progress, restores brightness/keep-screen; back when the immediate previous route is the same source+comic details, otherwise replaceUrl with stable params to avoid a Home->Reader->Details->Reader loop; ordinary Back unchanged. Device routing NOT_TESTED."
+    fixed_8_demo_removed: "Deleted source/DemoApiSource.ets, its SourceManager registration, all settings-page demo API controls, and Settings.apiBaseUrl/demoApiBaseUrl. No real source/history/favorite/account data touched; local case asserts absence."
+    fixed_3_all_source_attribution: "SourceAcceptance now supports real loadNext cursor explore, really invokes category/tag targets with dynamic options, falls back to public explore/category candidates to still exercise details->chapters->image decode while preserving search failure, and emits per-source classification (A_APPLICATION_*/B_SOURCE_RULE_NEEDS_DOM_COMPARISON/C_SITE_AUTH_OR_NETWORK_BLOCK/NO_PUBLIC_FAILURE_OBSERVED)."
+    verifier_self_fixes: "Two self-inflicted verifier bugs found and fixed: a category-stage throw aborted remaining stages and fabricated source FAIL (now per-stage try/catch isolation), and the public-HTML diagnostic had no timeout so a blocked host stalled the matrix (now 8s connect/12s read, stop on 403)."
+    prior_build_matrix: "Previous build completed 20-source matrix logs/user8-baseline-full-matrix-20261014.jsonl: jm/hcomic/hitomi/nhentai/ykmh sampled chain OK; wnacg search 'cannot read property text of undefined'; ehentai 'not a function' + JSON.parse(undefined). ehentai causes were migration defects (cursor-only explore dispatched to load; search option defaults not passed) and are fixed. wnacg current public default host returns HTTP 403 in independent testing, so it is NOT labelled a bad source rule; a bounded no-cookie public HTML capture exists to compare the exact phone response with an independent parser."
+    regression: "PASS31 local suites logs/user8-regression-20261014.log incl. source_contract_ui11/reader_tap_policy15/category_tag21/deep_matrix12."
+    build_install: "logs/user8-build1|build2-20261014.log BUILD SUCCESSFUL exit0; install1/install2 explicit 'install bundle successfully'; tools/install_verified.ps1 hardened (also fixed its own unset-$LASTEXITCODE false failure)."
+    review_20261015: "Old 'STALE SOURCE SELECTOR, not our app' verdict RETRACTED. Fixed upstream default UA differs our Phone UA. After source-only UA restoration same-phone no-cookie probe returns desktop selector2/cards24, actual unchanged-source search24->48 and reader121/tap1->2. WN home still empty, EH0 results unresolved. Komiic search explicitly maxPage1: no fake page2 required; new matrix confirms declaredEnd. Category errors now preserve numeric part/item/phase and later targets. New report neutral observations, SDK code401 notHTTP401, generic TypeError unknown. docs/USER8_DEVICE_REVIEW_20261015.md; docs/SOURCE_MATRIX_2026-10-15_reviewed.md. Installed original-UA matrix complete20/20+END; docs/SOURCE_MATRIX_2026-10-15_final-ua-run.md. Readingchains7/cleanpublicstages4; WNcategory9 targets+two keyword24/24 distinctpages+chainOK but exploreempty. Ykmhcategory temp undeclared provenbeforeHTTP in standardJS+actualNAPI full-source replay, no installed edit. Basic UI actual21 checks complete, exhaustive gestures/modes+remaining sources not certified."
+
+  discovery_search_ranking_20261016:
+    upstream: "Fixed7110c19c4f3e342cf33d358d6be9058d8abc2505 parser707-835, source.dart SearchOptions/RankingData, search_page/result_page and ranking_page. docs/DISCOVERY_SEARCH_RANKING_20261016.md"
+    search: "JsSearchOptionsAdapter reads source optionList dynamically; type/default JSON/first-dash key-label/empty keys. SearchFilterPolicy validates defaults and choices. SearchView real filters/collapse/reset/error retry/source stable key. SearchSession snapshots options, copies into every page/cursor request, cancels stale source/filter query. Aggregated/history/suggestions/translations/search-source management NOT done."
+    ranking: "RankingData/JsRankingAdapter + RankingSession/RankingPage wired through real parser summary/configure. category.enableRankingPage preserved; rank-only parts[] accepted. load(option,page) preferred, loadWithNext(option,null/opaque) fallback, maxPage/cursor loop and duplicate/end handling, retry/stale guards, original source details routes. No inferred loadNext alias."
+    validation: "PASS40JS + Python report/historicalUI evidence assertions logs/search-ranking-regression-20261016.log. Search12 production+5actualhostNAPI; Ranking15 production+6actualhostNAPI. Existing addon reused, no new native changes. All source HTTP intercepted in memory; not real site/network/account/device acceptance."
+    build: "logs/discovery-search-ranking-build-20261016.log directSDK/API21 exit0; dist/search-ranking-20261016-signed.hap SHA25614E1E03B04BA9DD770319598BEA9B655BCCF370AF432F1B1489A2308EB98E3A5. NOT installed, phone remains prior reader fix package."
+
+missing_features:
+  - "Real account/WebView/Cookie/native RDB cold/login acceptance; API21/22 full Cookie metadata, OAuth popups/infoItems, site-specific L4/L5"
+  - "New isolated image/compute NAPI+ImageKit/device acceptance; persistent compute global/nested compute/remote callbacks; real HTTP hook/SDK codec/PATCH validation, cache/progress/performance parity; mature HTML5 engine"
+  - "Reader gallery/wide/settings phoneGPU+gesture+orientation+Preferences acceptance; gallerylastgroup historycompletion, continuoussmooth/stepped pixelauto/crosschapterwaterfall/preload, fullgroupedtree/longlist, volume/eInk/fullsettings/layoutdetection/backupcompat"
+  - "System background/archives/download batches; CBZ/EPUB/PDF import/export"
+  - "True two-way WebDAV conflicts/deletes/scheduling/comic library/deeplinks"
+  - "Network favorites/comments/image favorites/follow updates/full discovery/detail features"
+ui_differences:
+  - "See docs/FEATURE_PARITY.md; implemented foundations are not complete Android feature/UI equivalence"
+
+  broad_features_20261016:
+    scope: "User-named features: aggregated search, single-source binding, search history, explore sections, details thumbnails/comments/share/cover viewer, network favorites, picture favorites, follow updates, reader settings/volume/statistics/gestures, background downloads with restart/delete/pause/resume."
+    aggregated_search: "AggregatedSearchSession groups per source with a global 3-request ceiling, per-source retry, cancel settles queued tasks; AggregatedSearchPage uses LazyForEach cachedCount1 and More routes to the source-locked full pager. Source-management UI and device behaviour untested."
+    search_history: "SearchHistoryDao own table, dedup, 100 cap, parameterised serial writes, delete/clear; written only on user submit and never logged."
+    details: "DetailsCapabilities/JsDetailsAdapter declare upstream loadThumbnails(id,next first null)/comments/chapter comments/send/like/vote; DetailsMedia supports EH sprite crop read-only; ImageViewerPage real pinch/pan/double-tap prev/next loading only the current image; share via ShareKit; writes only from explicit user actions, no auto retry/relogin."
+    collections: "JsFavoritesAdapter implements loadComics/loadNext(null first)/loadFolders/addOrDelFavorite. Discovered the installed WN source declares a 4th favoriteId that upstream parser ignores and would emit an 'undefined' deletion URL; adapter inspects declared arity, keeps 3-arg sources, and refuses removal when the required id is missing. Picture favorites save processed bytes under UUID names with collision check and own-file cleanup; follow updates are manual read-only with first-check baseline and per-comic failure retention."
+    reader: "ReaderVolumeKeys uses API21 inputConsumer foreground volume consumption registered only while visible and enabled, released on hide; ReaderGesturePolicy centralises tap regions/long-press/zoom; continuous auto reading now really scrolls (autoScrollStyle/speed/distance) and only pages/chapters at the end; ReadingStatsDao uses incremental baseline + per-day segments + deduped page table."
+    background_downloads: "BackgroundDownloadCoordinator uses API21 ContinuousTaskRequest + MODE_DATA_TRANSFER + system notification + WantAgent; refusal/suspension pauses with concrete reason and no fake keepalive. Queue gained generation+inflight ownership so pause invalidates the old runner and restart/delete await it before touching files; deletes only strict own DL_* folders/.part with root and symlink validation. Notification tap only opens the list."
+    validation: "PASS45JS suites + Python report/historical-phone assertions logs/broad-features-regression2-20261016.log. New suites: details14/details_napi6/collections9/collections_napi5/background_download21/search_filters12/search_filters_napi5/ranking15/ranking_napi6. Actual host NAPI fixtures replay full unchanged WN/EH/Komiic sources with intercepted in-memory HTTP only."
+    build: "logs/broad-features-compile3-20261016.log directSDK/API21 exit0; dist/broad-features-20261016-signed.hap SHA256 7F8CE9659F9C56AF06A80A516DF69087B7EE086DBCCF0264E99D474B7812FB9E; NOT installed."
+    residuals: "No phone/live-site/account acceptance this round. Share chooser, real background authorisation/suspension, real volume keys, cross-process restart unverified. Explore more-UI, aggregated source management, rich comment HTML, cover export still missing. Prior JM reader fix still needs sustained long-chapter and real FPS validation."
+
+round_icon_share_download_cache_20261017:
+  doc: "docs/ROUND_ICON_SHARE_DOWNLOAD_CACHE_20261017.md"
+  icon: "Replaced with the upstream venera-app/venera artwork: assets/app_icon.png (1024) as foreground+startIcon, background from its adaptive-icon solid (33,67,243); originals backed up in logs/icon-source/original."
+  bundle_name: "UNCHANGED com.venerahm.reader per user choice (changing it would create a new app and lose existing data)."
+  share: "Upstream share() is title+comic.url; most sources return no url. Three-step fallback now used: source url -> absolute comic id -> source site domain (linkHandler.domains[0]); unsafe candidates still rejected."
+  downloads: "MAX_CONCURRENT_TASKS=3 with a 4th task queued (not an error), PAGE_WORKERS=3 per chapter, real Progress bar with chapter-weighted percentage and an explicit 'total unknown' state. Persisted checkpoint stays a CONTIGUOUS verified prefix: batches commit in index order and stop at the first unverified page; generation change aborts before committing. Single OS background lease retained; other tasks run foreground and pause on backgrounding."
+  cache: "New CacheStore (byte accounting, LRU, default 1 GiB cap, atomic index via .part+rename, rebuild from listing when index missing/corrupt) + CacheSettingsPage (limit options, clear with dialog stating downloads/history are untouched). ImageLoader only swapped its disk read/write. Details cache is wired at the SOURCE layer on the raw script JSON because the parsed model contains Maps that JSON.stringify would silently drop; the page paints cached details instantly and still refreshes, keeping cached content if the refresh fails."
+  validation: "51 local suites + 2 negative controls PASS via tools/run_local_search_download_regression.ps1. New: download_progress 8, cache_store 17, cache_settings 11, details_cache 5. Real SDK build exit0 logs/round-icons-downloads-cache-build1.log and the artifact was confirmed newer than all sources."
+  key_evidence: "details_cache_cases.js drives the REAL JsComicSource adapter across two launches (fresh memory, same cache dir): second launch loadCachedComicInfo hits with ZERO script calls, and a subsequent loadComicInfo still calls the script exactly once (no permanent staleness)."
+  not_verified: "Not installed. Progress rendering, real-device concurrency/memory, three parallel decodes and the settings page interaction are unverified on hardware. Cache has no TTL. Cookie remains part of image identity by design. One shared cap for images and JSON payloads."
+
+local_test_environment_20261017:
+  doc: "docs/LOCAL_TEST_ENVIRONMENT.md"
+  previewer_finding: "DevEco Previewer.exe starts the real ArkUI engine and produces render frames (Get first render buffer) at 1080x2340, but pages still use the legacy JS frontend (jsi_base_utils Compile js bundle failed / no root component) despite ProjectModel=Stage. It needs the IDE pipe-driven preview build variant; hvigor exposes no preview task. Even if it rendered, Venera pages depend on RDB/file/network/native source engine at AppInit, so value is limited. Not pursued further."
+  ui_contract_harness: "tools/ui_contract_cases.js adds 12 device-free checks: registered page<->@Entry struct, every router target registered and backed by a file, no stale removed-page references, aggregate entry inside the source dropdown with no standalone button, search/explore/category all bind one SelectedSource, no silent source rewrite, no aggregate concurrency ceiling, lazy partial partition updates, documented LIVE_VIEW submode with no blind stop/retry, foreground fallback, generation and late-runner ownership, no TODO pages."
+  negative_controls: "tools/ui_contract_negative.js builds a broken project (button routing to unregistered pages/Ghost) and asserts exit1 plus the unregistered-route message; tools/local_watchdog_cases.js asserts hung tests fail rather than exit0."
+  runner: "run_local_search_download_regression.ps1 now runs 47 suites plus both negative controls with per-suite timeout/exit/completion-summary checks."
+  install_state: "Local package overwrite-installed successfully and launched as PID 59580, then the device disconnected ([Empty] targets); UI spot-check NOT completed."
+
+local_validation_20261017:
+  latest_user_constraint: "LOCAL TESTS ONLY. No installation, launch, phone clicks or other device operations until the user arranges them."
+  evidence: "docs/LOCAL_SEARCH_DOWNLOAD_20261017.md; logs/local-search-download-20261017/summary.json; logs/local-search-download-build-final-20261017.log"
+  source_selection: "One SelectedSource key shared by production Search/Explore/Category views; same-source explicit reselection also notifies; unsupported/removed source never silently changes global key."
+  aggregate_search: "Same-page source-dropdown entry only; no separate button/page; all selected sources start without three-request ceiling; independent errors/defaults and local lazy-render snapshots."
+  background_downloads: "DATA_TRANSFER requires LIVE_VIEW submode per published API21 mapping; no empty array and no unsupported stale-task inference. No blind stop/retry. Only exact known owned task IDs may be stopped. Preserve late IDs on cancellation races."
+  fallback: "If OS refuses background, explicit foreground download may continue with code visible; backgrounding pauses it and never auto-resumes. Device9800005 disappearance is NOT verified."
+  test_integrity: "Fixed never-settling test Promise false exit0. Search25 and background27 must reach exact completion markers; every local suite has watchdog/exit/final summary checks; two in-memory negative controls verify failure detection."
+  result: "46 suites PASS (45JS+1Python), 2 negative controls PASS, final real SDK exit0. Local artifact NOT installed."
+
+last_update: "2026-10-17"
+next_step: "User now explicitly requires local tests first: NO automatic installation, app launch, phone interaction or real-account/source mutation. Latest shared-source/inline-aggregate/download9800005 corrections passed46 complete local suites plus2 negative watchdog controls and final realSDK build; artifact local-search-download-20261017-r2-signed.hap NOT installed. Wait for user-arranged phone validation; do not claim device9800005 resolved or background grant success. Continue any further requested migration locally: explore more UI, aggregate source management, rich comments, cover export, local import/export/library, archive downloads, full WebDAV parity. Prior JM long-chapter/FPS and new OS background/volume/share behaviour remain separate device checks."

@@ -1,0 +1,406 @@
+{
+  "engineSha256": "87e13d3635fba7bbc500aab4b6659bf831fab84c6cfa210c67f8cccf27daec65",
+  "engine": "production HtmlDocument in bounded NodeVM; NO NAPI/source parser execution",
+  "rows": [
+    {
+      "index": 0,
+      "utf8Bytes": 63532,
+      "characters": 63088,
+      "sha256": "11f3db799f5fd163d0b49c72781f36e6e75b527912daaf1656c6b5696cacec2d",
+      "firstCharIsAngle": true,
+      "rawMarkers": {
+        "<table": 2,
+        "<tbody": 0,
+        "</tbody": 0,
+        "<tr": 29,
+        "<thead": 0,
+        "<tfoot": 0
+      },
+      "lineClues": {
+        "listingTable": {
+          "line": 45,
+          "column": 7
+        },
+        "explicitTbody": null,
+        "firstTr": {
+          "line": 22,
+          "column": 310
+        }
+      },
+      "counts": {
+        "table.itg.gltc > tbody > tr": 0,
+        "div.gl1t": 0,
+        "a": 88,
+        "div.gl5t > div > div.cs": 0,
+        "div.gl5t > div > div": 0,
+        "img": 50,
+        "div.gl5t > div > div.ir": 0,
+        "table.itg.glte > tbody > tr": 0,
+        "td.gl2e > div > a > div > div.glink": 0,
+        "td.gl2e > div > div.gl3e > div.cn": 0,
+        "td.gl2e > div > div.gl3e > div": 0,
+        "td.gl2e > div > div.gl3e > div > a": 0,
+        "td.gl1e > div > a > img": 0,
+        "td.gl2e > div > div.gl3e > div.ir": 0,
+        "td.gl1e > div > a": 0,
+        "div.gt, div.gtl": 190,
+        "table.itg.gltm > tbody > tr": 0,
+        "td.gl3m > a > div.glink": 0,
+        "td.gl1m > div.cs": 0,
+        "td.gl2m > div": 0,
+        "td.gl5m > div > a": 0,
+        "td.gl2m > div > div > img": 0,
+        "td.gl4m > div.ir": 0,
+        "td.gl3m > a": 0,
+        "a#dnext": 1,
+        "html": 1,
+        "head": 1,
+        "title": 1,
+        "body": 1,
+        "table.itg": 1,
+        "table.itg > tr": 27,
+        "table.itg > tbody": 0,
+        "table.itg > tbody > tr": 0,
+        ".gltc": 1,
+        ".glte": 0,
+        ".gltm": 0,
+        ".gl1t": 0,
+        ".glink": 25,
+        ".gl5t": 0,
+        "#dnext": 1,
+        "form": 1,
+        "#searchbox": 1,
+        "#nb": 1,
+        "#gdt": 0,
+        "#eventpane": 0
+      },
+      "direct": {
+        "gltc": {
+          "rows": 27,
+          "childrenHistogram": {
+            "1": 1,
+            "4": 26
+          },
+          "styleNonempty": 25,
+          "styleMissingOrEmpty": 2,
+          "compactRequiredShapeOk": 25
+        },
+        "glte": {
+          "rows": 0,
+          "childrenHistogram": {},
+          "styleNonempty": 0,
+          "styleMissingOrEmpty": 0,
+          "compactRequiredShapeOk": 0
+        },
+        "gltm": {
+          "rows": 0,
+          "childrenHistogram": {},
+          "styleNonempty": 0,
+          "styleMissingOrEmpty": 0,
+          "compactRequiredShapeOk": 0
+        }
+      },
+      "nextPresent": true
+    },
+    {
+      "index": 1,
+      "utf8Bytes": 146119,
+      "characters": 143007,
+      "sha256": "701dc71145559371741c52167499a9d9a48c876d76b10819436dbae72456447a",
+      "firstCharIsAngle": true,
+      "rawMarkers": {
+        "<table": 1,
+        "<tbody": 0,
+        "</tbody": 0,
+        "<tr": 64,
+        "<thead": 0,
+        "<tfoot": 0
+      },
+      "lineClues": {
+        "listingTable": {
+          "line": 45,
+          "column": 7
+        },
+        "explicitTbody": null,
+        "firstTr": {
+          "line": 45,
+          "column": 31
+        }
+      },
+      "counts": {
+        "table.itg.gltc > tbody > tr": 0,
+        "div.gl1t": 0,
+        "a": 192,
+        "div.gl5t > div > div.cs": 0,
+        "div.gl5t > div > div": 0,
+        "img": 124,
+        "div.gl5t > div > div.ir": 0,
+        "table.itg.glte > tbody > tr": 0,
+        "td.gl2e > div > a > div > div.glink": 0,
+        "td.gl2e > div > div.gl3e > div.cn": 0,
+        "td.gl2e > div > div.gl3e > div": 0,
+        "td.gl2e > div > div.gl3e > div > a": 0,
+        "td.gl1e > div > a > img": 0,
+        "td.gl2e > div > div.gl3e > div.ir": 0,
+        "td.gl1e > div > a": 0,
+        "div.gt, div.gtl": 515,
+        "table.itg.gltm > tbody > tr": 0,
+        "td.gl3m > a > div.glink": 0,
+        "td.gl1m > div.cs": 0,
+        "td.gl2m > div": 0,
+        "td.gl5m > div > a": 0,
+        "td.gl2m > div > div > img": 0,
+        "td.gl4m > div.ir": 0,
+        "td.gl3m > a": 0,
+        "a#dnext": 0,
+        "html": 1,
+        "head": 1,
+        "title": 1,
+        "body": 1,
+        "table.itg": 1,
+        "table.itg > tr": 64,
+        "table.itg > tbody": 0,
+        "table.itg > tbody > tr": 0,
+        ".gltc": 1,
+        ".glte": 0,
+        ".gltm": 0,
+        ".gl1t": 0,
+        ".glink": 62,
+        ".gl5t": 0,
+        "#dnext": 1,
+        "form": 0,
+        "#searchbox": 0,
+        "#nb": 1,
+        "#gdt": 0,
+        "#eventpane": 0
+      },
+      "direct": {
+        "gltc": {
+          "rows": 64,
+          "childrenHistogram": {
+            "1": 1,
+            "4": 63
+          },
+          "styleNonempty": 62,
+          "styleMissingOrEmpty": 2,
+          "compactRequiredShapeOk": 62
+        },
+        "glte": {
+          "rows": 0,
+          "childrenHistogram": {},
+          "styleNonempty": 0,
+          "styleMissingOrEmpty": 0,
+          "compactRequiredShapeOk": 0
+        },
+        "gltm": {
+          "rows": 0,
+          "childrenHistogram": {},
+          "styleNonempty": 0,
+          "styleMissingOrEmpty": 0,
+          "compactRequiredShapeOk": 0
+        }
+      },
+      "nextPresent": false
+    },
+    {
+      "index": 2,
+      "utf8Bytes": 66777,
+      "characters": 66041,
+      "sha256": "4d65b72955b14c2befc00ded3fd4396e07ed2bc6947ce290b7ba2416d52560fc",
+      "firstCharIsAngle": true,
+      "rawMarkers": {
+        "<table": 2,
+        "<tbody": 0,
+        "</tbody": 0,
+        "<tr": 29,
+        "<thead": 0,
+        "<tfoot": 0
+      },
+      "lineClues": {
+        "listingTable": {
+          "line": 45,
+          "column": 7
+        },
+        "explicitTbody": null,
+        "firstTr": {
+          "line": 22,
+          "column": 310
+        }
+      },
+      "counts": {
+        "table.itg.gltc > tbody > tr": 0,
+        "div.gl1t": 0,
+        "a": 87,
+        "div.gl5t > div > div.cs": 0,
+        "div.gl5t > div > div": 0,
+        "img": 50,
+        "div.gl5t > div > div.ir": 0,
+        "table.itg.glte > tbody > tr": 0,
+        "td.gl2e > div > a > div > div.glink": 0,
+        "td.gl2e > div > div.gl3e > div.cn": 0,
+        "td.gl2e > div > div.gl3e > div": 0,
+        "td.gl2e > div > div.gl3e > div > a": 0,
+        "td.gl1e > div > a > img": 0,
+        "td.gl2e > div > div.gl3e > div.ir": 0,
+        "td.gl1e > div > a": 0,
+        "div.gt, div.gtl": 224,
+        "table.itg.gltm > tbody > tr": 0,
+        "td.gl3m > a > div.glink": 0,
+        "td.gl1m > div.cs": 0,
+        "td.gl2m > div": 0,
+        "td.gl5m > div > a": 0,
+        "td.gl2m > div > div > img": 0,
+        "td.gl4m > div.ir": 0,
+        "td.gl3m > a": 0,
+        "a#dnext": 1,
+        "html": 1,
+        "head": 1,
+        "title": 1,
+        "body": 1,
+        "table.itg": 1,
+        "table.itg > tr": 27,
+        "table.itg > tbody": 0,
+        "table.itg > tbody > tr": 0,
+        ".gltc": 1,
+        ".glte": 0,
+        ".gltm": 0,
+        ".gl1t": 0,
+        ".glink": 25,
+        ".gl5t": 0,
+        "#dnext": 1,
+        "form": 1,
+        "#searchbox": 1,
+        "#nb": 1,
+        "#gdt": 0,
+        "#eventpane": 0
+      },
+      "direct": {
+        "gltc": {
+          "rows": 27,
+          "childrenHistogram": {
+            "1": 1,
+            "4": 26
+          },
+          "styleNonempty": 25,
+          "styleMissingOrEmpty": 2,
+          "compactRequiredShapeOk": 25
+        },
+        "glte": {
+          "rows": 0,
+          "childrenHistogram": {},
+          "styleNonempty": 0,
+          "styleMissingOrEmpty": 0,
+          "compactRequiredShapeOk": 0
+        },
+        "gltm": {
+          "rows": 0,
+          "childrenHistogram": {},
+          "styleNonempty": 0,
+          "styleMissingOrEmpty": 0,
+          "compactRequiredShapeOk": 0
+        }
+      },
+      "nextPresent": true
+    },
+    {
+      "index": 3,
+      "utf8Bytes": 72149,
+      "characters": 70003,
+      "sha256": "d5abd8c04cf632bcf3bbc71876d7983ee9856df603e64e131cea349cc7b25565",
+      "firstCharIsAngle": true,
+      "rawMarkers": {
+        "<table": 2,
+        "<tbody": 0,
+        "</tbody": 0,
+        "<tr": 29,
+        "<thead": 0,
+        "<tfoot": 0
+      },
+      "lineClues": {
+        "listingTable": {
+          "line": 45,
+          "column": 7
+        },
+        "explicitTbody": null,
+        "firstTr": {
+          "line": 22,
+          "column": 310
+        }
+      },
+      "counts": {
+        "table.itg.gltc > tbody > tr": 0,
+        "div.gl1t": 0,
+        "a": 98,
+        "div.gl5t > div > div.cs": 0,
+        "div.gl5t > div > div": 0,
+        "img": 50,
+        "div.gl5t > div > div.ir": 0,
+        "table.itg.glte > tbody > tr": 0,
+        "td.gl2e > div > a > div > div.glink": 0,
+        "td.gl2e > div > div.gl3e > div.cn": 0,
+        "td.gl2e > div > div.gl3e > div": 0,
+        "td.gl2e > div > div.gl3e > div > a": 0,
+        "td.gl1e > div > a > img": 0,
+        "td.gl2e > div > div.gl3e > div.ir": 0,
+        "td.gl1e > div > a": 0,
+        "div.gt, div.gtl": 220,
+        "table.itg.gltm > tbody > tr": 0,
+        "td.gl3m > a > div.glink": 0,
+        "td.gl1m > div.cs": 0,
+        "td.gl2m > div": 0,
+        "td.gl5m > div > a": 0,
+        "td.gl2m > div > div > img": 0,
+        "td.gl4m > div.ir": 0,
+        "td.gl3m > a": 0,
+        "a#dnext": 1,
+        "html": 1,
+        "head": 1,
+        "title": 1,
+        "body": 1,
+        "table.itg": 1,
+        "table.itg > tr": 27,
+        "table.itg > tbody": 0,
+        "table.itg > tbody > tr": 0,
+        ".gltc": 1,
+        ".glte": 0,
+        ".gltm": 0,
+        ".gl1t": 0,
+        ".glink": 25,
+        ".gl5t": 0,
+        "#dnext": 1,
+        "form": 1,
+        "#searchbox": 1,
+        "#nb": 1,
+        "#gdt": 0,
+        "#eventpane": 0
+      },
+      "direct": {
+        "gltc": {
+          "rows": 27,
+          "childrenHistogram": {
+            "1": 1,
+            "4": 26
+          },
+          "styleNonempty": 25,
+          "styleMissingOrEmpty": 2,
+          "compactRequiredShapeOk": 25
+        },
+        "glte": {
+          "rows": 0,
+          "childrenHistogram": {},
+          "styleNonempty": 0,
+          "styleMissingOrEmpty": 0,
+          "compactRequiredShapeOk": 0
+        },
+        "gltm": {
+          "rows": 0,
+          "childrenHistogram": {},
+          "styleNonempty": 0,
+          "styleMissingOrEmpty": 0,
+          "compactRequiredShapeOk": 0
+        }
+      },
+      "nextPresent": true
+    }
+  ]
+}

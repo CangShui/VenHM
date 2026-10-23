@@ -1,0 +1,1459 @@
+{
+  "scope": "OFFLINE no network/accounts/device/build. Full exact installed sources evaluated unmodified; only Network methods fixture-stubbed. Same UTF-8 response-text file/hash consumed in production JS HTML engine + actual prebuilt Node NAPI/QuickJS and independent lxml. Not original wire bytes.",
+  "hashes": {
+    "entry/src/main/resources/rawfile/init.js": "a999b38801d5f754c2682a3f1905f5ff820fa9517df71608015151f088531098",
+    "entry/src/main/resources/rawfile/html_engine.js": "5a024a88dc7832bf944237a71fa0e0bd41ecc87c1ab52f10b43a443ba1267be7",
+    "entry/src/main/resources/rawfile/sendmessage_shim.js": "26e28b6cfd8f5c0664807c49ac14f918bed1d941be7f52be76b78f2dc6c7e07f",
+    "logs/napi-host/venerajs.node": "0c3b3faaaf4efd92a1388012a128dbb299251b2fedf00297887cb25afe5992dc",
+    "logs/user8-installed-scripts/wnacg.js": "545a6d818d012c1e5799d6aaf7ecd09798969acb840166ee7c56de6d02201df0",
+    "logs/user8-installed-scripts/Komiic.js": "a467325b6be833afc676099e66563a9af849641ef9e548d1f2304cd2d883d1e8",
+    "logs/user8-installed-scripts/ehentai.js": "ef15f80d8090cb9ec1fcb18b502017a47694484e81d51c85e6b06ea162c58e4a",
+    "logs/user8-installed-scripts/shonen_jump_plus.js": "a8a18249a4f30d907b82eec276d9bda0631c975118ae75dfcb252a6a9cdbe264"
+  },
+  "runtimes": [
+    {
+      "name": "Node VM production init.js + html_engine.js",
+      "files": [
+        {
+          "file": "tools/wnacg_html_reference/phone/phone-0.html",
+          "sha256": "796718b16bc3e2d153a69ceb3eab860b2caf195cb4df92cdd2bcfe1b867224b3",
+          "fixtureHttpStatus": 200,
+          "selectorCounts": [
+            {
+              "selector": "a[href]",
+              "count": 51
+            },
+            {
+              "selector": "div.pic_box > a",
+              "count": 0
+            },
+            {
+              "selector": "div.pic_box > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.info_col",
+              "count": 0
+            },
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 0
+            },
+            {
+              "selector": "div.r > a",
+              "count": 0
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator > a",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0
+            },
+            {
+              "selector": "option",
+              "count": 0
+            },
+            {
+              "selector": "div.asTB",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.thumb > div > img",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_catg > span",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.alopt > a",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > h2",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > div.asTB > div.asTBcell.uwthumb > img",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > label",
+              "count": 0
+            },
+            {
+              "selector": "#sr_pub",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn a.tagshow",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > p",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwuinfo > a > p",
+              "count": 0
+            },
+            {
+              "selector": "a[data-chid]",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator a[href]",
+              "count": 0
+            },
+            {
+              "selector": "div.pic_box.tb > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator",
+              "count": 0
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 5
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 5
+            },
+            {
+              "selector": "div.Sub_H2 > span.Title",
+              "count": 5
+            },
+            {
+              "selector": "div.Sub_H2 > a[href]",
+              "count": 5
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 30
+            },
+            {
+              "selector": "ul#classify_container > li",
+              "count": 0
+            },
+            {
+              "selector": "a.ImgA",
+              "count": 30
+            },
+            {
+              "selector": "a.ImgA > img",
+              "count": 30
+            },
+            {
+              "selector": "a.ImgA > span",
+              "count": 0
+            },
+            {
+              "selector": "a.txtA",
+              "count": 30
+            },
+            {
+              "selector": "span.info",
+              "count": 30
+            },
+            {
+              "selector": "img[data-original]",
+              "count": 0
+            },
+            {
+              "selector": "img[data-src]",
+              "count": 0
+            },
+            {
+              "selector": "meta[http-equiv]",
+              "count": 2
+            },
+            {
+              "selector": "script",
+              "count": 9
+            },
+            {
+              "selector": "style",
+              "count": 1
+            }
+          ],
+          "mismatches": [],
+          "fullInstalledReplay": [
+            {
+              "call": "installed.explore[0].load(null)",
+              "result": {
+                "parts": 0,
+                "counts": []
+              }
+            }
+          ],
+          "requests": [
+            "https://wnacg.com"
+          ],
+          "proposalReplay": {
+            "parts": 5,
+            "counts": [
+              6,
+              6,
+              6,
+              6,
+              6
+            ],
+            "allCardFieldsEqualLxml": true,
+            "validCovers": true
+          }
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone/phone-1.html",
+          "sha256": "b8d93b73885626984ced93067aa87c55cc36e39b64635cbf1a53e25c3ff4fc9a",
+          "fixtureHttpStatus": 200,
+          "selectorCounts": [
+            {
+              "selector": "a[href]",
+              "count": 58
+            },
+            {
+              "selector": "div.pic_box > a",
+              "count": 0
+            },
+            {
+              "selector": "div.pic_box > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.info_col",
+              "count": 0
+            },
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 0
+            },
+            {
+              "selector": "div.r > a",
+              "count": 0
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator > a",
+              "count": 9
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0
+            },
+            {
+              "selector": "option",
+              "count": 0
+            },
+            {
+              "selector": "div.asTB",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.thumb > div > img",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_catg > span",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.alopt > a",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > h2",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > div.asTB > div.asTBcell.uwthumb > img",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > label",
+              "count": 0
+            },
+            {
+              "selector": "#sr_pub",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn a.tagshow",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > p",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwuinfo > a > p",
+              "count": 0
+            },
+            {
+              "selector": "a[data-chid]",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator a[href]",
+              "count": 9
+            },
+            {
+              "selector": "div.pic_box.tb > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator",
+              "count": 1
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2 > span.Title",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2 > a[href]",
+              "count": 0
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 0
+            },
+            {
+              "selector": "ul#classify_container > li",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA > img",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA > span",
+              "count": 24
+            },
+            {
+              "selector": "a.txtA",
+              "count": 0
+            },
+            {
+              "selector": "span.info",
+              "count": 24
+            },
+            {
+              "selector": "img[data-original]",
+              "count": 0
+            },
+            {
+              "selector": "img[data-src]",
+              "count": 0
+            },
+            {
+              "selector": "meta[http-equiv]",
+              "count": 2
+            },
+            {
+              "selector": "script",
+              "count": 10
+            },
+            {
+              "selector": "style",
+              "count": 4
+            }
+          ],
+          "mismatches": [],
+          "fullInstalledReplay": [
+            {
+              "call": "installed.search.load(\"a\",[],1)",
+              "error": "TypeError: Cannot read properties of undefined (reading 'text')"
+            }
+          ],
+          "requests": [
+            "https://wnacg.com/search/?q=a&f=_all&s=create_time_DESC&syn=yes&p=1"
+          ],
+          "proposalReplay": {
+            "comics": 24,
+            "next": "https://wnacg.com/search/index.php?q=a&m=&syn=yes&f=_all&s=create_time_DESC&p=2&c=a~0~1791973439395833~0",
+            "allCardFieldsEqualLxml": true,
+            "validCovers": true
+          }
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone/phone-2.html",
+          "sha256": "2d57f39dd7c8c5c1627e75b72ace3ec1ef813c1c96f82393132ff52b49565d1c",
+          "fixtureHttpStatus": 200,
+          "selectorCounts": [
+            {
+              "selector": "a[href]",
+              "count": 58
+            },
+            {
+              "selector": "div.pic_box > a",
+              "count": 0
+            },
+            {
+              "selector": "div.pic_box > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.info_col",
+              "count": 0
+            },
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 0
+            },
+            {
+              "selector": "div.r > a",
+              "count": 0
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator > a",
+              "count": 9
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0
+            },
+            {
+              "selector": "option",
+              "count": 0
+            },
+            {
+              "selector": "div.asTB",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.thumb > div > img",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_catg > span",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.alopt > a",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > h2",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > div.asTB > div.asTBcell.uwthumb > img",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > label",
+              "count": 0
+            },
+            {
+              "selector": "#sr_pub",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn a.tagshow",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > p",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwuinfo > a > p",
+              "count": 0
+            },
+            {
+              "selector": "a[data-chid]",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator a[href]",
+              "count": 9
+            },
+            {
+              "selector": "div.pic_box.tb > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator",
+              "count": 1
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2 > span.Title",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2 > a[href]",
+              "count": 0
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 0
+            },
+            {
+              "selector": "ul#classify_container > li",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA > img",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA > span",
+              "count": 24
+            },
+            {
+              "selector": "a.txtA",
+              "count": 0
+            },
+            {
+              "selector": "span.info",
+              "count": 24
+            },
+            {
+              "selector": "img[data-original]",
+              "count": 0
+            },
+            {
+              "selector": "img[data-src]",
+              "count": 0
+            },
+            {
+              "selector": "meta[http-equiv]",
+              "count": 2
+            },
+            {
+              "selector": "script",
+              "count": 10
+            },
+            {
+              "selector": "style",
+              "count": 4
+            }
+          ],
+          "mismatches": [],
+          "fullInstalledReplay": [
+            {
+              "call": "installed.search.load(\"魔法\",[],1)",
+              "error": "TypeError: Cannot read properties of undefined (reading 'text')"
+            }
+          ],
+          "requests": [
+            "https://wnacg.com/search/?q=%E9%AD%94%E6%B3%95&f=_all&s=create_time_DESC&syn=yes&p=1"
+          ],
+          "proposalReplay": {
+            "comics": 24,
+            "next": "https://wnacg.com/search/index.php?q=%E9%AD%94%E6%B3%95&m=&syn=yes&f=_all&s=create_time_DESC&p=2&c=a~0~1791372087393691~0",
+            "allCardFieldsEqualLxml": true,
+            "validCovers": true
+          }
+        }
+      ],
+      "contractCases": [
+        {
+          "source": "Komiic",
+          "case": "page accepted but ignored by finite one-shot search",
+          "requests": [
+            {
+              "url": "https://komiic.com/api/query",
+              "body": {
+                "operationName": "searchComicAndAuthorQuery",
+                "variables": {
+                  "keyword": "魔法"
+                },
+                "query": "query searchComicAndAuthorQuery($keyword: String!) {\n  searchComicsAndAuthors(keyword: $keyword) {\n    comics {\n      id\n      title\n      status\n      year\n      imageUrl\n      authors {\n        id\n        name\n        __typename\n      }\n      categories {\n        id\n        name\n        __typename\n      }\n      dateUpdated\n      monthViews\n      views\n      favoriteCount\n      lastBookUpdate\n      lastChapterUpdate\n      __typename\n    }\n    authors {\n      id\n      name\n      chName\n      enName\n      wikiLink\n      comicCount\n      views\n      __typename\n    }\n    __typename\n  }\n}"
+              }
+            },
+            {
+              "url": "https://komiic.com/api/query",
+              "body": {
+                "operationName": "searchComicAndAuthorQuery",
+                "variables": {
+                  "keyword": "魔法"
+                },
+                "query": "query searchComicAndAuthorQuery($keyword: String!) {\n  searchComicsAndAuthors(keyword: $keyword) {\n    comics {\n      id\n      title\n      status\n      year\n      imageUrl\n      authors {\n        id\n        name\n        __typename\n      }\n      categories {\n        id\n        name\n        __typename\n      }\n      dateUpdated\n      monthViews\n      views\n      favoriteCount\n      lastBookUpdate\n      lastChapterUpdate\n      __typename\n    }\n    authors {\n      id\n      name\n      chName\n      enName\n      wikiLink\n      comicCount\n      views\n      __typename\n    }\n    __typename\n  }\n}"
+              }
+            }
+          ],
+          "maxPages": [
+            1,
+            1
+          ],
+          "ids": [
+            [
+              "fixture-1"
+            ],
+            [
+              "fixture-1"
+            ]
+          ]
+        },
+        {
+          "source": "ehentai",
+          "case": "cursor-only API and JSON-string multi-select option contract; empty fixture is not live acceptance",
+          "exploreHasLoad": "undefined",
+          "exploreHasLoadNext": "function",
+          "invalidOptionsError": "SyntaxError: \"undefined\" is not valid JSON",
+          "valid": {
+            "comics": [],
+            "next": "https://e-hentai.org/?next=fixture"
+          },
+          "requests": [
+            "https://e-hentai.org/?f_search=a"
+          ]
+        },
+        {
+          "source": "shonen_jump_plus",
+          "case": "synthetic403 HTML response reproduces unguarded token JSON parse; not proof of baseline phone status or CDN cause",
+          "error": "SyntaxError: Unexpected token '<', \"<html><bod\"... is not valid JSON",
+          "requests": [
+            "https://shonenjumpplus.com/api/v1/user_account/access_token"
+          ]
+        }
+      ],
+      "proposalChecks": [
+        {
+          "urls": [
+            "https://img.example/a.webp",
+            "https://img.example/a.webp",
+            "https://wnacg.com/covers/a.jpg",
+            "https://wnacg.com/covers/a.jpg"
+          ],
+          "unsupportedPagesRejected": 2
+        },
+        {
+          "scriptExecuted": false,
+          "fakeDesktopNodes": 0,
+          "lazyCover": "https://img.example/lazy.webp"
+        },
+        {
+          "unchangedOriginalDesktopFixture": {
+            "parts": 1,
+            "counts": [
+              1
+            ]
+          },
+          "note": "synthetic regression only; curated integration must preserve this original desktop branch"
+        }
+      ]
+    },
+    {
+      "name": "Actual prebuilt Node NAPI/QuickJS + production init.js/html_engine.js (not device; no rebuild)",
+      "files": [
+        {
+          "file": "tools/wnacg_html_reference/phone/phone-0.html",
+          "sha256": "796718b16bc3e2d153a69ceb3eab860b2caf195cb4df92cdd2bcfe1b867224b3",
+          "fixtureHttpStatus": 200,
+          "selectorCounts": [
+            {
+              "selector": "a[href]",
+              "count": 51
+            },
+            {
+              "selector": "div.pic_box > a",
+              "count": 0
+            },
+            {
+              "selector": "div.pic_box > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.info_col",
+              "count": 0
+            },
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 0
+            },
+            {
+              "selector": "div.r > a",
+              "count": 0
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator > a",
+              "count": 0
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0
+            },
+            {
+              "selector": "option",
+              "count": 0
+            },
+            {
+              "selector": "div.asTB",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.thumb > div > img",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_catg > span",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.alopt > a",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > h2",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > div.asTB > div.asTBcell.uwthumb > img",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > label",
+              "count": 0
+            },
+            {
+              "selector": "#sr_pub",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn a.tagshow",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > p",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwuinfo > a > p",
+              "count": 0
+            },
+            {
+              "selector": "a[data-chid]",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator a[href]",
+              "count": 0
+            },
+            {
+              "selector": "div.pic_box.tb > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator",
+              "count": 0
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 5
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 5
+            },
+            {
+              "selector": "div.Sub_H2 > span.Title",
+              "count": 5
+            },
+            {
+              "selector": "div.Sub_H2 > a[href]",
+              "count": 5
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 30
+            },
+            {
+              "selector": "ul#classify_container > li",
+              "count": 0
+            },
+            {
+              "selector": "a.ImgA",
+              "count": 30
+            },
+            {
+              "selector": "a.ImgA > img",
+              "count": 30
+            },
+            {
+              "selector": "a.ImgA > span",
+              "count": 0
+            },
+            {
+              "selector": "a.txtA",
+              "count": 30
+            },
+            {
+              "selector": "span.info",
+              "count": 30
+            },
+            {
+              "selector": "img[data-original]",
+              "count": 0
+            },
+            {
+              "selector": "img[data-src]",
+              "count": 0
+            },
+            {
+              "selector": "meta[http-equiv]",
+              "count": 2
+            },
+            {
+              "selector": "script",
+              "count": 9
+            },
+            {
+              "selector": "style",
+              "count": 1
+            }
+          ],
+          "mismatches": [],
+          "fullInstalledReplay": [
+            {
+              "call": "installed.explore[0].load(null)",
+              "result": {
+                "parts": 0,
+                "counts": []
+              }
+            }
+          ],
+          "requests": [
+            "https://wnacg.com"
+          ],
+          "proposalReplay": {
+            "parts": 5,
+            "counts": [
+              6,
+              6,
+              6,
+              6,
+              6
+            ],
+            "allCardFieldsEqualLxml": true,
+            "validCovers": true
+          }
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone/phone-1.html",
+          "sha256": "b8d93b73885626984ced93067aa87c55cc36e39b64635cbf1a53e25c3ff4fc9a",
+          "fixtureHttpStatus": 200,
+          "selectorCounts": [
+            {
+              "selector": "a[href]",
+              "count": 58
+            },
+            {
+              "selector": "div.pic_box > a",
+              "count": 0
+            },
+            {
+              "selector": "div.pic_box > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.info_col",
+              "count": 0
+            },
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 0
+            },
+            {
+              "selector": "div.r > a",
+              "count": 0
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator > a",
+              "count": 9
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0
+            },
+            {
+              "selector": "option",
+              "count": 0
+            },
+            {
+              "selector": "div.asTB",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.thumb > div > img",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_catg > span",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.alopt > a",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > h2",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > div.asTB > div.asTBcell.uwthumb > img",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > label",
+              "count": 0
+            },
+            {
+              "selector": "#sr_pub",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn a.tagshow",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > p",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwuinfo > a > p",
+              "count": 0
+            },
+            {
+              "selector": "a[data-chid]",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator a[href]",
+              "count": 9
+            },
+            {
+              "selector": "div.pic_box.tb > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator",
+              "count": 1
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2 > span.Title",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2 > a[href]",
+              "count": 0
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 0
+            },
+            {
+              "selector": "ul#classify_container > li",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA > img",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA > span",
+              "count": 24
+            },
+            {
+              "selector": "a.txtA",
+              "count": 0
+            },
+            {
+              "selector": "span.info",
+              "count": 24
+            },
+            {
+              "selector": "img[data-original]",
+              "count": 0
+            },
+            {
+              "selector": "img[data-src]",
+              "count": 0
+            },
+            {
+              "selector": "meta[http-equiv]",
+              "count": 2
+            },
+            {
+              "selector": "script",
+              "count": 10
+            },
+            {
+              "selector": "style",
+              "count": 4
+            }
+          ],
+          "mismatches": [],
+          "fullInstalledReplay": [
+            {
+              "call": "installed.search.load(\"a\",[],1)",
+              "error": "TypeError: cannot read property 'text' of undefined"
+            }
+          ],
+          "requests": [
+            "https://wnacg.com/search/?q=a&f=_all&s=create_time_DESC&syn=yes&p=1"
+          ],
+          "proposalReplay": {
+            "comics": 24,
+            "next": "https://wnacg.com/search/index.php?q=a&m=&syn=yes&f=_all&s=create_time_DESC&p=2&c=a~0~1791973439395833~0",
+            "allCardFieldsEqualLxml": true,
+            "validCovers": true
+          }
+        },
+        {
+          "file": "tools/wnacg_html_reference/phone/phone-2.html",
+          "sha256": "2d57f39dd7c8c5c1627e75b72ace3ec1ef813c1c96f82393132ff52b49565d1c",
+          "fixtureHttpStatus": 200,
+          "selectorCounts": [
+            {
+              "selector": "a[href]",
+              "count": 58
+            },
+            {
+              "selector": "div.pic_box > a",
+              "count": 0
+            },
+            {
+              "selector": "div.pic_box > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.info > div.info_col",
+              "count": 0
+            },
+            {
+              "selector": "div.title_sort",
+              "count": 0
+            },
+            {
+              "selector": "div.bodywrap",
+              "count": 0
+            },
+            {
+              "selector": "div.title_h2",
+              "count": 0
+            },
+            {
+              "selector": "div.r > a",
+              "count": 0
+            },
+            {
+              "selector": "div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.grid div.gallary_wrap > ul.cc > li",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator > a",
+              "count": 9
+            },
+            {
+              "selector": "p.result > b",
+              "count": 0
+            },
+            {
+              "selector": "option",
+              "count": 0
+            },
+            {
+              "selector": "div.asTB",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.thumb > div > img",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_catg > span",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.l_title > a",
+              "count": 0
+            },
+            {
+              "selector": "div.box_cel.u_listcon > p.alopt > a",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > h2",
+              "count": 0
+            },
+            {
+              "selector": "div.userwrap > div.asTB > div.asTBcell.uwthumb > img",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > label",
+              "count": 0
+            },
+            {
+              "selector": "#sr_pub",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn a.tagshow",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwconn > p",
+              "count": 0
+            },
+            {
+              "selector": "div.asTBcell.uwuinfo > a > p",
+              "count": 0
+            },
+            {
+              "selector": "a[data-chid]",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator a[href]",
+              "count": 9
+            },
+            {
+              "selector": "div.pic_box.tb > a > img",
+              "count": 0
+            },
+            {
+              "selector": "div.f_left.paginator",
+              "count": 1
+            },
+            {
+              "selector": "div.imgBox",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2 > span.Title",
+              "count": 1
+            },
+            {
+              "selector": "div.Sub_H2 > a[href]",
+              "count": 0
+            },
+            {
+              "selector": "ul.col_3_2 > li",
+              "count": 0
+            },
+            {
+              "selector": "ul#classify_container > li",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA > img",
+              "count": 24
+            },
+            {
+              "selector": "a.ImgA > span",
+              "count": 24
+            },
+            {
+              "selector": "a.txtA",
+              "count": 0
+            },
+            {
+              "selector": "span.info",
+              "count": 24
+            },
+            {
+              "selector": "img[data-original]",
+              "count": 0
+            },
+            {
+              "selector": "img[data-src]",
+              "count": 0
+            },
+            {
+              "selector": "meta[http-equiv]",
+              "count": 2
+            },
+            {
+              "selector": "script",
+              "count": 10
+            },
+            {
+              "selector": "style",
+              "count": 4
+            }
+          ],
+          "mismatches": [],
+          "fullInstalledReplay": [
+            {
+              "call": "installed.search.load(\"魔法\",[],1)",
+              "error": "TypeError: cannot read property 'text' of undefined"
+            }
+          ],
+          "requests": [
+            "https://wnacg.com/search/?q=%E9%AD%94%E6%B3%95&f=_all&s=create_time_DESC&syn=yes&p=1"
+          ],
+          "proposalReplay": {
+            "comics": 24,
+            "next": "https://wnacg.com/search/index.php?q=%E9%AD%94%E6%B3%95&m=&syn=yes&f=_all&s=create_time_DESC&p=2&c=a~0~1791372087393691~0",
+            "allCardFieldsEqualLxml": true,
+            "validCovers": true
+          }
+        }
+      ],
+      "contractCases": [
+        {
+          "source": "Komiic",
+          "case": "page accepted but ignored by finite one-shot search",
+          "requests": [
+            {
+              "url": "https://komiic.com/api/query",
+              "body": {
+                "operationName": "searchComicAndAuthorQuery",
+                "variables": {
+                  "keyword": "魔法"
+                },
+                "query": "query searchComicAndAuthorQuery($keyword: String!) {\n  searchComicsAndAuthors(keyword: $keyword) {\n    comics {\n      id\n      title\n      status\n      year\n      imageUrl\n      authors {\n        id\n        name\n        __typename\n      }\n      categories {\n        id\n        name\n        __typename\n      }\n      dateUpdated\n      monthViews\n      views\n      favoriteCount\n      lastBookUpdate\n      lastChapterUpdate\n      __typename\n    }\n    authors {\n      id\n      name\n      chName\n      enName\n      wikiLink\n      comicCount\n      views\n      __typename\n    }\n    __typename\n  }\n}"
+              }
+            },
+            {
+              "url": "https://komiic.com/api/query",
+              "body": {
+                "operationName": "searchComicAndAuthorQuery",
+                "variables": {
+                  "keyword": "魔法"
+                },
+                "query": "query searchComicAndAuthorQuery($keyword: String!) {\n  searchComicsAndAuthors(keyword: $keyword) {\n    comics {\n      id\n      title\n      status\n      year\n      imageUrl\n      authors {\n        id\n        name\n        __typename\n      }\n      categories {\n        id\n        name\n        __typename\n      }\n      dateUpdated\n      monthViews\n      views\n      favoriteCount\n      lastBookUpdate\n      lastChapterUpdate\n      __typename\n    }\n    authors {\n      id\n      name\n      chName\n      enName\n      wikiLink\n      comicCount\n      views\n      __typename\n    }\n    __typename\n  }\n}"
+              }
+            }
+          ],
+          "maxPages": [
+            1,
+            1
+          ],
+          "ids": [
+            [
+              "fixture-1"
+            ],
+            [
+              "fixture-1"
+            ]
+          ]
+        },
+        {
+          "source": "ehentai",
+          "case": "cursor-only API and JSON-string multi-select option contract; empty fixture is not live acceptance",
+          "exploreHasLoad": "undefined",
+          "exploreHasLoadNext": "function",
+          "invalidOptionsError": "SyntaxError: unexpected token: 'undefined'",
+          "valid": {
+            "comics": [],
+            "next": "https://e-hentai.org/?next=fixture"
+          },
+          "requests": [
+            "https://e-hentai.org/?f_search=a"
+          ]
+        },
+        {
+          "source": "shonen_jump_plus",
+          "case": "synthetic403 HTML response reproduces unguarded token JSON parse; not proof of baseline phone status or CDN cause",
+          "error": "SyntaxError: unexpected token: '<'",
+          "requests": [
+            "https://shonenjumpplus.com/api/v1/user_account/access_token"
+          ]
+        }
+      ],
+      "proposalChecks": [
+        {
+          "urls": [
+            "https://img.example/a.webp",
+            "https://img.example/a.webp",
+            "https://wnacg.com/covers/a.jpg",
+            "https://wnacg.com/covers/a.jpg"
+          ],
+          "unsupportedPagesRejected": 2
+        },
+        {
+          "scriptExecuted": false,
+          "fakeDesktopNodes": 0,
+          "lazyCover": "https://img.example/lazy.webp"
+        },
+        {
+          "unchangedOriginalDesktopFixture": {
+            "parts": 1,
+            "counts": [
+              1
+            ]
+          },
+          "note": "synthetic regression only; curated integration must preserve this original desktop branch"
+        }
+      ]
+    }
+  ]
+}

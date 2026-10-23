@@ -1,0 +1,1038 @@
+{
+  "scope": "Offline exported UTF-8 response text, not original wire bytes. XPath lxml independent of helper and production JS.",
+  "lxmlVersion": [
+    6,
+    1,
+    3,
+    0
+  ],
+  "files": [
+    {
+      "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-0.html",
+      "sha256": "df7fddaed8c6bd5a4dc9931e417708bc627b4e370cce8802eab15fa69697b5fd",
+      "bytes": 67387,
+      "utf16Units": 57881,
+      "proof": {
+        "source": "wnacg",
+        "url": "https://wnacg.com",
+        "status": 200,
+        "publicPathOnly": true,
+        "cookieJarSent": false,
+        "cookieJarUpdated": false,
+        "characters": 57881,
+        "requestUserAgent": "VeneraNext/v1.17.0",
+        "responseCharsetHeader": "text/html; charset=utf-8"
+      },
+      "title": "紳士漫畫-專註分享漢化本子|邪惡漫畫",
+      "selectors": {
+        "div.title_sort": 6,
+        "div.bodywrap": 6,
+        "div.title_h2": 6,
+        "div.gallary_wrap > ul.cc > li": 6,
+        "div.imgBox": 0,
+        "div.Sub_H2": 0,
+        "ul.col_3_2 > li": 0
+      },
+      "sections": [
+        {
+          "title": "最新更新",
+          "comics": [
+            {
+              "id": "395948",
+              "title": "[18マスター] 香苗さん [中国翻訳] [Banana手工漢化]",
+              "cover": "https://t4.qy0.ru/data/t/3959/48/17920369199372101.png",
+              "description": "2026-10-15, 30張圖片"
+            },
+            {
+              "id": "395902",
+              "title": "[Psst] 總是和我一起放學的青梅竹馬 無修正 / いつも一緒に下校してる幼馴染 4ページ [Humper 繁中漢化]",
+              "cover": "https://t4.qy0.ru/data/t/3959/02/17920043509361399.webp",
+              "description": "2026-10-15, 10張圖片"
+            },
+            {
+              "id": "395901",
+              "title": "[tapioka] [AI] 誘惑 x Mai 小舞 マイ",
+              "cover": "https://t4.qy0.ru/data/t/3959/01/17920034329961555.webp",
+              "description": "2026-10-15, 66張圖片"
+            },
+            {
+              "id": "395900",
+              "title": "[sasapoliton]像爱不释手的，哄色高峰挟（有栖川汉化）",
+              "cover": "https://t4.qy0.ru/data/t/3959/00/17920023049813494.webp",
+              "description": "2026-10-15, 15張圖片"
+            },
+            {
+              "id": "395899",
+              "title": "[rupert everton ｜ alexis flower]流浪寻爱记 卷7（上）（白化鳄鱼赞助汉化）",
+              "cover": "https://t4.qy0.ru/data/t/3958/99/1792002296658613.webp",
+              "description": "2026-10-15, 121張圖片"
+            },
+            {
+              "id": "395898",
+              "title": "To LOVEる―とらぶる― 短編集 Parade [中国翻译] [水电工汉化组] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/98/17920022837408425.webp",
+              "description": "2026-10-15, 42張圖片"
+            }
+          ],
+          "viewMore": "category:最新更新@/albums.html"
+        },
+        {
+          "title": "同人誌CG畫集",
+          "comics": [
+            {
+              "id": "395948",
+              "title": "[18マスター] 香苗さん [中国翻訳] [Banana手工漢化]",
+              "cover": "https://t4.qy0.ru/data/t/3959/48/17920369199372101.png",
+              "description": "2026-10-15, 30張圖片"
+            },
+            {
+              "id": "395902",
+              "title": "[Psst] 總是和我一起放學的青梅竹馬 無修正 / いつも一緒に下校してる幼馴染 4ページ [Humper 繁中漢化]",
+              "cover": "https://t4.qy0.ru/data/t/3959/02/17920043509361399.webp",
+              "description": "2026-10-15, 10張圖片"
+            },
+            {
+              "id": "395900",
+              "title": "[sasapoliton]像爱不释手的，哄色高峰挟（有栖川汉化）",
+              "cover": "https://t4.qy0.ru/data/t/3959/00/17920023049813494.webp",
+              "description": "2026-10-15, 15張圖片"
+            },
+            {
+              "id": "395897",
+              "title": "[XG Epee] 布洛妮娅的任务失败",
+              "cover": "https://t4.qy0.ru/data/t/3958/97/17920022804103806.webp",
+              "description": "2026-10-15, 37張圖片"
+            },
+            {
+              "id": "395896",
+              "title": "[石狩庵] 汗っかきで隠れスケベな羽村さんと文芸部室をヤリ部屋にする。＼我和喜歡出汗又悶騷的羽村同學把文藝部活動室當成了炮房來用 [中国翻訳] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/96/17920022772052476.jpg",
+              "description": "2026-10-15, 38張圖片"
+            },
+            {
+              "id": "395895",
+              "title": "[徒歩三分 (チャダ)] 魔法学園首席のママに勝利して一日支配する。 [angle345个人汉化] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/95/17920022695599395.webp",
+              "description": "2026-10-15, 29張圖片"
+            },
+            {
+              "id": "395894",
+              "title": "[宇場義行] ハーレム・カルト side CULT（15） [XY个人翻译]",
+              "cover": "https://t4.qy0.ru/data/t/3958/94/17920022576909894.webp",
+              "description": "2026-10-15, 24張圖片"
+            },
+            {
+              "id": "395893",
+              "title": "[仔じら園] 19cmが挿入るまで3~アナル編~ [COW个人汉化]",
+              "cover": "https://t4.qy0.ru/data/t/3958/93/1792002243471477.webp",
+              "description": "2026-10-15, 75張圖片"
+            },
+            {
+              "id": "395892",
+              "title": "[ユリィカイカ展示会 (宍倉センドー, ユリィカ天竺丼)] 英雄様の世話係にされた村娘～知らなかったのは私だけ～ [中国翻訳] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/92/1792002240534567.jpg",
+              "description": "2026-10-15, 26張圖片"
+            },
+            {
+              "id": "395891",
+              "title": "[サルパッチョ (わいら)] トネリコと。 (Fate／Grand Order)｜和魔女梣一起。 [B_Meow个人汉化] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/91/1792002239205879.jpg",
+              "description": "2026-10-15, 53張圖片"
+            },
+            {
+              "id": "395890",
+              "title": "[カブト3号 (アデシ)] 引っ越した先の住民が性欲旺盛すぎて精子枯れるまでドスケベ交尾から逃げられない [中国翻訳]",
+              "cover": "https://t4.qy0.ru/data/t/3958/90/17920022257097703.webp",
+              "description": "2026-10-15, 32張圖片"
+            },
+            {
+              "id": "395889",
+              "title": "[アスハー] 幼馴染がハメられる。 [中国翻訳]",
+              "cover": "https://t4.qy0.ru/data/t/3958/89/17920022137691284.jpg",
+              "description": "2026-10-15, 49張圖片"
+            }
+          ],
+          "viewMore": "category:同人誌CG畫集@/albums-index-cate-5.html"
+        },
+        {
+          "title": "單行漫畫",
+          "comics": [
+            {
+              "id": "395880",
+              "title": "[TYPE.90] ボッチ様の痴女カノジョ [中国翻訳]",
+              "cover": "https://t4.qy0.ru/data/t/3958/80/17920021177555496.jpg",
+              "description": "2026-10-15, 218張圖片"
+            },
+            {
+              "id": "395878",
+              "title": "[鳩麦月々]セーラー服と独占CHU[DLsite限定特典付き]",
+              "cover": "https://t4.qy0.ru/data/t/3958/78/17920020855344366.webp",
+              "description": "2026-10-15, 243張圖片"
+            },
+            {
+              "id": "395859",
+              "title": "[沐雪Arayuki] Kamisato Ayaka Rainnight (Patreon) [最爱吃手手的大bt个人汉化]",
+              "cover": "https://t4.qy0.ru/data/t/3958/59/17919880861612801.jpg",
+              "description": "2026-10-14, 10張圖片"
+            },
+            {
+              "id": "395682",
+              "title": "[交介] スキならスキだしスキなだけ [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3956/82/17919169172549357.webp",
+              "description": "2026-10-14, 213張圖片"
+            },
+            {
+              "id": "395616",
+              "title": "[かわもりみさき] OL様バラエティ [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3956/16/17918776738966747.jpg",
+              "description": "2026-10-13, 202張圖片"
+            },
+            {
+              "id": "395614",
+              "title": "[内藤キララ] 孕ませ流遇ハーレム島 [甜族星人赞助汉化] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3956/14/17918776738846235.jpg",
+              "description": "2026-10-13, 196張圖片"
+            },
+            {
+              "id": "395464",
+              "title": "[宝あきひと] あの夏の日、セックスした相手を僕は知らない [Amerins漢化] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3954/64/17918168246771247.webp",
+              "description": "2026-10-12, 214張圖片"
+            },
+            {
+              "id": "395406",
+              "title": "[稲下竹刀、正璽] 転生したら序盤で死ぬ中ボスだった－ヒロイン眷属化で生き残る 11",
+              "cover": "https://t4.qy0.ru/data/t/3954/06/17918118872138887.webp",
+              "description": "2026-10-12, 195張圖片"
+            },
+            {
+              "id": "395387",
+              "title": "[かるま龍狼] ひとづま ｜人妻[中国翻訳] [無修正] [AI翻译]",
+              "cover": "https://t4.qy0.ru/data/t/3953/87/17918086773285959.webp",
+              "description": "2026-10-12, 231張圖片"
+            },
+            {
+              "id": "395379",
+              "title": "[RAN] 女神敗北 転生のヴァラノワ 第06巻 [機翻]",
+              "cover": "https://t4.qy0.ru/data/t/3953/79/1791800914324166.webp",
+              "description": "2026-10-12, 178張圖片"
+            },
+            {
+              "id": "395374",
+              "title": "[RAN] 女神敗北 転生のヴァラノワ 第04巻 [機翻]",
+              "cover": "https://t4.qy0.ru/data/t/3953/74/17917994305663311.webp",
+              "description": "2026-10-12, 219張圖片"
+            },
+            {
+              "id": "395325",
+              "title": "[紫吹おろし] 転生しなくても神アプリで人生一発逆転できた件 [中国翻訳] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3953/25/17917972268683995.webp",
+              "description": "2026-10-12, 203張圖片"
+            }
+          ],
+          "viewMore": "category:單行漫畫@/albums-index-cate-6.html"
+        },
+        {
+          "title": "雜誌短篇",
+          "comics": [
+            {
+              "id": "395899",
+              "title": "[rupert everton ｜ alexis flower]流浪寻爱记 卷7（上）（白化鳄鱼赞助汉化）",
+              "cover": "https://t4.qy0.ru/data/t/3958/99/1792002296658613.webp",
+              "description": "2026-10-15, 121張圖片"
+            },
+            {
+              "id": "395898",
+              "title": "To LOVEる―とらぶる― 短編集 Parade [中国翻译] [水电工汉化组] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/98/17920022837408425.webp",
+              "description": "2026-10-15, 42張圖片"
+            },
+            {
+              "id": "395873",
+              "title": "[めんぼー] 堕とされ天使ちゃん",
+              "cover": "https://t4.qy0.ru/data/t/3958/73/17919952952109816.webp",
+              "description": "2026-10-15, 24張圖片"
+            },
+            {
+              "id": "395872",
+              "title": "[すずしも] 記憶消してもう一度ヤりたい！",
+              "cover": "https://t4.qy0.ru/data/t/3958/72/17919952252791342.webp",
+              "description": "2026-10-15, 28張圖片"
+            },
+            {
+              "id": "395871",
+              "title": "[あおそら] 田舎の幼馴染がなんかエロい",
+              "cover": "https://t4.qy0.ru/data/t/3958/71/17919952176641308.webp",
+              "description": "2026-10-15, 24張圖片"
+            },
+            {
+              "id": "395870",
+              "title": "[園色] 夢中の嬢",
+              "cover": "https://t4.qy0.ru/data/t/3958/70/17919951479218266.webp",
+              "description": "2026-10-15, 24張圖片"
+            },
+            {
+              "id": "395869",
+              "title": "[長頼] ×××な後輩",
+              "cover": "https://t4.qy0.ru/data/t/3958/69/17919950583431366.webp",
+              "description": "2026-10-15, 22張圖片"
+            },
+            {
+              "id": "395868",
+              "title": "[つかこ] いつもの放課後",
+              "cover": "https://t4.qy0.ru/data/t/3958/68/17919950260302375.webp",
+              "description": "2026-10-15, 21張圖片"
+            },
+            {
+              "id": "395862",
+              "title": "[束] 漏れ出す秘密 (妻猥〜女たちの裏の顔〜 #7) [中国翻訳] [DL版] [薄码] [星空重嵌]",
+              "cover": "https://t4.qy0.ru/data/t/3958/62/17919894989263373.jpg",
+              "description": "2026-10-14, 20張圖片"
+            },
+            {
+              "id": "395855",
+              "title": "[園色] 夢中の嬢 (COMIC 快楽天ビースト 2026年11月号) [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/55/17919857761928175.webp",
+              "description": "2026-10-14, 24張圖片"
+            },
+            {
+              "id": "395854",
+              "title": "[puya] 義妹（キミ）さえいれば (COMIC 快楽天ビースト 2026年11月号) [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/54/17919857204582156.webp",
+              "description": "2026-10-14, 20張圖片"
+            },
+            {
+              "id": "395852",
+              "title": "[めんぼー] 堕とされ天使ちゃん (COMIC 快楽天ビースト 2026年11月号) [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/52/17919856209333980.webp",
+              "description": "2026-10-14, 24張圖片"
+            }
+          ],
+          "viewMore": "category:雜誌短篇@/albums-index-cate-7.html"
+        },
+        {
+          "title": "韓國漫畫",
+          "comics": [
+            {
+              "id": "395674",
+              "title": "Narakarana／娜拉卡拉娜 1-23話[完結]",
+              "cover": "https://t4.qy0.ru/data/t/3956/74/17919002913712784.webp",
+              "description": "2026-10-13, 368張圖片"
+            },
+            {
+              "id": "394624",
+              "title": "純潔遊戲",
+              "cover": "https://t4.qy0.ru/data/t/3845/82/17892922433425403.jpg",
+              "description": "2026-10-10, 3話"
+            },
+            {
+              "id": "394610",
+              "title": "滿意度評鑑中",
+              "cover": "https://t4.qy0.ru/data/t/3749/19/17856599842614459.jpg",
+              "description": "2026-10-10, 6話"
+            },
+            {
+              "id": "390073",
+              "title": "和正妹們的語言交換",
+              "cover": "https://t4.qy0.ru/data/t/3749/18/17856598339418183.jpg",
+              "description": "2026-09-29, 6話"
+            },
+            {
+              "id": "390064",
+              "title": "神祕的桌遊",
+              "cover": "https://t4.qy0.ru/data/t/3693/12/1783238272373239.jpg",
+              "description": "2026-09-29, 8話"
+            },
+            {
+              "id": "390063",
+              "title": "瘋狂真愛",
+              "cover": "https://t4.qy0.ru/data/t/3693/11/17832381778309164.jpg",
+              "description": "2026-09-29, 8話"
+            },
+            {
+              "id": "390056",
+              "title": "與爸爸的情婦共處一室",
+              "cover": "https://t4.qy0.ru/data/t/3663/53/17820264248445.jpg",
+              "description": "2026-09-29, 9話"
+            },
+            {
+              "id": "390053",
+              "title": "魔法刺青店",
+              "cover": "https://t4.qy0.ru/data/t/3663/54/17820264460302.jpg",
+              "description": "2026-09-29, 9話"
+            },
+            {
+              "id": "390042",
+              "title": "為民服務App",
+              "cover": "https://t4.qy0.ru/data/t/3598/35/17783963922797.jpg",
+              "description": "2026-09-29, 12話"
+            },
+            {
+              "id": "390041",
+              "title": "那個小太妹",
+              "cover": "https://t4.qy0.ru/data/t/3598/29/17783962754635.jpg",
+              "description": "2026-09-29, 12話"
+            },
+            {
+              "id": "390038",
+              "title": "要成為男子漢",
+              "cover": "https://t4.qy0.ru/data/t/3598/28/17783962410312.jpg",
+              "description": "2026-09-29, 12話"
+            },
+            {
+              "id": "390033",
+              "title": "女友不能說的事",
+              "cover": "https://t4.qy0.ru/data/t/3575/60/17771845296017.jpg",
+              "description": "2026-09-29, 13話"
+            }
+          ],
+          "viewMore": "category:韓國漫畫@/albums-index-cate-19.html"
+        },
+        {
+          "title": "Cosplay寫真",
+          "comics": [
+            {
+              "id": "395879",
+              "title": "Umeko J cosplay Little Mermaid – NIKKE",
+              "cover": "https://t4.qy0.ru/data/t/3958/79/17920020855611278.webp",
+              "description": "2026-10-15, 90張圖片"
+            },
+            {
+              "id": "395877",
+              "title": "Tiny Asa アサ - Chisa – Wuthering Waves",
+              "cover": "https://t4.qy0.ru/data/t/3958/77/17920020855304140.webp",
+              "description": "2026-10-15, 55張圖片"
+            },
+            {
+              "id": "395863",
+              "title": "悠宝三岁 放学后被绑在后备箱",
+              "cover": "https://t4.qy0.ru/data/t/3958/63/17919917713461527.jpg",
+              "description": "2026-10-14, 57張圖片"
+            },
+            {
+              "id": "395856",
+              "title": "けんけん - DL寫真集 KURO Animals",
+              "cover": "https://t4.qy0.ru/data/t/3958/56/17919868158627795.webp",
+              "description": "2026-10-14, 72張圖片"
+            },
+            {
+              "id": "395845",
+              "title": "Saika Kawakita 河北彩伽『うたかたの花』",
+              "cover": "https://t4.qy0.ru/data/t/3958/45/17919793309165990.webp",
+              "description": "2026-10-14, 148張圖片"
+            },
+            {
+              "id": "395844",
+              "title": "最高の彼女 河北彩伽",
+              "cover": "https://t4.qy0.ru/data/t/3958/44/17919792948946369.webp",
+              "description": "2026-10-14, 99張圖片"
+            },
+            {
+              "id": "395772",
+              "title": "落落Raku - Cat Anime Uniform",
+              "cover": "https://t4.qy0.ru/data/t/3957/72/17919639169216916.webp",
+              "description": "2026-10-14, 38張圖片"
+            },
+            {
+              "id": "395684",
+              "title": "King Angel - Maid Mihara",
+              "cover": "https://t4.qy0.ru/data/t/3956/84/17919169172854263.webp",
+              "description": "2026-10-14, 53張圖片"
+            },
+            {
+              "id": "395683",
+              "title": "坠星大聪明 - Velvet Bunny",
+              "cover": "https://t4.qy0.ru/data/t/3956/83/17919169172558652.webp",
+              "description": "2026-10-14, 92張圖片"
+            },
+            {
+              "id": "395615",
+              "title": "Soso嗖嗖 - Sirenweave Mirage Yin Ziping",
+              "cover": "https://t4.qy0.ru/data/t/3956/15/17918776738941681.webp",
+              "description": "2026-10-13, 219張圖片"
+            },
+            {
+              "id": "395472",
+              "title": "溯兮sukki - 绝区零 铃 泳装",
+              "cover": "https://t4.qy0.ru/data/t/3954/72/17918229579058445.webp",
+              "description": "2026-10-13, 26張圖片"
+            },
+            {
+              "id": "395471",
+              "title": "小和甜酒 - 交错战线 咎瓦尤斯 女仆",
+              "cover": "https://t4.qy0.ru/data/t/3954/71/17918229566052591.webp",
+              "description": "2026-10-13, 71張圖片"
+            }
+          ],
+          "viewMore": "category:Cosplay寫真@/albums-index-cate-3.html"
+        }
+      ],
+      "rootHomeLinks": 2,
+      "metaRefresh": [],
+      "duplicateClassTags": [
+        "<div class=\"title_sort\" class=\"cc\">",
+        "<div class=\"bodywrap\" class=\"cc\">",
+        "<div class=\"title_sort\" class=\"cc\">",
+        "<div class=\"bodywrap\" class=\"cc\">",
+        "<div class=\"title_sort\" class=\"cc\">",
+        "<div class=\"bodywrap\" class=\"cc\">",
+        "<div class=\"title_sort\" class=\"cc\">",
+        "<div class=\"bodywrap\" class=\"cc\">",
+        "<div class=\"title_sort\" class=\"cc\">",
+        "<div class=\"bodywrap\" class=\"cc\">",
+        "<div class=\"title_sort\" class=\"cc\">",
+        "<div class=\"bodywrap\" class=\"cc\">"
+      ]
+    },
+    {
+      "file": "tools/wnacg_html_reference/phone/phone-0.html",
+      "sha256": "796718b16bc3e2d153a69ceb3eab860b2caf195cb4df92cdd2bcfe1b867224b3",
+      "bytes": 32462,
+      "utf16Units": 30994,
+      "proof": {
+        "source": "wnacg",
+        "url": "https://wnacg.com",
+        "status": 200,
+        "publicPathOnly": true,
+        "cookieJarSent": false,
+        "cookieJarUpdated": false,
+        "characters": 30994
+      },
+      "title": "紳士漫畫移動版-專注分享漢化本子",
+      "selectors": {
+        "div.title_sort": 0,
+        "div.bodywrap": 0,
+        "div.title_h2": 0,
+        "div.gallary_wrap > ul.cc > li": 0,
+        "div.imgBox": 5,
+        "div.Sub_H2": 5,
+        "ul.col_3_2 > li": 30
+      },
+      "sections": [
+        {
+          "title": "最新上架",
+          "comics": [
+            {
+              "id": "395902",
+              "title": "[Psst] 總是和我一起放學的青梅竹馬 無修正 / いつも一緒に下校してる幼馴染 4ページ [Humper 繁中漢化]",
+              "cover": "https://t4.qy0.ru/data/t/3959/02/17920043509361399.webp",
+              "description": "2026-10-15, 10張圖片"
+            },
+            {
+              "id": "395901",
+              "title": "[tapioka] [AI] 誘惑 x Mai 小舞 マイ",
+              "cover": "https://t4.qy0.ru/data/t/3959/01/17920034329961555.webp",
+              "description": "2026-10-15, 66張圖片"
+            },
+            {
+              "id": "395900",
+              "title": "[sasapoliton]像爱不释手的，哄色高峰挟（有栖川汉化）",
+              "cover": "https://t4.qy0.ru/data/t/3959/00/17920023049813494.webp",
+              "description": "2026-10-15, 15張圖片"
+            },
+            {
+              "id": "395899",
+              "title": "[rupert everton ｜ alexis flower]流浪寻爱记 卷7（上）（白化鳄鱼赞助汉化）",
+              "cover": "https://t4.qy0.ru/data/t/3958/99/1792002296658613.webp",
+              "description": "2026-10-15, 121張圖片"
+            },
+            {
+              "id": "395898",
+              "title": "To LOVEる―とらぶる― 短編集 Parade [中国翻译] [水电工汉化组] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/98/17920022837408425.webp",
+              "description": "2026-10-15, 42張圖片"
+            },
+            {
+              "id": "395897",
+              "title": "[XG Epee] 布洛妮娅的任务失败",
+              "cover": "https://t4.qy0.ru/data/t/3958/97/17920022804103806.webp",
+              "description": "2026-10-15, 37張圖片"
+            }
+          ],
+          "viewMore": "category:最新上架@albums.html"
+        },
+        {
+          "title": "同人志",
+          "comics": [
+            {
+              "id": "395902",
+              "title": "[Psst] 總是和我一起放學的青梅竹馬 無修正 / いつも一緒に下校してる幼馴染 4ページ [Humper 繁中漢化]",
+              "cover": "https://t4.qy0.ru/data/t/3959/02/17920043509361399.webp",
+              "description": "2026-10-15, 10張圖片"
+            },
+            {
+              "id": "395900",
+              "title": "[sasapoliton]像爱不释手的，哄色高峰挟（有栖川汉化）",
+              "cover": "https://t4.qy0.ru/data/t/3959/00/17920023049813494.webp",
+              "description": "2026-10-15, 15張圖片"
+            },
+            {
+              "id": "395897",
+              "title": "[XG Epee] 布洛妮娅的任务失败",
+              "cover": "https://t4.qy0.ru/data/t/3958/97/17920022804103806.webp",
+              "description": "2026-10-15, 37張圖片"
+            },
+            {
+              "id": "395896",
+              "title": "[石狩庵] 汗っかきで隠れスケベな羽村さんと文芸部室をヤリ部屋にする。＼我和喜歡出汗又悶騷的羽村同學把文藝部活動室當成了炮房來用 [中国翻訳] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/96/17920022772052476.jpg",
+              "description": "2026-10-15, 38張圖片"
+            },
+            {
+              "id": "395895",
+              "title": "[徒歩三分 (チャダ)] 魔法学園首席のママに勝利して一日支配する。 [angle345个人汉化] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/95/17920022695599395.webp",
+              "description": "2026-10-15, 29張圖片"
+            },
+            {
+              "id": "395894",
+              "title": "[宇場義行] ハーレム・カルト side CULT（15） [XY个人翻译]",
+              "cover": "https://t4.qy0.ru/data/t/3958/94/17920022576909894.webp",
+              "description": "2026-10-15, 24張圖片"
+            }
+          ],
+          "viewMore": "category:同人志@/albums-index-cate-5.html"
+        },
+        {
+          "title": "單行本",
+          "comics": [
+            {
+              "id": "395880",
+              "title": "[TYPE.90] ボッチ様の痴女カノジョ [中国翻訳]",
+              "cover": "https://t4.qy0.ru/data/t/3958/80/17920021177555496.jpg",
+              "description": "2026-10-15, 218張圖片"
+            },
+            {
+              "id": "395878",
+              "title": "[鳩麦月々]セーラー服と独占CHU[DLsite限定特典付き]",
+              "cover": "https://t4.qy0.ru/data/t/3958/78/17920020855344366.webp",
+              "description": "2026-10-15, 243張圖片"
+            },
+            {
+              "id": "395859",
+              "title": "[沐雪Arayuki] Kamisato Ayaka Rainnight (Patreon) [最爱吃手手的大bt个人汉化]",
+              "cover": "https://t4.qy0.ru/data/t/3958/59/17919880861612801.jpg",
+              "description": "2026-10-14, 10張圖片"
+            },
+            {
+              "id": "395682",
+              "title": "[交介] スキならスキだしスキなだけ [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3956/82/17919169172549357.webp",
+              "description": "2026-10-14, 213張圖片"
+            },
+            {
+              "id": "395616",
+              "title": "[かわもりみさき] OL様バラエティ [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3956/16/17918776738966747.jpg",
+              "description": "2026-10-13, 202張圖片"
+            },
+            {
+              "id": "395614",
+              "title": "[内藤キララ] 孕ませ流遇ハーレム島 [甜族星人赞助汉化] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3956/14/17918776738846235.jpg",
+              "description": "2026-10-13, 196張圖片"
+            }
+          ],
+          "viewMore": "category:單行本@/albums-index-cate-6.html"
+        },
+        {
+          "title": "雜誌·短篇",
+          "comics": [
+            {
+              "id": "395899",
+              "title": "[rupert everton ｜ alexis flower]流浪寻爱记 卷7（上）（白化鳄鱼赞助汉化）",
+              "cover": "https://t4.qy0.ru/data/t/3958/99/1792002296658613.webp",
+              "description": "2026-10-15, 121張圖片"
+            },
+            {
+              "id": "395898",
+              "title": "To LOVEる―とらぶる― 短編集 Parade [中国翻译] [水电工汉化组] [DL版]",
+              "cover": "https://t4.qy0.ru/data/t/3958/98/17920022837408425.webp",
+              "description": "2026-10-15, 42張圖片"
+            },
+            {
+              "id": "395873",
+              "title": "[めんぼー] 堕とされ天使ちゃん",
+              "cover": "https://t4.qy0.ru/data/t/3958/73/17919952952109816.webp",
+              "description": "2026-10-15, 24張圖片"
+            },
+            {
+              "id": "395872",
+              "title": "[すずしも] 記憶消してもう一度ヤりたい！",
+              "cover": "https://t4.qy0.ru/data/t/3958/72/17919952252791342.webp",
+              "description": "2026-10-15, 28張圖片"
+            },
+            {
+              "id": "395871",
+              "title": "[あおそら] 田舎の幼馴染がなんかエロい",
+              "cover": "https://t4.qy0.ru/data/t/3958/71/17919952176641308.webp",
+              "description": "2026-10-15, 24張圖片"
+            },
+            {
+              "id": "395870",
+              "title": "[園色] 夢中の嬢",
+              "cover": "https://t4.qy0.ru/data/t/3958/70/17919951479218266.webp",
+              "description": "2026-10-15, 24張圖片"
+            }
+          ],
+          "viewMore": "category:雜誌·短篇@/albums-index-cate-7.html"
+        },
+        {
+          "title": "韓漫",
+          "comics": [
+            {
+              "id": "395674",
+              "title": "Narakarana／娜拉卡拉娜 1-23話[完結]",
+              "cover": "https://t4.qy0.ru/data/t/3956/74/17919002913712784.webp",
+              "description": "2026-10-13, 368張圖片"
+            },
+            {
+              "id": "394624",
+              "title": "純潔遊戲",
+              "cover": "https://t4.qy0.ru/data/t/3845/82/17892922433425403.jpg",
+              "description": "2026-10-10, 3話"
+            },
+            {
+              "id": "394610",
+              "title": "滿意度評鑑中",
+              "cover": "https://t4.qy0.ru/data/t/3749/19/17856599842614459.jpg",
+              "description": "2026-10-10, 6話"
+            },
+            {
+              "id": "390073",
+              "title": "和正妹們的語言交換",
+              "cover": "https://t4.qy0.ru/data/t/3749/18/17856598339418183.jpg",
+              "description": "2026-09-29, 6話"
+            },
+            {
+              "id": "390064",
+              "title": "神祕的桌遊",
+              "cover": "https://t4.qy0.ru/data/t/3693/12/1783238272373239.jpg",
+              "description": "2026-09-29, 8話"
+            },
+            {
+              "id": "390063",
+              "title": "瘋狂真愛",
+              "cover": "https://t4.qy0.ru/data/t/3693/11/17832381778309164.jpg",
+              "description": "2026-09-29, 8話"
+            }
+          ],
+          "viewMore": "category:韓漫@/albums-index-cate-19.html"
+        }
+      ],
+      "rootHomeLinks": 2,
+      "metaRefresh": [],
+      "duplicateClassTags": []
+    }
+  ],
+  "searches": [
+    {
+      "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-1.html",
+      "sha256": "ca3851f7bb1ee1db24fdb4a88130e1f8fe14850c723f9d9bf629a979d8db00b8",
+      "comics": [
+        {
+          "id": "395901",
+          "title": "[tapioka] [AI] 誘惑 x Mai 小舞 マイ",
+          "cover": "https://t4.qy0.ru/data/t/3959/01/17920034329961555.webp",
+          "description": "66張圖片，創建於2026-10-15 02:43:24"
+        },
+        {
+          "id": "395899",
+          "title": "[rupert everton ｜ alexis flower]流浪寻爱记 卷7（上）（白化鳄鱼赞助汉化）",
+          "cover": "https://t4.qy0.ru/data/t/3958/99/1792002296658613.webp",
+          "description": "121張圖片，創建於2026-10-15 02:24:56"
+        },
+        {
+          "id": "395898",
+          "title": "To LOVEる―とらぶる― 短編集 Parade [中国翻译] [水电工汉化组] [DL版]",
+          "cover": "https://t4.qy0.ru/data/t/3958/98/17920022837408425.webp",
+          "description": "42張圖片，創建於2026-10-15 02:24:43"
+        },
+        {
+          "id": "395895",
+          "title": "[徒歩三分 (チャダ)] 魔法学園首席のママに勝利して一日支配する。 [angle345个人汉化] [DL版]",
+          "cover": "https://t4.qy0.ru/data/t/3958/95/17920022695599395.webp",
+          "description": "29張圖片，創建於2026-10-15 02:24:29"
+        },
+        {
+          "id": "395886",
+          "title": "[ななひめ (春巻クリスティン)] 魔法使いのおねえさん｜魔法使大姊姊 [Amerins漢化]",
+          "cover": "https://t4.qy0.ru/data/t/3958/86/17920021952065319.webp",
+          "description": "16張圖片，創建於2026-10-15 02:23:15"
+        },
+        {
+          "id": "395877",
+          "title": "Tiny Asa アサ - Chisa – Wuthering Waves",
+          "cover": "https://t4.qy0.ru/data/t/3958/77/17920020855304140.webp",
+          "description": "55張圖片，創建於2026-10-15 02:21:25"
+        },
+        {
+          "id": "395876",
+          "title": "[AzzAI] 種島ぽぷら [AI Generated]",
+          "cover": "https://t4.qy0.ru/data/t/3958/76/17920010650473212.webp",
+          "description": "331張圖片，創建於2026-10-15 02:04:09"
+        },
+        {
+          "id": "395875",
+          "title": "[AzzAI] 八奈見杏菜 [AI Generated]",
+          "cover": "https://t4.qy0.ru/data/t/3958/75/17920010147832686.webp",
+          "description": "452張圖片，創建於2026-10-15 02:03:18"
+        },
+        {
+          "id": "395865",
+          "title": "[フリテン堂] ド淫乱地縛霊の彼女には肉体がないので、種付けSEXの間だだけ皆さんの肉穴お借りします [发财个人ai汉化]",
+          "cover": "https://t4.qy0.ru/data/t/3958/65/17919940774895749.webp",
+          "description": "44張圖片，創建於2026-10-15 00:07:08"
+        },
+        {
+          "id": "395861",
+          "title": "[bepob] 穿越后的监护人是爆乳特工 [Ai-generated]",
+          "cover": "https://t4.qy0.ru/data/t/3958/61/17919887544582358.webp",
+          "description": "242張圖片，創建於2026-10-14 22:37:34"
+        },
+        {
+          "id": "395859",
+          "title": "[沐雪Arayuki] Kamisato Ayaka Rainnight (Patreon) [最爱吃手手的大bt个人汉化]",
+          "cover": "https://t4.qy0.ru/data/t/3958/59/17919880861612801.jpg",
+          "description": "10張圖片，創建於2026-10-14 22:27:29"
+        },
+        {
+          "id": "395858",
+          "title": "[沐雪Arayuki] Kamisato Ayaka Classroom (Patreon) [最爱吃手手的大bt个人汉化]",
+          "cover": "https://t4.qy0.ru/data/t/3958/58/17919878363034197.webp",
+          "description": "18張圖片，創建於2026-10-14 22:22:33"
+        },
+        {
+          "id": "395856",
+          "title": "けんけん - DL寫真集 KURO Animals",
+          "cover": "https://t4.qy0.ru/data/t/3958/56/17919868158627795.webp",
+          "description": "72張圖片，創建於2026-10-14 22:04:55"
+        },
+        {
+          "id": "395853",
+          "title": "(智弘カイ)接遇課対応中3",
+          "cover": "https://t4.qy0.ru/data/t/3958/53/17919910601782761.webp",
+          "description": "68張圖片，創建於2026-10-14 21:47:42"
+        },
+        {
+          "id": "395847",
+          "title": "[えなりずし] 無知なノンケ男子に男の娘AV見せてメス堕ちさせた話",
+          "cover": "https://t4.qy0.ru/data/t/3958/47/17919847401341751.webp",
+          "description": "54張圖片，創建於2026-10-14 21:32:06"
+        },
+        {
+          "id": "395843",
+          "title": "[tapioka] [AI] 脅迫 x Hilda Boreas Greyrat ヒルダ",
+          "cover": "https://t4.qy0.ru/data/t/3958/43/17919784822161973.webp",
+          "description": "135張圖片，創建於2026-10-14 19:47:28"
+        },
+        {
+          "id": "395842",
+          "title": "[超级子弹拳SBP] Mod太多所以变得奇怪的原神 EX1.1~1.3 [AI Generated]",
+          "cover": "https://t4.qy0.ru/data/t/3958/42/17919758617512750.webp",
+          "description": "55張圖片，創建於2026-10-14 19:03:50"
+        },
+        {
+          "id": "395841",
+          "title": "[超级子弹拳SBP] Mod太多所以变得奇怪的原神 1-4 [AI Generated]",
+          "cover": "https://t4.qy0.ru/data/t/3958/41/17919756384076844.webp",
+          "description": "149張圖片，創建於2026-10-14 19:00:18"
+        },
+        {
+          "id": "395839",
+          "title": "[超级子弹拳SBP] 月白家的性事：月白夫妇篇 1-3 [AI Generated]",
+          "cover": "https://t4.qy0.ru/data/t/3958/39/17919753326419333.webp",
+          "description": "119張圖片，創建於2026-10-14 18:55:16"
+        },
+        {
+          "id": "395838",
+          "title": "[超级子弹拳SBP] 井上家的亲子教育 [AI Generated]",
+          "cover": "https://t4.qy0.ru/data/t/3958/38/17919750916119460.webp",
+          "description": "46張圖片，創建於2026-10-14 18:50:49"
+        },
+        {
+          "id": "395837",
+          "title": "[超级子弹拳SBP] 关于我被班上的辣妹伪娘调教成女朋友这件事 [AI Generated]",
+          "cover": "https://t4.qy0.ru/data/t/3958/37/17919748280069183.webp",
+          "description": "70張圖片，創建於2026-10-14 18:46:45"
+        },
+        {
+          "id": "395836",
+          "title": "えっちしか知らない性処理用の猫娘#13 何も知らなければ、幸せだったのに [日本語]",
+          "cover": "https://t4.qy0.ru/data/t/3958/36/17919744745974121.webp",
+          "description": "46張圖片，創建於2026-10-14 18:27:08"
+        },
+        {
+          "id": "395834",
+          "title": "えっちしか知らない性処理用の猫娘#12 妹を守るのが、私の使命なの [中譯]",
+          "cover": "https://t4.qy0.ru/data/t/3958/34/17919738386648721.webp",
+          "description": "46張圖片，創建於2026-10-14 18:24:47"
+        },
+        {
+          "id": "395833",
+          "title": "[超级子弹拳SBP] 人夫伪娘画师笔记—2 [AI Generated]",
+          "cover": "https://t4.qy0.ru/data/t/3958/33/17919734577207633.webp",
+          "description": "44張圖片，創建於2026-10-14 18:23:59"
+        }
+      ],
+      "maxPage": 1688
+    },
+    {
+      "file": "tools/wnacg_html_reference/phone-upstream-ua/phone-2.html",
+      "sha256": "5480dd9b6b428cff280ebea0d40708e3be42105fd35f7feb5b451f04f8437137",
+      "comics": [
+        {
+          "id": "395895",
+          "title": "[徒歩三分 (チャダ)] 魔法学園首席のママに勝利して一日支配する。 [angle345个人汉化] [DL版]",
+          "cover": "https://t4.qy0.ru/data/t/3958/95/17920022695599395.webp",
+          "description": "29張圖片，創建於2026-10-15 02:24:29"
+        },
+        {
+          "id": "395886",
+          "title": "[ななひめ (春巻クリスティン)] 魔法使いのおねえさん｜魔法使大姊姊 [Amerins漢化]",
+          "cover": "https://t4.qy0.ru/data/t/3958/86/17920021952065319.webp",
+          "description": "16張圖片，創建於2026-10-15 02:23:15"
+        },
+        {
+          "id": "395796",
+          "title": "[瑠璃丸 (るりまる)] 魔法少女ユニコーンの敗北 [中国翻訳] [DL版]",
+          "cover": "https://t4.qy0.ru/data/t/3957/96/17919640518282111.webp",
+          "description": "53張圖片，創建於2026-10-14 15:47:31"
+        },
+        {
+          "id": "395794",
+          "title": "[昭和最終戦線 (はなうな)] 魔法少女ゆーしゃちゃん闇のゲームブック編 [廉价汉化组] [DL版]",
+          "cover": "https://t4.qy0.ru/data/t/3957/94/17919640416251489.webp",
+          "description": "33張圖片，創建於2026-10-14 15:47:21"
+        },
+        {
+          "id": "395790",
+          "title": "[ダブルタイフーン (奇妙鳥類)] 魔法少女マコBROOM! DEAR LIZ…ブザマ脱出ゲームリズ編",
+          "cover": "https://t4.qy0.ru/data/t/3957/90/1791964016458291.webp",
+          "description": "56張圖片，創建於2026-10-14 15:46:56"
+        },
+        {
+          "id": "395788",
+          "title": "[まんねんドコドコドンドドコ (とっととねろ太郎。)] 嘘ニ堕チル. (名探偵プリキュア!) [欶澜汉化组] [DL版]",
+          "cover": "https://t4.qy0.ru/data/t/3957/88/17919639994745124.webp",
+          "description": "44張圖片，創建於2026-10-14 15:46:39"
+        },
+        {
+          "id": "395764",
+          "title": "[ぶるーと] 催●支配された学園都市〜全員寝取られ・孕ませ〜 [AI绘图][RATKING機翻]",
+          "cover": "https://t4.qy0.ru/data/t/3957/64/17919601734186938.webp",
+          "description": "122張圖片，創建於2026-10-14 14:42:35"
+        },
+        {
+          "id": "395703",
+          "title": "[まんねんドコドコドンドドコ (とっととねろ太郎。)] 嘘ニ堕チル. (名探偵プリキュア!) [中国翻訳] [DL版]",
+          "cover": "https://t4.qy0.ru/data/t/3957/03/17919170876275267.webp",
+          "description": "44張圖片，創建於2026-10-14 02:44:47"
+        },
+        {
+          "id": "395652",
+          "title": "[すごい火] マジカル★ルルイエちゃん2 (神羅万象) [Toymon機翻漢化]",
+          "cover": "https://t4.qy0.ru/data/t/3956/52/17918780268355226.webp",
+          "description": "11張圖片，創建於2026-10-13 15:53:46"
+        },
+        {
+          "id": "395622",
+          "title": "[まんねんドコドコドンドドコ (とっととねろ太郎。)] 嘘ニ堕チル. (名探偵プリキュア!) [DL版]",
+          "cover": "https://t4.qy0.ru/data/t/3956/22/17918777748142225.jpg",
+          "description": "44張圖片，創建於2026-10-13 15:49:34"
+        },
+        {
+          "id": "395621",
+          "title": "[ななひめ (春巻クリスティン)] 魔法使いのおねえさん [DL版]",
+          "cover": "https://t4.qy0.ru/data/t/3956/21/17918777675817965.webp",
+          "description": "15張圖片，創建於2026-10-13 15:49:27"
+        },
+        {
+          "id": "395519",
+          "title": "[すごい火] マジカル★ルルイエちゃん5 (神羅万象) [Toymon漢化]",
+          "cover": "https://t4.qy0.ru/data/t/3955/19/17918232253681872.webp",
+          "description": "12張圖片，創建於2026-10-13 00:40:25"
+        },
+        {
+          "id": "395192",
+          "title": "[桜水晶 (夜桜ソウキ)] #天使な魔法少女が堕とされます｜#令天使般魔法少女沦为肉便器 [欶澜汉化组] [DL版]",
+          "cover": "https://t4.qy0.ru/data/t/3951/92/17917377654198677.webp",
+          "description": "67張圖片，創建於2026-10-12 00:56:05"
+        },
+        {
+          "id": "395015",
+          "title": "[STROLL IN THE WOODS !! -森林浴- (ELF)] フェイトさんNTRられる？",
+          "cover": "https://t4.qy0.ru/data/t/3950/15/17917090056708189.webp",
+          "description": "18張圖片，創建於2026-10-11 16:56:45"
+        },
+        {
+          "id": "394964",
+          "title": "魔法刺青店 19-20話",
+          "cover": "https://t4.qy0.ru/data/t/3949/64/17917052783552418.jpg",
+          "description": "36張圖片，創建於2026-10-11 15:22:01"
+        },
+        {
+          "id": "394206",
+          "title": "[ごくとくん] 御坂援交マンガ（LUOLIMASI漢化）",
+          "cover": "https://t4.qy0.ru/data/t/3942/06/17914931321469503.webp",
+          "description": "4張圖片，創建於2026-10-09 04:58:52"
+        },
+        {
+          "id": "394125",
+          "title": "[ひよりハムスター] 変身ヒロインと魔族の俺｜變身英雌與身為魔族的我[Irodori Comics] [中文無修正]",
+          "cover": "https://t4.qy0.ru/data/t/3941/25/1791458058069172.jpg",
+          "description": "44張圖片，創建於2026-10-08 19:13:52"
+        },
+        {
+          "id": "394043",
+          "title": "魔法少女露美娜 21-22話",
+          "cover": "https://t4.qy0.ru/data/t/3940/43/17914515247716943.jpg",
+          "description": "32張圖片，創建於2026-10-08 15:29:21"
+        },
+        {
+          "id": "394032",
+          "title": "魔法少女退役後 34-35話",
+          "cover": "https://t4.qy0.ru/data/t/3940/32/17914513279555927.jpg",
+          "description": "36張圖片，創建於2026-10-08 15:29:10"
+        },
+        {
+          "id": "394006",
+          "title": "[異世界チート工房×スタジオAnIma] バレンタインにダウナー系銀髪ギャルから魔法のオナホをもらったから使い倒してイチャラブセックスしまくる。 [AI Generated]",
+          "cover": "https://t4.qy0.ru/data/t/3940/06/1791441601187396.webp",
+          "description": "107張圖片，創建於2026-10-08 14:39:40"
+        },
+        {
+          "id": "393932",
+          "title": "[BlueBorscht] Moria Luluka [Chinese] [欶澜汉化组]",
+          "cover": "https://t4.qy0.ru/data/t/3939/32/179139198527816.webp",
+          "description": "31張圖片，創建於2026-10-08 00:53:05"
+        },
+        {
+          "id": "393885",
+          "title": "[瑠璃丸 (るりまる)] 魔法少女ユニコーンの敗北 [DL版]",
+          "cover": "https://t4.qy0.ru/data/t/3938/85/17913918792666775.webp",
+          "description": "54張圖片，創建於2026-10-08 00:51:19"
+        },
+        {
+          "id": "393865",
+          "title": "[たいらー] たんプリまんが (名探偵プリキュア!) [種付大叔個人漢化]",
+          "cover": "https://t4.qy0.ru/data/t/3938/65/17913904988773178.webp",
+          "description": "91張圖片，創建於2026-10-08 00:24:29"
+        },
+        {
+          "id": "393691",
+          "title": "[げげら俊和]巨乳目錄（Toaru Majutsu no Index)",
+          "cover": "https://t4.qy0.ru/data/t/3936/91/17913721305023499.webp",
+          "description": "15張圖片，創建於2026-10-07 19:21:27"
+        }
+      ],
+      "maxPage": 249
+    }
+  ],
+  "urlContract": {
+    "publicBase": "https://wnacg.com",
+    "defaultPath": "/",
+    "root": "https://wnacg.com/",
+    "relative": "https://wnacg.com/albums.html"
+  }
+}

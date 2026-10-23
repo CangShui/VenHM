@@ -1,0 +1,43 @@
+/node_modules
+/oh_modules
+/local.properties
+/.idea
+**/build
+/.hvigor
+.cxx
+/.clangd
+/.clang-format
+/.clang-tidy
+**/.test
+/.appanalyzer
+/logs/
+
+# Release binaries and local build artifacts: published via GitHub Releases,
+# never committed (a signed HAP is >7 MB and version specific).
+/dist/
+*.hap
+*.hsp
+*.app
+*.har
+
+# Signing material must never enter the repository. Keep the certificate,
+# profile and password only on your own machine (DevEco > Project Structure >
+# Signing Configs) or in an untracked local build profile.
+*.p12
+*.cer
+*.p7b
+*.csr
+*.keystore
+*.jks
+signing-config.json5
+build-profile.local.json5
+
+# DevEco preview/analysis caches contain absolute local paths.
+**/.preview/
+*.log
+
+# Python/OS caches contain absolute local paths.
+**/__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
