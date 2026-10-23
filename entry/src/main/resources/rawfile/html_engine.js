@@ -1,5 +1,5 @@
-/*
- * HTML / CSS selector engine for Venera HM.
+﻿/*
+ * HTML / CSS selector engine for VenHM.
  *
  * Why this exists: comic sources scrape web pages through the `HtmlDocument` /
  * `HtmlElement` / `HtmlNode` API defined in assets/init.js. Those classes reach

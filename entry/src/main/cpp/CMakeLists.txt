@@ -1,4 +1,4 @@
-# QuickJS runtime + NAPI bridge for Venera HM comic source scripts.
+﻿# QuickJS runtime + NAPI bridge for VenHM comic source scripts.
 #
 # The Flutter build used flutter_qjs (an NDK build of QuickJS plus Dart FFI).
 # HarmonyOS has no such binding, so this module compiles the QuickJS sources

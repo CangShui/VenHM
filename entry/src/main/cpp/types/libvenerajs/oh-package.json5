@@ -1,6 +1,6 @@
-{
+﻿{
   "name": "libvenerajs.so",
   "types": "./index.d.ts",
   "version": "1.0.0",
-  "description": "Venera HM embedded QuickJS runtime"
+  "description": "VenHM embedded QuickJS runtime"
 }

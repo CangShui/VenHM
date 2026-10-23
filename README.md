@@ -1,4 +1,4 @@
-# Venera HM
+# VenHM
 
 [VeneraNext](https://github.com/CyrilPeng/Venera-Next) 的**原生鸿蒙（ArkTS/ArkUI）移植**工程。
 

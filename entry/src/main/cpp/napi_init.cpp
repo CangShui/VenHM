@@ -1,5 +1,5 @@
-/*
- * NAPI entry point for the Venera HM JavaScript runtime.
+﻿/*
+ * NAPI entry point for the VenHM JavaScript runtime.
  *
  * ArkTS imports this as `libvenerajs.so`.
  *

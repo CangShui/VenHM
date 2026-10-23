@@ -150,8 +150,8 @@ export struct SettingsView {
             Stack() { UiIcon({ name: 'info', color: '#6487CF', iconSize: 23 }) }
               .width(46).height(46).borderRadius(15).backgroundColor('#EDF2FF')
             Column({ space: 5 }) {
-              Text('Venera HM').fontSize(16).fontWeight(FontWeight.Medium).fontColor(UiTheme.ink)
-              Text('VeneraNext 的原生鸿蒙（ArkTS/ArkUI）移植骨架').fontSize(12).fontColor(UiTheme.muted).lineHeight(18)
+              Text('VenHM').fontSize(16).fontWeight(FontWeight.Medium).fontColor(UiTheme.ink)
+              Text('VeneraNext 的原生鸿蒙（ArkTS/ArkUI）移植').fontSize(12).fontColor(UiTheme.muted).lineHeight(18)
               Text('bundle: com.venerahm.reader').fontSize(11).fontColor(UiTheme.muted)
             }.alignItems(HorizontalAlign.Start).layoutWeight(1)
           }.width('100%').padding(18)

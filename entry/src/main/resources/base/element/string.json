@@ -2,15 +2,15 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "Venera HM main module"
+      "value": "VenHM main module"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "Venera HM comic reader"
+      "value": "VenHM comic reader"
     },
     {
       "name": "EntryAbility_label",
-      "value": "Venera HM"
+      "value": "VenHM"
     }
   ]
 }

@@ -45,7 +45,7 @@ struct Index {
     Row({ space: 10 }) {
       Column({ space: 4 }) {
         Text(this.currentIndex === 1 ? '我的书架' : this.currentIndex === 2 ? '发现漫画' :
-          this.currentIndex === 3 ? '漫画分类' : 'Venera')
+          this.currentIndex === 3 ? '漫画分类' : 'VenHM')
           .fontSize(29).fontWeight(FontWeight.Bold).fontColor(UiTheme.ink).maxLines(1)
         Text(this.currentIndex === 1 ? '收藏与本地，随时接着读' : this.currentIndex === 2 ? '从喜欢的漫画源开始' :
           this.currentIndex === 3 ? '按类型和标签探索' : '今天，也读一点喜欢的')
