@@ -66,6 +66,8 @@ struct ReaderPage {
   private readyImages: Set<number> = new Set<number>();
   private visibleFirst: number = 0;
   private visibleLast: number = 0;
+  /** Guards anchor restores that would otherwise fight the reader's scrolling. */
+  private lastUserScrollAt: number = 0;
   @State private scrolling: boolean = false;
   @State private layoutPending: boolean = false;
   private layoutVersion: number = 0;
@@ -981,7 +983,12 @@ struct ReaderPage {
 
   private onFlowImageSize(display: number, generation: number, oldHeight: number, height: number): void {
     if (generation !== this.renderGeneration || !this.isVerticalFlow() || this.scrolling ||
-      display > this.sourceToDisplay(this.currentPage) || oldHeight === height) { return; }
+      oldHeight === height || Date.now() - this.lastUserScrollAt < 600) { return; }
+    // Only a change strictly ABOVE the first visible item shifts the reader and
+    // needs an anchor restore. Restoring for the visible item itself (its own
+    // decode completes or a tall page re-lays out) pulled the list back to that
+    // item's top on every change, which made scrolling down feel like it bounced.
+    if (display >= this.visibleFirst) { return; }
     this.scheduleAnchorRestore();
   }
 
@@ -1281,7 +1288,10 @@ struct ReaderPage {
       .onActionCancel(() => { this.endImageLongPress(); }))
     .onAreaChange((oldArea: Area, area: Area) => {
       this.onFlowImageSize(display, generation, Number(oldArea.height), Number(area.height));
-      if (Number(oldArea.height) !== Number(area.height)) { this.alignPreviousChapterEnd(); }
+      // The previous-chapter END anchor is only meaningful while it is armed.
+      if (this.previousEndLoad >= 0 && Number(oldArea.height) !== Number(area.height)) {
+        this.alignPreviousChapterEnd();
+      }
     })
   }
 
@@ -1312,8 +1322,8 @@ struct ReaderPage {
     .onTouch((event: TouchEvent) => {
       this.releaseRestoreOnTouch(event);
     })
-    .onScrollStart(() => { this.scrolling = true; if (!this.autoReading) { this.cancelCanvasTap(); } })
-    .onScrollStop(() => { this.scrolling = false; })
+    .onScrollStart(() => { this.scrolling = true; this.lastUserScrollAt = Date.now(); if (!this.autoReading) { this.cancelCanvasTap(); } })
+    .onScrollStop(() => { this.scrolling = false; this.lastUserScrollAt = Date.now(); })
     .onScrollIndex((first: number, last: number) => {
       this.visibleFirst = first;
       this.visibleLast = last;

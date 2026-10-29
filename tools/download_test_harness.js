@@ -29,6 +29,8 @@ function downloads(audit=()=>{}) {
       if(!shouldContinue())throw Error('IMAGE_REQUEST_CANCELLED');
       if(!response.ok)throw Error('image HTTP failed');return response.bytes}},
     ImageTransforms:{cancel:()=>{}},
+    // UI refresh notification; the harness only needs it to be callable.
+    LocalLibrarySignal:class{static addListener(){}static removeListener(){}static notify(){}},
     HttpClient:{getBytes:async u=>{calls.push(u);return {ok:true,status:200,bytes:new ArrayBuffer(128)}}},
     image:{createImageSource:()=>({getImageInfo:async()=>({size:{width:10,height:20},mimeType:'image/png'}),
       createPixelMap:async()=>({getImageInfo:async()=>({size:{width:10,height:20}}),release:async()=>{}}),release:async()=>{}})},

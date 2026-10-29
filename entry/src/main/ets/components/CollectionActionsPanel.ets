@@ -119,7 +119,7 @@ export struct CollectionActionsPanel {
             const option: SelectOption = { value: name }; return option;
           }))
             .selected(this.folders.indexOf(this.folderId))
-            .onSelect((index: number) => { this.folderId = this.folders[index]; })
+            .fontColor(UiTheme.ink).selectedOptionFontColor(UiTheme.accent).optionFontColor(UiTheme.ink).optionBgColor(UiTheme.surface).selectedOptionBgColor(UiTheme.accentSoft).menuBackgroundColor(UiTheme.surface).onSelect((index: number) => { this.folderId = this.folders[index]; })
             .enabled(!this.busy).height(44).font({ size: 14 }).fontColor(UiTheme.ink)
           Text(this.favorited.includes(this.folderId) ? '源报告：此漫画已在所选收藏夹' : '所选收藏夹未报告已收藏（以刷新远端为准）')
             .fontSize(12).lineHeight(20).fontColor(UiTheme.secondary).width('100%')

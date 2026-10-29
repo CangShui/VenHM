@@ -278,7 +278,7 @@ export struct SearchView {
         }))
           .selected(this.filterIndex(group, index))
           .value(group.options.get(this.filterValues[index] ?? '') ?? '请选择')
-          .onSelect((selected: number) => {
+          .fontColor(UiTheme.ink).selectedOptionFontColor(UiTheme.accent).optionFontColor(UiTheme.ink).optionBgColor(UiTheme.surface).selectedOptionBgColor(UiTheme.accentSoft).menuBackgroundColor(UiTheme.surface).onSelect((selected: number) => {
             const keys = Array.from(group.options.keys());
             if (selected >= 0 && selected < keys.length) { this.changeFilter(index, keys[selected]); }
           })
@@ -336,7 +336,7 @@ export struct SearchView {
             .selected(this.selectedIndex)
             .value(this.selectedIndex >= 0 ? this.sourceOptions[this.selectedIndex] : '所选源不可用')
             .font({ size: 14 }).layoutWeight(1).height(48).backgroundColor(UiTheme.surface)
-            .onSelect((index: number) => { this.selectSource(index); })
+            .fontColor(UiTheme.ink).selectedOptionFontColor(UiTheme.accent).optionFontColor(UiTheme.ink).optionBgColor(UiTheme.surface).selectedOptionBgColor(UiTheme.accentSoft).menuBackgroundColor(UiTheme.surface).onSelect((index: number) => { this.selectSource(index); })
         }.width('100%').padding({ left: 14, right: 8 }).backgroundColor(UiTheme.surface).borderRadius(18)
         Row({ space: 10 }) {
         TextInput({ placeholder: '输入关键字', text: this.keyword, controller: this.inputController })

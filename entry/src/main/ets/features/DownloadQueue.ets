@@ -8,6 +8,7 @@ import { ImageRequests } from '../source/ImageRequests';
 import { ImagePipeline } from '../network/ImagePipeline';
 import { ImageTransforms } from '../network/ImageTransforms';
 import { BackgroundDownloadCoordinator } from './BackgroundDownloadCoordinator';
+import { LocalLibrarySignal } from './LocalLibrarySignal';
 
 export class DownloadTask {
   id: string = '';
@@ -503,6 +504,8 @@ export class DownloadQueue {
       fs.rmdirSync(dir);
       DownloadQueue.tasks = DownloadQueue.tasks.filter((item: DownloadTask) => item !== task);
       DownloadQueue.persist();
+      // The folder is gone: cached home/bookshelf listings must drop it now.
+      LocalLibrarySignal.notify();
       Log.audit(id, '下载删除', '只删除已验证所有权的DL任务文件夹/队列记录；不修改其他本地漫画或阅读历史');
     } finally { DownloadQueue.mutating.delete(id); }
   }
@@ -676,6 +679,7 @@ export class DownloadQueue {
       }
       if (DownloadQueue.live(task, generation) && task.chapter === task.chapterIds.length) { task.status = 'completed'; }
       DownloadQueue.persist();
+      if (task.status === 'completed') { LocalLibrarySignal.notify(); }
       Log.audit(id, '下载返回', `状态=${task.status}；已保存=${task.savedPages}`);
     } catch (error) {
       if (DownloadQueue.generations.get(id) !== generation) { return; }

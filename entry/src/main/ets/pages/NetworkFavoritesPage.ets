@@ -120,14 +120,14 @@ struct NetworkFavoritesPage {
             }))
               .selected(this.sources.findIndex((source: ComicSource) => source.key === this.sourceKey))
               .enabled(!this.loading)
-              .onSelect((index: number) => { this.sourceKey = this.sources[index].key; this.refresh(); })
+              .fontColor(UiTheme.ink).selectedOptionFontColor(UiTheme.accent).optionFontColor(UiTheme.ink).optionBgColor(UiTheme.surface).selectedOptionBgColor(UiTheme.accentSoft).menuBackgroundColor(UiTheme.surface).onSelect((index: number) => { this.sourceKey = this.sources[index].key; this.refresh(); })
               .height(44).font({ size: 14 }).fontColor(UiTheme.ink)
           }
           if (this.folderIds.length > 0) {
             Select(this.folderNames.map((name: string): SelectOption => {
               const option: SelectOption = { value: name }; return option;
             }))
-              .selected(this.folderIndex).enabled(!this.loading).onSelect((index: number) => { this.more(index); })
+              .selected(this.folderIndex).enabled(!this.loading).fontColor(UiTheme.ink).selectedOptionFontColor(UiTheme.accent).optionFontColor(UiTheme.ink).optionBgColor(UiTheme.surface).selectedOptionBgColor(UiTheme.accentSoft).menuBackgroundColor(UiTheme.surface).onSelect((index: number) => { this.more(index); })
               .height(44).font({ size: 14 }).fontColor(UiTheme.ink)
           }
           Button('当前源账号 / 登录').attributeModifier(UiStyles.secondary).onClick(() => {

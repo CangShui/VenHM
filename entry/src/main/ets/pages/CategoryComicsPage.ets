@@ -159,7 +159,7 @@ struct CategoryComicsPage {
             .selected(Array.from(option.options.keys()).indexOf(this.optionValues[index]))
             .value(option.options.get(this.optionValues[index]) ?? '')
             .layoutWeight(1).height(48).font({ size: 14 }).fontColor(UiTheme.ink).backgroundColor(UiTheme.surface).borderRadius(14).enabled(!this.loading)
-            .onSelect((selected: number) => {
+            .fontColor(UiTheme.ink).selectedOptionFontColor(UiTheme.accent).optionFontColor(UiTheme.ink).optionBgColor(UiTheme.surface).selectedOptionBgColor(UiTheme.accentSoft).menuBackgroundColor(UiTheme.surface).onSelect((selected: number) => {
               const values = this.optionValues.slice();
               values[index] = Array.from(option.options.keys())[selected];
               this.optionValues = values; this.load(1);

@@ -231,7 +231,7 @@ struct SourceSettingsPage {
                     .selected(this.selectedIndex(field)).value(this.selectionText(field))
                     .height(48).font({ size: 14 }).fontColor(UiTheme.ink).backgroundColor(UiTheme.page).borderRadius(14)
                     .enabled(this.busyKey.length === 0)
-                    .onSelect((index: number) => { this.choose(field, index); })
+                    .fontColor(UiTheme.ink).selectedOptionFontColor(UiTheme.accent).optionFontColor(UiTheme.ink).optionBgColor(UiTheme.surface).selectedOptionBgColor(UiTheme.accentSoft).menuBackgroundColor(UiTheme.surface).onSelect((index: number) => { this.choose(field, index); })
                 } else if (field.type === 'select') {
                   Text('当前没有可用选项').fontSize(13).fontColor(UiTheme.muted)
                 } else if (field.type === 'switch') {

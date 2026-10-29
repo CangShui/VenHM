@@ -200,7 +200,7 @@ export struct ExploreView {
         .value(this.sourceIndex >= 0 ? this.sourceNames[this.sourceIndex] : '所选源不可用')
         .font({ size: 14 }).height(48).borderRadius(18).backgroundColor(UiTheme.surface)
         .layoutWeight(1)
-        .onSelect((index: number) => {
+        .fontColor(UiTheme.ink).selectedOptionFontColor(UiTheme.accent).optionFontColor(UiTheme.ink).optionBgColor(UiTheme.surface).selectedOptionBgColor(UiTheme.accentSoft).menuBackgroundColor(UiTheme.surface).onSelect((index: number) => {
           if (index >= 0 && index < this.sourceKeys.length) { SelectedSource.select(this.sourceKeys[index]); }
         })
 

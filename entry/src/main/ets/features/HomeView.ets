@@ -11,6 +11,7 @@ import { HistoryNavigation } from './HistoryNavigation';
 import { AsyncComicImage, ComicCell, EmptyView } from '../components/ComicWidgets';
 import { AppInit } from '../foundation/AppInit';
 import { Log } from '../foundation/Log';
+import { LocalLibrarySignal } from './LocalLibrarySignal';
 
 /**
  * Home tab - summary cards, mirroring VeneraNext's home page.
@@ -30,15 +31,37 @@ export struct HomeView {
 
   private historyRefreshId: number = 0;
   private readonly onHistoryChanged: () => void = () => { this.reloadHistory(); };
+  private localRefreshId: number = 0;
+  private readonly onLocalLibraryChanged: () => void = () => { this.reloadLocal(); };
 
   aboutToAppear(): void {
     HistoryDao.addListener(this.onHistoryChanged);
+    LocalLibrarySignal.addListener(this.onLocalLibraryChanged);
     this.reload();
   }
 
   aboutToDisappear(): void {
     HistoryDao.removeListener(this.onHistoryChanged);
+    LocalLibrarySignal.removeListener(this.onLocalLibraryChanged);
     this.historyRefreshId++;
+    this.localRefreshId++;
+  }
+
+  /** Refresh only the sandbox local-comic list (download add/remove). */
+  private async reloadLocal(): Promise<void> {
+    const requestId = ++this.localRefreshId;
+    try {
+      const local = SourceManager.find('local');
+      if (local === undefined || local.explorePages.length === 0) { return; }
+      const explore = local.explorePages[0];
+      if (explore.loadPage === undefined) { return; }
+      const result = await explore.loadPage(1);
+      if (requestId === this.localRefreshId) {
+        this.localComics = result.dataOrNull ?? [];
+      }
+    } catch (error) {
+      Log.warn('HomeView', `local comics refresh failed: ${error}`);
+    }
   }
 
   private async reloadHistory(): Promise<void> {

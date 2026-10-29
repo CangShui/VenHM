@@ -114,7 +114,7 @@ struct RankingPage {
       if (this.options.length > 0) {
         Select(this.options).selected(this.optionIndex).value(this.optionLabel).width('100%').height(56)
           .font({ size: 15 }).fontColor(UiTheme.ink).backgroundColor(UiTheme.surface).borderRadius(20).padding({ left: 16, right: 16 })
-          .onSelect((index: number) => {
+          .fontColor(UiTheme.ink).selectedOptionFontColor(UiTheme.accent).optionFontColor(UiTheme.ink).optionBgColor(UiTheme.surface).selectedOptionBgColor(UiTheme.accentSoft).menuBackgroundColor(UiTheme.surface).onSelect((index: number) => {
             const keys = Array.from(this.session.options.keys());
             if (index >= 0 && index < keys.length) { this.action(keys[index]); }
           })

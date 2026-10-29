@@ -9,6 +9,7 @@ import { SourceManager } from '../source/SourceManager';
 import { ComicCell, EmptyView, ErrorView, LoadingView } from '../components/ComicWidgets';
 import { AppInit } from '../foundation/AppInit';
 import { Log } from '../foundation/Log';
+import { LocalLibrarySignal } from './LocalLibrarySignal';
 
 /**
  * Bookshelf tab.
@@ -38,16 +39,35 @@ export struct BookshelfView {
   private visible: boolean = false;
   private disposed: boolean = false;
   private reloadToken: number = 0;
+  private localToken: number = 0;
   private readonly onChanged: () => void = () => {
     if (!this.disposed && this.visible && !this.busy) {
       this.reloadFavorites();
     }
   };
+  private readonly onLocalLibraryChanged: () => void = () => { this.reloadLocalComics(); };
 
   aboutToAppear(): void {
     this.disposed = false;
     FavoritesDao.addListener(this.onChanged);
+    LocalLibrarySignal.addListener(this.onLocalLibraryChanged);
     this.refresh();
+  }
+
+  /** Download completed or was deleted: the sandbox folder list changed. */
+  private async reloadLocalComics(): Promise<void> {
+    const token = ++this.localToken;
+    try {
+      const local = SourceManager.find('local');
+      if (local === undefined) { return; }
+      const explore = local.explorePages.length > 0 ? local.explorePages[0] : undefined;
+      if (explore === undefined || explore.loadPage === undefined) { return; }
+      const result = await explore.loadPage(1);
+      if (this.disposed || token !== this.localToken) { return; }
+      this.localComics = result.dataOrNull ?? [];
+    } catch (error) {
+      Log.warn('BookshelfView', `local comics refresh failed: ${error}`);
+    }
   }
 
   onPageShow(): void {
@@ -63,7 +83,9 @@ export struct BookshelfView {
     this.disposed = true;
     this.visible = false;
     this.reloadToken++;
+    this.localToken++;
     FavoritesDao.removeListener(this.onChanged);
+    LocalLibrarySignal.removeListener(this.onLocalLibraryChanged);
   }
 
   async refresh(): Promise<void> {
