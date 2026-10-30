@@ -1,8 +1,8 @@
 # VenHM
 
-[VeneraNext](https://github.com/CyrilPeng/Venera-Next) 的**原生鸿蒙（ArkTS/ArkUI）移植**工程。
+[Venera](https://github.com/venera-app/venera) 的**原生鸿蒙（ArkTS/ArkUI）移植**工程。
 
-- 上游：`venera_next` v1.17.0+228（Flutter 3.41.4）
+- 上游：`venera`
 - 本工程：HarmonyOS `6.0.1(21)`，`runtimeOS: HarmonyOS`，bundle `com.venerahm.reader`
 - 语言/UI：ArkTS + ArkUI（声明式），原生 NAPI C++ 承载 QuickJS 漫画源运行时
 - 迁移计划与进度：[docs/MIGRATION_PLAN.md](docs/MIGRATION_PLAN.md) · [migration_status.yaml](migration_status.yaml)
@@ -104,3 +104,7 @@ hvigorw --mode module -p product=default -p module=entry@default -p buildMode=de
 
 上游 VeneraNext 为 GPL-3.0，本移植工程沿用同一许可，见 [LICENSE](LICENSE)。
 内嵌的 QuickJS、Brotli 等第三方组件保留各自的许可证文本（`entry/src/main/cpp/*/LICENSE`、`entry/src/main/resources/rawfile/licenses/`）。
+
+## 相关链接
+上游Venera仓库 [Venera]https://github.com/venera-app/venera)。
+本开源项目已链接并认可 [LINUX DO 社区](https://linux.do/)。
