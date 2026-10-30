@@ -13,6 +13,19 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 set(QJS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/quickjs)
 
+# ------------------------------------------------------- reproducible paths
+# __FILE__ is compiled into assert messages; without this the produced .so
+# carries the absolute build path of the machine that built it. Rewrite both
+# the repository root and the cpp subdirectory to stable relative markers.
+get_filename_component(VENHM_REPO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../.." ABSOLUTE)
+set(VENHM_PATH_FLAGS
+    "-ffile-prefix-map=${VENHM_REPO_ROOT}/="
+    "-ffile-prefix-map=${VENHM_REPO_ROOT}=."
+    "-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}/=entry/src/main/cpp/"
+)
+add_compile_options(${VENHM_PATH_FLAGS})
+
+
 # ---------------------------------------------------------------- QuickJS core
 add_library(quickjs STATIC
     ${QJS_DIR}/dtoa.c
