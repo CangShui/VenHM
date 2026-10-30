@@ -106,5 +106,8 @@ hvigorw --mode module -p product=default -p module=entry@default -p buildMode=de
 内嵌的 QuickJS、Brotli 等第三方组件保留各自的许可证文本（`entry/src/main/cpp/*/LICENSE`、`entry/src/main/resources/rawfile/licenses/`）。
 
 ## 相关链接
-上游Venera仓库 [Venera]https://github.com/venera-app/venera)。
+上游Venera仓库 [Venera](https://github.com/venera-app/venera)。
+
+Venera源链接  [Venera源](https://cdn.jsdelivr.net/gh/venera-app/venera-configs@main/index.json)。
+
 本开源项目已链接并认可 [LINUX DO 社区](https://linux.do/)。
