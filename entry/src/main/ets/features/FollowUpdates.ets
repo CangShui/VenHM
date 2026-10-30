@@ -42,7 +42,7 @@ export class FollowUpdates {
 
   static async checkAll(onResult: (row: FollowUpdate) => void = (row: FollowUpdate): void => {},
     shouldContinue: () => boolean = (): boolean => true): Promise<void> {
-    if (FollowUpdates.checking) { throw new Error('已有手动追更检查在执行'); }
+    if (FollowUpdates.checking) { throw new Error('已有本地收藏更新检查在执行'); }
     FollowUpdates.checking = true;
     try {
       const rows = await FollowUpdatesDao.list();

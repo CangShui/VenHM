@@ -13,7 +13,7 @@ const c=vm.createContext({Date:class extends Date{static now(){return now}},setT
  History:class{},ComicType:{fromKey:()=>({value:1})},HistoryDao:{save:async h=>saves.push(h)},ImageFit:{Cover:0},ImageRequestConfig:class{},ImageLoader:{cancelOwned(){}},ReaderSettings:{},AppContext:{context:{},ensureInitialized(){}},
  ReaderWindowChrome:class{enter(){calls.push(['window-enter']);return Promise.resolve()}leave(){calls.push(['window-leave']);return Promise.resolve()}},
  router:{getParams:()=>({}),back:()=>calls.push(['back'])},Log:{audit(){},warn(){},error(){}},promptAction:{showToast(){}},TouchType:{Down:0,Move:1,Up:2,Cancel:3},px2vp:v=>v,batteryInfo:{batterySOC:100},ScrollAlign:{START:0,END:1}});
-const helpers=['ReaderTapPolicy','ReaderGesturePolicy','ReaderModes','ReaderSpreads','ReaderRenderSource','ReaderVolumeKeys','ReadingPosition','ReaderImageLayout'].map(n=>read('entry/src/main/ets/features/'+n+'.ets')).join('\n');
+const helpers=['ReaderTapPolicy','ReaderGesturePolicy','ReaderModes','ReaderSpreads','ReaderRenderSource','ReaderVolumeKeys','ReaderWorkload','ReadingPosition','ReaderImageLayout'].map(n=>read('entry/src/main/ets/features/'+n+'.ets')).join('\n');
 const zones=read('entry/src/main/ets/components/ReaderClickZones.ets');
 const rawImage=read('entry/src/main/ets/components/ComicWidgets.ets'),image=(rawImage.slice(0,rawImage.indexOf('  build() {'))+'}').replace(/@(?:Entry|Component|State|Prop)\s*|@Watch\('[^']+'\)\s*/g,'').replace('struct AsyncComicImage','class AsyncComicImage');
 vm.runInContext(stripTypeScriptTypes(helpers+'\n'+zones+'\n'+options+'\n'+reader+'\n'+image,{mode:'transform'})+'\nglobalThis.Reader=ReaderPage;globalThis.Picture=AsyncComicImage;globalThis.Zones=ReaderClickZones;globalThis.Gesture=ReaderCanvasGesture;',c,{timeout:1000});
@@ -174,10 +174,10 @@ const Z=c.Zones;
   assert.equal((rawReader.match(/zoomEnabled: true/g)||[]).length,2);
   assert.equal((rawReader.match(/doubleTapZoomEnabled: this\.options\.enableDoubleTapToZoom/g)||[]).length,2);
  });
- await test('all previous reader functions remain in the single bottom panel',()=>{
+ await test('user-requested reader bottom panel contains navigation, settings, mode, speed and details',()=>{
   const panel=rawReader.slice(rawReader.indexOf('  bottomBar()'),rawReader.indexOf('  flowImage('));
-  for(const call of ['returnToPrevious','switchChapter','stepPage','openReaderSettings','openComicDetails','toggleAutoRead','setMode','cycleBrightness','collectPicture','showImageMenu','openStatistics'])assert.ok(panel.includes('this.'+call+'('),call);
-  assert.match(panel,/TransitionEffect\.move\(TransitionEdge\.BOTTOM\)/);
+  for(const call of ['returnToPrevious','switchChapter','openReaderSettings','openComicDetails','openAutoSpeedMenu','showModeMenu = true','setBrightnessValue'])assert.ok(panel.includes(call),call);
+ assert.match(panel,/TransitionEffect\.move\(TransitionEdge\.BOTTOM\)/);
   assert.match(panel,/openReaderChapterMenu/);
  });
  await test('settings explain the nine-zone contract and drop the dead region slider',()=>{

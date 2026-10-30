@@ -107,7 +107,9 @@ struct ReaderSettingsPage {
     Column({ space: 10 }) {
       Text(`${title}：${value}`).fontSize(15).fontColor(UiTheme.ink).width('100%')
       Slider({ value: value, min: min, max: max, step: step }).selectedColor(UiTheme.accent).enabled(this.canEditOptions())
-        .onChange((next: number, mode: SliderChangeMode) => { if (mode === SliderChangeMode.End) { this.save(name, Math.round(next)); } })
+        .onChange((next: number, mode: SliderChangeMode) => { if (mode === SliderChangeMode.End || mode === SliderChangeMode.Click) {
+          this.save(name, name === 'autoPageTurningInterval' ? Math.round(next * 10) / 10 : Math.round(next));
+        } })
     }.width('100%').padding({ top: 14, bottom: 14 })
   }
   build() {
@@ -187,7 +189,7 @@ struct ReaderSettingsPage {
               ['zoom', 'autoReading', 'menu', 'none'], ['按住2倍缩放', '开始/暂停自动阅读', '图片操作菜单', '不操作'])
             this.choiceOption('长按缩放锚点', 'longPressZoomPosition', this.options.longPressZoomPosition,
               ['press', 'center'], ['按下位置', '图片中心'])
-            Text('长按缩放松手即恢复；原有双击缩放、双指缩放和放大拖动仍保留。图片菜单/收藏按钮是显式动作，不自动收藏，不改变源图片页身份。')
+            Text('长按缩放松手即恢复；双击缩放、双指缩放和放大拖动保留。长按菜单仅提供阅读设置与自动翻页速度。')
               .fontSize(12).fontColor(UiTheme.secondary).lineHeight(20).width('100%')
             this.switchOption('音量键翻页（仅阅读器前台）', 'enableTurnPageByVolumeKey', this.options.enableTurnPageByVolumeKey)
             Text('仅在章节已加载、阅读器显示时注册系统按键消费；关闭/离开立即释放。上键上一页、下键下一页。不修改设备音量，不使用音量变化轮询。设备不支持时阅读器会提示。')
@@ -204,13 +206,9 @@ struct ReaderSettingsPage {
 
           UiSectionHeading({ title: '自动阅读' })
           Column() {
-            this.countOption('自动翻页间隔（秒，原版1–20）', 'autoPageTurningInterval', this.options.autoPageTurningInterval, 20)
+            this.sliderOption('每页停留时间（秒）', 'autoPageTurningInterval', this.options.autoPageTurningInterval, 0.1, 10, 0.1)
             this.switchOption('自动阅读允许跨章节', 'autoReadingAcrossChapters', this.options.autoReadingAcrossChapters)
-            this.choiceOption('纵向连续模式自动滚动', 'autoScrollStyle', this.options.autoScrollStyle, ['smooth', 'stepped'], ['平滑', '分步'])
-            this.sliderOption('平滑速度（像素/秒）', 'autoScrollSpeed', this.options.autoScrollSpeed, 10, 1000, 10)
-            this.sliderOption('分步频率（次/秒）', 'autoScrollFrequency', this.options.autoScrollFrequency, 1, 10, 1)
-            this.sliderOption('分步距离（像素）', 'autoScrollDistance', this.options.autoScrollDistance, 10, 500, 10)
-            Text('自动滚动仅用于纵向连续/瀑布流；画廊与横向连续模式按翻页间隔。加载、缩放、后台不自动移动。')
+            Text('所有模式均按每页停留秒数自动前进。连续/瀑布模式每次前进一屏；加载未就绪、滚动、缩放、菜单打开和后台期间等待，不连续跳过未显示的页。')
               .fontSize(12).fontColor(UiTheme.secondary).lineHeight(20).width('100%')
           }.width('100%').padding({ left: 20, right: 20, top: 4, bottom: 20 }).backgroundColor(UiTheme.surface).borderRadius(UiTheme.cardRadius)
 
@@ -218,7 +216,7 @@ struct ReaderSettingsPage {
           Column({ space: 10 }) {
             Text('已绑定：模式/分屏/拆宽图/边距/宽度、点击与动画、双击与长按、自动翻页与纵向滚动、亮度、音量键、页码、时间电量；全局/设备/漫画分层保存。')
               .fontSize(12).fontColor(UiTheme.secondary).lineHeight(20).width('100%')
-            Text('未移植（不提供无效开关）：自动版式检测与按版式模式、墨水屏硬件刷新、鼠标滚轮倍率、系统状态栏、预加载数量、自定义图片处理、章节评论/章末评论、快捷双击或滑动收藏。预加载继续使用已验证的单邻居懒加载窗口；图片收藏请使用明确按钮或菜单。')
+            Text('未移植（不提供无效开关）：自动版式检测与按版式模式、墨水屏硬件刷新、鼠标滚轮倍率、系统状态栏、预加载数量、自定义图片处理、章节评论/章末评论、快捷双击或滑动收藏。预加载继续使用单邻居懒加载窗口。')
               .fontSize(12).fontColor(UiTheme.secondary).lineHeight(20).width('100%')
           }.width('100%').padding(20).backgroundColor(UiTheme.surface).borderRadius(UiTheme.cardRadius)
           if (this.error.length > 0) {

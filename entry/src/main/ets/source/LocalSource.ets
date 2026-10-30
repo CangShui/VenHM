@@ -91,7 +91,8 @@ export class LocalSource extends ComicSource {
         const lower = name.toLowerCase();
         for (let e = 0; e < IMAGE_EXTENSIONS.length; e++) {
           if (lower.endsWith(IMAGE_EXTENSIONS[e])) {
-            out.push(name);
+            const full = `${path}/${name}`;
+            if (fs.statSync(full).isFile()) { out.push(name); }
             break;
           }
         }
@@ -170,9 +171,19 @@ export class LocalSource extends ComicSource {
     const names = this.listDirectories(this.rootDir());
     const comics: Comic[] = [];
     for (let i = 0; i < names.length; i++) {
-      comics.push(this.buildComic(names[i]));
+      const name = names[i];
+      // Old explicitly-created diagnostic samples are not the user's library.
+      // Only exclude the strict test name WITH its exact ownership marker.
+      if (/^HM_OFFLINE_READER_[0-9]+_[0-9]+$/.test(name)) {
+        const marker = `${this.rootDir()}/${name}/.venera-usability`;
+        try { if (fs.accessSync(marker) && fs.readTextSync(marker) === name) { continue; } } catch (error) {}
+      }
+      const comic = this.buildComic(name);
+      // A task placeholder, empty folder or metadata-only orphan is not yet a
+      // readable comic. Keep every actual local comic; never delete directories.
+      if (comic.cover.length > 0) { comics.push(comic); }
     }
-    return new Res<Comic[]>(comics, undefined, names.length > 0 ? 1 : 0);
+    return new Res<Comic[]>(comics, undefined, comics.length > 0 ? 1 : 0);
   }
 
   private async searchLocal(keyword: string, page: number): Promise<Res<Comic[]>> {

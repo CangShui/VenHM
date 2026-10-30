@@ -3,8 +3,8 @@
 // contract harness fails on it. Without this, a green run could be vacuous.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
-const tmp=path.join(root,'logs','ui-contract-negative');
-fs.rmSync(tmp,{recursive:true,force:true});
+// Fresh workspace fixture: never delete prior logs/evidence or an unchecked path.
+const tmp=fs.mkdtempSync(path.join(root,'logs','ui-contract-negative-'));
 const put=(rel,body)=>{const f=path.join(tmp,rel);fs.mkdirSync(path.dirname(f),{recursive:true});fs.writeFileSync(f,body)};
 const ets='entry/src/main/ets';
 
@@ -17,13 +17,17 @@ put(`${ets}/features/AggregatedSearchSession.ets`,``);
 put(`${ets}/features/AggregatedSearchList.ets`,``);
 put(`${ets}/features/BackgroundDownloadCoordinator.ets`,``);
 put(`${ets}/features/DownloadQueue.ets`,``);
-put('entry/src/main/resources/base/profile/main_pages.json',JSON.stringify({src:['pages/A']}));
+// A genuinely backed retired route must fail the retirement check independently
+// of the unregistered Ghost target above.
+put(`${ets}/pages/StatisticsPage.ets`,'@Entry\n@Component\nstruct StatisticsPage { build() { Column() {} } }');
+put('entry/src/main/resources/base/profile/main_pages.json',JSON.stringify({src:['pages/A','pages/StatisticsPage']}));
 
 const run=cp.spawnSync(process.execPath,[path.join(__dirname,'ui_contract_cases.js')],
   {cwd:__dirname,encoding:'utf8',env:Object.assign({},process.env,{UI_CONTRACT_ROOT:tmp})});
 const out=(run.stdout||'')+(run.stderr||'');
 assert.equal(run.status,1,'broken project must fail the contract harness');
 assert.match(out,/unregistered pages\/Ghost/,'ghost route was not reported');
+assert.match(out,/retired page is registered: pages\/StatisticsPage/,'backed retired route was not rejected');
 assert.match(out,/UI_CONTRACT_FAIL/,'no failure summary emitted');
-console.log('PASS negative control: broken route detected, harness exits 1');
+console.log('PASS 2 negative route controls: unregistered Ghost and backed retired route detected; harness exits 1');
 console.log('UI_CONTRACT_NEGATIVE_PASS; no production file changed, no device/network');

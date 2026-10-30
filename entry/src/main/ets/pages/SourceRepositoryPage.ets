@@ -3,6 +3,7 @@ import { promptAction } from '@kit.ArkUI';
 import { RepositoryParams } from '../model/RouteParams';
 import { SourceCatalog, SourceCatalogEntry, SourceRepositories } from '../source/SourceRepository';
 import { SourceInstaller, SourceInstallResult } from '../source/SourceInstaller';
+import { SourceManager } from '../source/SourceManager';
 import { AppContext } from '../foundation/AppContext';
 import { AppInit } from '../foundation/AppInit';
 import { ErrorView, LoadingView } from '../components/ComicWidgets';
@@ -73,6 +74,9 @@ struct SourceRepositoryPage {
     this.installingKey = entry.key;
     try {
       const result: SourceInstallResult = await SourceInstaller.install(entry);
+      // Parse and register now: installing must not require an app restart, and
+      // a runtime failure is reported instead of silently keeping an old copy.
+      await SourceManager.reloadInstalled();
       await this.refreshInstalled();
       promptAction.showToast({ message: result.message, duration: 4000 });
     } catch (error) {

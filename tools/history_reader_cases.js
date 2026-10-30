@@ -6,7 +6,7 @@
  *
  * No application build, installed source rules, network or device is used.
  * Node erases types; this does NOT validate ArkTS static restrictions or ArkUI
- * rendering. Reader @Builder methods are excluded; source/DAO/clock/controllers
+ * rendering. Reader @Builder methods are excluded; source/DAO/controllers
  * are deterministic fakes. Real waterfall layout must still be tested on-device.
  */
 const fs = require('node:fs');
@@ -31,6 +31,7 @@ const modes = fs.readFileSync(
   path.join(root, 'entry/src/main/ets/features/ReaderModes.ets'), 'utf8')
   .replace(/export /g, '');
 const spreads = fs.readFileSync(path.join(root, 'entry/src/main/ets/features/ReaderSpreads.ets'), 'utf8').replace(/export /g, '');
+const workload = fs.readFileSync(path.join(root, 'entry/src/main/ets/features/ReaderWorkload.ets'), 'utf8').replace(/export /g, '');
 const renderSource = fs.readFileSync(path.join(root, 'entry/src/main/ets/features/ReaderRenderSource.ets'), 'utf8')
   .replace(/^import .*;\r?\n/gm, '').replace(/export /g, '');
 const volumeKeys = fs.readFileSync(path.join(root, 'entry/src/main/ets/features/ReaderVolumeKeys.ets'), 'utf8')
@@ -123,7 +124,10 @@ const env = {
     resolve: () => {
       const value = new env.ReaderOptions(); value.readerMode = env.Settings.readerMode; return value;
     },
-    setActive: async (comicId, sourceKey, key, value) => { env.Settings.readerMode = value; }
+    set: async (scope, comicId, sourceKey, key, value) => {
+      assert.deepEqual([scope, comicId, sourceKey, key], ['comic', 'comic', 'real-key', 'readerMode']);
+      env.Settings.readerMode = value;
+    }
   },
   router: { getParams: () => ({ sourceKey: 'real-key', comicId: 'comic', title: 'Route title' }) },
   Log: { warn: () => {}, error: () => {}, audit: (t,s,m)=>fs.appendFileSync(auditPath,`TraceID=${t} [${s}] ${m}\n`) },
@@ -132,8 +136,8 @@ const env = {
   TouchType: { Down: 0 }
 };
 vm.createContext(env);
-vm.runInContext(stripTypeScriptTypes(helper + '\n' + modes + '\n' + spreads + '\n' + renderSource + '\n' + volumeKeys + '\n' + options + '\n' + chapterNavigation + '\n' + reader +
-  '\nthis.ReaderOptions = ReaderOptions; this.Reader = ReaderPage; this.Position = ReadingPosition; this.Clock = ReadingClock;' +
+vm.runInContext(stripTypeScriptTypes(helper + '\n' + workload + '\n' + modes + '\n' + spreads + '\n' + renderSource + '\n' + volumeKeys + '\n' + options + '\n' + chapterNavigation + '\n' + reader +
+  '\nthis.ReaderOptions = ReaderOptions; this.Reader = ReaderPage; this.Position = ReadingPosition;' +
   ' this.Modes = ReaderModes; this.MODE_KEYS = READER_MODES;', { mode: 'strip' }), env);
 
 let assertions = 0;
@@ -168,18 +172,7 @@ function purePositionCases() {
   eq(p.pageIndex(99, 5), 4, 'page overflow clamps to final page');
   eq(p.pageIndex(1, 0), -1, 'empty chapter has no valid page');
 
-  const clock = new env.Clock();
-  eq(clock.take(100, true), 0, 'unstarted clock');
-  clock.start(100);
-  eq(clock.take(250, false), 150, 'page save consumes interval');
-  eq(clock.take(300, true), 50, 'same-page exit consumes remaining interval');
-  eq(clock.take(500, true), 0, 'duplicate hide/disappear does not double-count');
-  clock.start(900);
-  clock.start(1000);
-  eq(clock.take(1100, true), 200, 'repeated start does not reset active interval');
-  clock.start(1200);
-  eq(clock.take(1100, false), 0, 'backward clock is not negative');
-  eq(clock.take(1250, true), 50, 'clock rollback does not count an interval twice');
+
 }
 
 async function readerControlFlowCases() {
@@ -202,7 +195,8 @@ async function readerControlFlowCases() {
   eq(saves.at(-1).page, 4, 'valid page-change snapshot');
   now = 1500;
   reader.onPageHide();
-  eq(saves.at(-1).readDurationMs, 500, 'same-page exit persists duration');
+  eq(saves.at(-1).page, 4, 'same-page exit retains the latest continue-reading page');
+  eq(saves.length, 2, 'same-page exit does not record another event');
   let count = saves.length;
   now = 1600;
   reader.aboutToDisappear();
@@ -250,17 +244,17 @@ async function readerControlFlowCases() {
   };
   const switching = reader.switchChapter(1);
   await reader.switchChapter(1);
-  eq([starts, reader.epId, saves.at(-1).epId, saves.at(-1).readDurationMs],
-    [1, 'a', 'a', 250], 'fast taps launch once and flush the OLD chapter first');
+  eq([starts, reader.epId, saves.at(-1).epId, saves.at(-1).page],
+    [1, 'a', 'a', 1], 'fast taps launch once and flush the OLD chapter first');
   now = 4000;
   finish({ error: false, dataOrNull: ['b1', 'b2'] });
   await switching;
   while (layoutTasks.length > 0) { layoutTasks.shift()(); }
-  eq([reader.epId, reader.currentPage, saves.at(-1).epId, saves.at(-1).page, saves.at(-1).readDurationMs],
-    ['b', 0, 'b', 1, 0], 'new chapter starts at first page; network time is excluded');
+  eq([reader.epId, reader.currentPage, saves.at(-1).epId, saves.at(-1).page],
+    ['b', 0, 'b', 1], 'new chapter starts at its validated first page');
   now = 4250;
   reader.onPageHide();
-  eq(saves.at(-1).readDurationMs, 250, 'new chapter gets only its own visible interval');
+  eq([saves.at(-1).epId, saves.at(-1).page], ['b', 1], 'same-page hide retains the new chapter position');
 
   reset();
   reader = make();
@@ -373,7 +367,7 @@ async function modeRenderingCase() {
   await coldRouteSettingsCase();
   await modeRenderingCase();
   const tail = assertions - helperCount - modeCount - controlCount;
-  console.log(`PASS ${assertions} production assertions: ${helperCount} position/clock + ` +
+  console.log(`PASS ${assertions} production assertions: ${helperCount} position + ` +
     `${modeCount} reader modes + ${controlCount} reader control-flow + ${tail} cold-route/render.`);
   fs.appendFileSync(auditPath,`TraceID=history-reader-tests [响应返回] PASS ${assertions} production assertions\n`);
   console.log('No ArkTS build/source rules/device. ArkUI visual usability and real database durability remain separate acceptance checks.');

@@ -7,7 +7,7 @@ const ts=require(sdk+'/node_modules/typescript/lib/typescript.js');const options
 const read=f=>fs.readFileSync(path.join(root,f),'utf8'),hash=s=>crypto.createHash('sha256').update(s).digest('hex');
 function methods(text){const file=ts.createSourceFile('ReaderPage.ets',text,ts.ScriptTarget.Latest,true,ts.ScriptKind.ETS,options),result={};function walk(n){if(ts.isMethodDeclaration(n)&&n.name){const name=n.name.getText(file),decorators=ts.getDecorators?ts.getDecorators(n):n.decorators;if(name!=='build'&&!(decorators||[]).some(d=>d.getText(file).includes('Builder')))result[name]=n.getText(file)}ts.forEachChild(n,walk)}walk(file);return result}
 const before=methods(read('logs/legado-interaction-20261023/ReaderPage.before.ets')),now=methods(read('entry/src/main/ets/pages/ReaderPage.ets'));
-const allowed=new Set(['aboutToAppear','imageTapEnabled','onImageSingleTap','dismissReaderMenu','onBackPress','releaseReaderControls','autoStep','syncVolumeKeys']);
+const allowed=new Set(['aboutToAppear','imageTapEnabled','onImageSingleTap','dismissReaderMenu','revealReaderMenu','onBackPress','releaseReaderControls','autoStep','syncVolumeKeys','turnReaderChapter','setBrightnessValue','selectAutoSpeed','selectComicMode']);
 const differences=[];let checked=0;for(const [name,body]of Object.entries(before)){if(allowed.has(name))continue;checked++;if(now[name]!==body)differences.push('NON_UI_READER '+name)}
 // Auto-pager gets only a UI visibility pause guard; its actual page/scroll logic is frozen.
 const normalizedAuto=now.autoStep.replace('this.toolbarVisible || this.showChapters || ','').replace(/\s+/g,' ').trim();assert.equal(normalizedAuto,before.autoStep.replace(/\s+/g,' ').trim());

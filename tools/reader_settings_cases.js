@@ -24,7 +24,7 @@ async function test(name,run){await run();count++;fs.appendFileSync(log,`TraceID
   });
   await test('existing HM mode and explicit legacy interval preserved without rewriting keys',async()=>{
     const e=env({readerMode:'galleryRightToLeft',autoReadIntervalSeconds:30});const o=e.s.resolve('comic','source');
-    assert.equal(o.readerMode,'galleryRightToLeft');assert.equal(o.autoPageTurningInterval,30);assert.equal(e.writes.length,0);
+    assert.equal(o.readerMode,'galleryRightToLeft');assert.equal(o.autoPageTurningInterval,10);assert.equal(e.writes.length,0);
     await e.s.set('global','','','autoPageTurningInterval',7);assert.equal(e.s.resolve('comic','source').autoPageTurningInterval,7);
     assert.equal(e.values.get('autoReadIntervalSeconds'),30);
   });

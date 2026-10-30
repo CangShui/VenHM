@@ -23,8 +23,14 @@ function sync(){
   vm.runInContext(stripTypeScriptTypes(read('entry/src/main/ets/features/DataSync.ets'),{mode:'transform'})+'\nglobalThis.Sync=DataSync;',ctx);
   return {ctx,Sync:ctx.Sync,transactions,insertions,requests,setFail:v=>fail=v};
 }
-let count=0;
-async function test(name,run){await run();count++;fs.appendFileSync(log,`[响应返回] TraceID=download-sync-tests PASS ${name}\n`);}
+let count=0,finished=false;
+process.on('beforeExit',()=>{if(!finished){console.error('FAIL missing final download/sync PASS marker');process.exitCode=1;}});
+async function test(name,run){
+  let timer;
+  try{await Promise.race([run(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('WATCHDOG '+name)),5000)})]);}
+  finally{clearTimeout(timer);}
+  count++;fs.appendFileSync(log,`[响应返回] TraceID=download-sync-tests PASS ${name}\n`);
+}
 (async()=>{
   await test('task creation is paused and duplicate requests do not duplicate tasks',async()=>{
     const e=downloads(),a=await e.Queue.add('fixture','comic'),b=await e.Queue.add('fixture','comic');
@@ -34,7 +40,7 @@ async function test(name,run){await run();count++;fs.appendFileSync(log,`[响应
     const e=downloads(),tasks=await Promise.all(Array.from({length:8},()=>e.Queue.add('fixture','comic')));
     assert.equal(new Set(tasks.map(t=>t.id)).size,1);assert.equal(e.Queue.tasks.length,1);
   });
-  await test('download decodes four real-page candidates and checkpoints each page',async()=>{
+  await test('download decodes four real-page candidates and checkpoints verified batches',async()=>{
     const e=downloads(),task=await e.Queue.add('fixture','comic');await e.Queue.resume(task.id);
     assert.equal(task.status,'completed');assert.equal(task.savedPages,4);assert.equal(task.chapter,2);
     assert.deepEqual(e.calls,['a-1','a-2','b-1','b-2']);
@@ -121,6 +127,19 @@ async function test(name,run){await run();count++;fs.appendFileSync(log,`[响应
     release({getImageInfo:async()=>({size:{width:10,height:20}}),release:async()=>{}});await run;
     assert.equal(task.status,'paused');assert.equal(e.calls.length,4);
   });
+  await test('short image response remains rejected before any part or final file write',async()=>{
+    const e=downloads(),task=await e.Queue.add('fixture','comic');
+    e.ctx.HttpClient.getBytes=async()=>({ok:true,bytes:new ArrayBuffer(63)});
+    await assert.rejects(e.Queue.resume(task.id),/图片响应过短/);
+    assert.equal(task.status,'failed');assert.equal(task.savedPages,0);assert.equal(task.page,0);
+    assert.equal(e.writes.some(path=>path.endsWith('.part')),false);
+    assert.equal([...e.files.keys()].some(path=>/[.](png|jpg|webp|gif|bmp)$/.test(path)),false);
+  });
+  // Keep all original download safety assertions runnable after the optional sync feature is retired.
+  if(process.argv.includes('--downloads-only')){
+    finished=true;console.log(`PASS ${count} production download safety cases; sync cases explicitly excluded (--downloads-only), no real downloads.`);
+    return;
+  }
   await test('invalid/credential-bearing/non-HTTPS endpoints are rejected',async()=>{
     const e=sync();
     for(const url of ['http://server/dav','https://u:p@server/dav','https://server/dav?token=x','https://server/dav#x','https://ser ver/dav']){
@@ -158,5 +177,5 @@ async function test(name,run){await run();count++;fs.appendFileSync(log,`[响应
     assert.equal(e.requests[0].o.headers.get('Authorization'),'Basic '+Buffer.from('fixture:secret').toString('base64'));
     assert.ok(!e.requests[0].o.jsonBody.includes('secret'));
   });
-  console.log(`PASS ${count} production download/sync safety/transport cases; not real WebDAV acceptance.`);
+  finished=true;console.log(`PASS ${count} production download/sync safety/transport cases; not real WebDAV acceptance.`);
 })().catch(e=>{fs.appendFileSync(log,e.stack+'\n');console.error(e);process.exitCode=1});

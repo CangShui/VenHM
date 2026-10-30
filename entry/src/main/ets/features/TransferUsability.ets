@@ -1,8 +1,5 @@
 import { DownloadQueue } from './DownloadQueue';
 import { HistoryUsability } from './HistoryUsability';
-import { DataSync, SyncSnapshot, SyncTable } from './DataSync';
-import { Database } from '../storage/Database';
-import { Settings } from '../foundation/Settings';
 import { Log } from '../foundation/Log';
 import { fileIo as fs } from '@kit.CoreFileKit';
 import { AppContext } from '../foundation/AppContext';
@@ -45,38 +42,6 @@ export class TransferUsability {
       DownloadQueue.cleanupProbe(task.id);
       if (!hadFixture) { await HistoryUsability.cleanupFixture(); }
       Log.audit(trace, '下载验收清理', '仅清理本次隔离下载；已有阅读样本保留');
-    }
-  }
-
-  static async sync(): Promise<string[]> {
-    const trace = `sync-probe-${Date.now()}`;
-    const folder = `__HM_SYNC_PROBE_${Date.now()}_${Math.floor(Math.random() * 1000000000)}`;
-    const rows = await Database.query('SELECT COUNT(*) FROM favorite_folders WHERE name = ?', [folder]);
-    try { if (!rows.goToFirstRow() || rows.getLong(0) !== 0) { throw new Error('验收文件夹标识冲突'); } }
-    finally { rows.close(); }
-    try {
-      const backup = new SyncSnapshot();
-      const table = new SyncTable();
-      table.name = 'favorite_folders';
-      table.columns = ['name', 'display_order'];
-      table.rows = [[folder, 99999]];
-      backup.tables = [table];
-      DataSync.mergeSnapshot(backup, trace);
-      DataSync.mergeSnapshot(backup, trace);
-      const found = await Database.query('SELECT COUNT(*) FROM favorite_folders WHERE name = ?', [folder]);
-      try { if (!found.goToFirstRow() || found.getLong(0) !== 1) { throw new Error('重复合并未正确去重'); } }
-      finally { found.close(); }
-      const snapshot = await DataSync.exportSnapshot(trace);
-      if (snapshot.tables.length !== 3 || snapshot.tables.some((table) =>
-          table.name === 'source_data' || table.name === 'cookies')) {
-        throw new Error('备份白名单未隔离凭据数据');
-      }
-      Log.audit(trace, '同步验收通过', '真实数据库重复合并不新增副本；备份只含历史与收藏；无网络上传');
-      return ['PASS · 同步白名单导出、真实RDB重复合并去重；没有上传任何数据',
-        '待验收 · 用户WebDAV服务器的PUT/GET、真实认证、跨设备冲突同步'];
-    } finally {
-      await Database.execute('DELETE FROM favorite_folders WHERE name = ?', [folder]);
-      Log.audit(trace, '同步验收清理', '只删除随机命名的同步测试收藏夹，用户记录不变');
     }
   }
 }

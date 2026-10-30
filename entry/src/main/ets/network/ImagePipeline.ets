@@ -11,6 +11,20 @@ import { ImageTransforms } from './ImageTransforms';
 
 /** One byte pipeline for covers/reader/download/acceptance, with upstream's five recovery attempts. */
 export class ImagePipeline {
+  /** Validation allocates a small real bitmap, not a full-resolution reader/display bitmap. */
+  static readonly VALIDATION_EDGE: number = 64;
+
+  /** Shared byte/disk validation contract. Header metadata alone is NOT sufficient. */
+  static async validateImage(decoder: image.ImageSource): Promise<void> {
+    const pixel = await decoder.createPixelMap({
+      desiredSize: { width: ImagePipeline.VALIDATION_EDGE, height: ImagePipeline.VALIDATION_EDGE }
+    });
+    try {
+      const info = await pixel.getImageInfo();
+      if (info.size.width <= 0 || info.size.height <= 0) { throw new Error('图片尺寸无效'); }
+    } finally { await pixel.release(); }
+  }
+
   static requestOptions(config: ImageRequestConfig, trace: string): HttpRequestOptions {
     const options = new HttpRequestOptions();
     options.traceId = trace;
@@ -102,12 +116,8 @@ export class ImagePipeline {
         if (!shouldContinue()) { throw new Error('IMAGE_REQUEST_CANCELLED'); }
         const decoder = image.createImageSource(bytes);
         try {
-          const pixel = await decoder.createPixelMap();
-          try {
-            const info = await pixel.getImageInfo();
-            if (info.size.width <= 0 || info.size.height <= 0) { throw new Error('图片尺寸无效'); }
-            Log.audit(trace, '图片流水线返回', `尝试=${attempt + 1}；实际解码=${info.size.width}x${info.size.height}；字节=${bytes.byteLength}`);
-          } finally { await pixel.release(); }
+          await ImagePipeline.validateImage(decoder);
+          Log.audit(trace, '图片流水线返回', `尝试=${attempt + 1}；实际解码校验目标=${ImagePipeline.VALIDATION_EDGE}x${ImagePipeline.VALIDATION_EDGE}；字节=${bytes.byteLength}`);
         } finally { await decoder.release(); }
         return bytes;
       } catch (error) {

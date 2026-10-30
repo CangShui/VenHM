@@ -15,7 +15,7 @@ const ctx=vm.createContext({Date:class extends Date{static now(){return now;}},
  Log:{audit(){},warn(){},error(){}},promptAction:{showToast(){}},ReaderSettings:{},AppContext:{context:{}}
 });
 const helperPath='entry/src/main/ets/features/ReaderRenderSource.ets';
-const helpers=['ReaderModes','ReaderSpreads','ReadingPosition','ReaderTapPolicy'].map(n=>read(`entry/src/main/ets/features/${n}.ets`)).join('\n')+
+const helpers=['ReaderModes','ReaderSpreads','ReadingPosition','ReaderTapPolicy','ReaderWorkload'].map(n=>read(`entry/src/main/ets/features/${n}.ets`)).join('\n')+
  (fs.existsSync(path.join(root,helperPath))?'\n'+read(helperPath):'');
 const options=read('entry/src/main/ets/foundation/ReaderSettings.ets').split('class ReaderProfile')[0];
 vm.runInContext(stripTypeScriptTypes(helpers+'\n'+options+'\n'+reader,{mode:'transform'})+'\nglobalThis.Reader=ReaderPage;',ctx);
@@ -60,18 +60,18 @@ test('rotation/regroup preserves canonical source anchor, RTL grouping, and unch
  const f=page(1000,'waterfallTopToBottom'),row=f.flowSource.getData(500);f.landscape=true;f.relayout();
  assert.equal(f.flowSource.getData(500),row);assert.equal(f.flowSource.getData(500).key,row.key);
 });
-test('progress is coalesced off callback stack, latest source page/duration flushes at timer and final hide',()=>{
- const p=page();p.clock.start(now);for(let i=1;i<100;i++)p.seekPage(i);
+test('resume position is coalesced off callback stack and latest source page flushes at timer/final hide without duration',()=>{
+ const p=page();for(let i=1;i<100;i++)p.seekPage(i);
  assert.equal(saves.length,0,'no disk persistence from page-turn stack');assert.equal(tasks.size,1,'one pending progress flush');
- tick(1000);assert.equal(saves.length,1);assert.equal(saves[0].page,100);assert.equal(saves[0].readDurationMs,1000);
- p.seekPage(500);tick(25);p.onPageHide();assert.equal(saves.length,2);assert.equal(saves[1].page,501);assert.equal(saves[1].readDurationMs,25);
+ tick(1000);assert.equal(saves.length,1);assert.equal(saves[0].page,100);assert.equal('readDurationMs' in saves[0],false);
+ p.seekPage(500);tick(25);p.onPageHide();assert.equal(saves.length,2);assert.equal(saves[1].page,501);assert.equal('readDurationMs' in saves[1],false);
  tick(2000);assert.equal(saves.length,2,'no stale pending write after hide');
 });
 test('chapter-switch forced flush preserves outgoing chapter even with a pending timer',()=>{
- const p=page();p.clock.start(now);p.seekPage(20);tick(10);p.saveProgress(true);
+ const p=page();p.seekPage(20);tick(10);p.saveProgress(true);
  assert.equal(saves.length,1);assert.equal(saves[0].epId,'ch');assert.equal(saves[0].page,21);
- p.epId='next';p.currentPage=0;p.rebuildPresentation();p.clock.start(now);p.saveProgress();tick(1000);
- assert.equal(saves.length,2);assert.equal(saves[1].epId,'next');assert.equal(saves[1].page,1);assert.equal(saves[1].readDurationMs,1000);
+ p.epId='next';p.currentPage=0;p.rebuildPresentation();p.saveProgress();tick(1000);
+ assert.equal(saves.length,2);assert.equal(saves[1].epId,'next');assert.equal(saves[1].page,1);assert.equal('readDurationMs' in saves[1],false);
 });
 console.log(`${count} passed, ${failures} failed; bounded demand simulation + production render contracts, not device mount measurement.`);
 if(failures)process.exitCode=1;

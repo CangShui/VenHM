@@ -28,6 +28,7 @@ struct CategoryComicsPage {
   private disposed: boolean = false;
   private version: number = 0;
   private cursor?: string;
+  private autoPaused: boolean = false;
 
   aboutToAppear(): void {
     this.disposed = false;
@@ -49,12 +50,17 @@ struct CategoryComicsPage {
   private current(version: number): boolean { return !this.disposed && version === this.version; }
 
   private async load(page: number, initializeOptions: boolean = false): Promise<void> {
-    if (page > 1 && (this.loading || this.ended)) { return; }
+    if (this.disposed || page < 1 ||
+      (page > 1 && (this.loading || this.ended || this.currentPage < 1 || page !== this.currentPage + 1))) { return; }
+    const sourceKey = this.params.sourceKey;
     const version = ++this.version;
     const trace = `category-results-${Date.now()}-${version}`;
     // Set loading synchronously before initialization/options/source callbacks.
     this.loading = true; this.error = '';
-    if (page === 1) { this.comics = []; this.currentPage = 0; this.cursor = undefined; this.ended = false; }
+    if (page === 1) {
+      this.comics = []; this.currentPage = 0; this.cursor = undefined; this.ended = false; this.autoPaused = false;
+      if (initializeOptions) { this.options = []; this.optionValues = []; }
+    }
     Log.audit(trace, '分类标签加载到达', `页=${page}；目标类型=${this.params?.page}；参数/正文不落盘`);
     try {
       await AppInit.init();
@@ -101,12 +107,15 @@ struct CategoryComicsPage {
           result = await search.loadNext(keyword, this.cursor, this.params.options?.slice() ?? []);
         } else { result = await search.loadPage(keyword, page, this.params.options?.slice() ?? []); }
       } else { throw new Error('源提供的目标类型不受支持'); }
-      if (!this.current(version)) { Log.audit(trace, '分类结果拦截', '页面已变化；丢弃旧结果'); return; }
+      if (!this.current(version) || sourceKey !== this.params.sourceKey || source !== SourceManager.find(sourceKey)) {
+        Log.audit(trace, '分类结果拦截', '页面或源已变化；丢弃旧结果'); return;
+      }
       if (result.error) { throw new Error(`分类/标签加载失败：${SourceFailure.message(result.errorMessage)}（诊断 ${trace}）`); }
       const items = result.dataOrNull;
-      if (items === undefined || items.length === 0) {
+      if (items === undefined) { throw new Error('源未返回有效列表，请重试'); }
+      if (items.length === 0) {
         if (page === 1) { throw new Error('该分类/标签返回空数据，请重试'); }
-        this.ended = true;
+        this.ended = true; this.currentPage = page;
         Log.audit(trace, '分类响应返回', '后续页为空，列表结束'); return;
       }
       const merged: Comic[] = page === 1 ? [] : this.comics.slice();
@@ -120,9 +129,10 @@ struct CategoryComicsPage {
       }
       const next = result.subDataString;
       const max = next !== undefined ? Number(next) : NaN;
-      this.ended = added === 0 || (this.params.page === 'search' && source.search?.cursorOnly
+      this.ended = this.params.page === 'search' && source.search?.cursorOnly
         ? next === undefined || next.length === 0 || next === this.cursor
-        : !isNaN(max) && page >= max);
+        : Number.isFinite(max) && max > 0 && page >= max;
+      this.autoPaused = !this.ended && added === 0;
       this.cursor = next; this.currentPage = page; this.comics = merged;
       Log.audit(trace, '分类响应返回', `接收=${items.length}；新增=${added}；已到末页=${this.ended}`);
     } catch (error) {
@@ -131,6 +141,12 @@ struct CategoryComicsPage {
       Log.audit(trace, '分类标签异常', '能力缺失、选项/列表空值或回调失败；保留已加载结果；不记录异常正文');
     } finally {
       if (this.current(version)) { this.loading = false; }
+    }
+  }
+
+  private reachEnd(): void {
+    if (!this.loading && this.currentPage > 0 && this.error.length === 0 && !this.autoPaused) {
+      this.load(this.currentPage + 1);
     }
   }
 
@@ -179,13 +195,20 @@ struct CategoryComicsPage {
                 sourceKey: comic.sourceKey, comicId: comic.id, onTapCell: () => { this.openComic(comic); } })
             }
           }, (comic: Comic) => `${comic.sourceKey}@${comic.id}`)
+          GridItem() {
+            Column({ space: 10 }) {
+              if (this.error.length > 0) {
+                Text(this.error).fontSize(13).fontColor(UiTheme.danger).lineHeight(20).width('100%').textAlign(TextAlign.Center)
+                Button('重试').attributeModifier(UiStyles.secondary).onClick(() => { this.retry(); })
+              }
+              Button(this.loading ? '加载中…' : (this.ended ? '已到末页' : '加载更多'))
+                .attributeModifier(UiStyles.primary).enabled(!this.loading && !this.ended)
+                .onClick(() => { this.load(this.currentPage + 1); })
+            }.width('100%').padding({ top: 10, bottom: 28 }).alignItems(HorizontalAlign.Center)
+          }.columnStart(0).columnEnd(2)
         }.columnsTemplate('1fr 1fr 1fr').columnsGap(12).rowsGap(18).padding({ top: 12, bottom: 12 }).layoutWeight(1).width('100%')
-        if (this.error.length > 0) {
-          Text(this.error).fontSize(13).fontColor(UiTheme.danger).lineHeight(20).padding(14).width('100%').backgroundColor(UiTheme.dangerSoft).borderRadius(16)
-          Button('重试').attributeModifier(UiStyles.secondary).onClick(() => { this.retry(); })
-        }
-        Button(this.loading ? '加载中…' : (this.ended ? '已到末页' : '加载更多')).attributeModifier(UiStyles.primary).margin({ top: 8, bottom: 16 })
-          .enabled(!this.loading && !this.ended).onClick(() => { this.load(this.currentPage + 1); })
+          .onReachEnd(() => { this.reachEnd(); })
+
       }
       }.width('100%').layoutWeight(1).padding({ left: UiTheme.gutter, right: UiTheme.gutter })
     }.width('100%').height('100%').backgroundColor(UiTheme.page)

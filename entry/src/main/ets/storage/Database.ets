@@ -43,6 +43,7 @@ export class Database {
     };
     const store = await relationalStore.getRdbStore(AppContext.context, config);
     await Database.createTables(store);
+    await Database.removeRetiredData(store);
     // Publish only after all migrations succeed; retries must not skip them.
     Database.store = store;
     Log.info('Database', 'rdb store ready');
@@ -94,7 +95,6 @@ export class Database {
         'read_episode TEXT NOT NULL DEFAULT \'\', ' +
         'max_page INTEGER, ' +
         'chapter_group INTEGER, ' +
-        'read_duration_ms INTEGER NOT NULL DEFAULT 0, ' +
         'PRIMARY KEY (id, type))');
 
     // Upgrade existing installs in place. Do not rebuild/drop user history.
@@ -147,6 +147,34 @@ export class Database {
         'SELECT DISTINCT folder, 1 FROM favorites');
 
     Log.info('Database', 'tables ensured');
+  }
+
+  /** Idempotent upgrade: remove only the retired modules' known tables and duration. */
+  static async removeRetiredData(store: relationalStore.RdbStore): Promise<void> {
+    // Explicit names only: never discover/drop tables by prefix or touch user files.
+    await store.executeSql('DROP TABLE IF EXISTS reader_stats_legacy');
+    await store.executeSql('DROP TABLE IF EXISTS reader_stats_segments');
+    await store.executeSql('DROP TABLE IF EXISTS reader_stats_pages');
+    await store.executeSql('DROP TABLE IF EXISTS reader_stats_meta');
+    await store.executeSql('DROP TABLE IF EXISTS picture_favorites');
+    const columns = await store.querySql('PRAGMA table_info(history)');
+    let hasDuration = false;
+    try {
+      while (columns.goToNextRow()) {
+        if (columns.getString(columns.getColumnIndex('name')) === 'read_duration_ms') { hasDuration = true; }
+      }
+    } finally { columns.close(); }
+    if (hasDuration) {
+      try {
+        // Modern SQLite can remove this non-key column without rebuilding history.
+        await store.executeSql('ALTER TABLE history DROP COLUMN read_duration_ms');
+      } catch (error) {
+        // Older engines may lack DROP COLUMN. Erase the data, retain the inert
+        // default-zero column; never drop/rebuild history and risk resume positions.
+        await store.executeSql('UPDATE history SET read_duration_ms = 0');
+        Log.info('Database', 'retired duration erased; legacy empty column retained');
+      }
+    }
   }
 
   static async execute(sql: string, args?: relationalStore.ValueType[]): Promise<void> {

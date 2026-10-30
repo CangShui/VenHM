@@ -13,12 +13,12 @@
 |---|---|
 | 漫画源 | QuickJS 原生运行时（NAPI）+ `sendMessage` 桥；支持 JS 源安装、校验、失败回退 |
 | 搜索/探索 | 源选择、关键字搜索、聚合搜索（无固定源数量上限）、分类与排行、筛选与标签路由 |
-| 详情 | 封面/作者/标签/简介、章节列表、评论、分享、图片与网络收藏 |
-| 阅读器 | 7 种模式（翻页/连续/瀑布、横竖、RTL）、双页拆分、点击分区、自动阅读、亮度、音量键、阅读统计 |
+| 详情 | 封面/作者/标签/简介、章节列表、评论、分享、图片查看与网络收藏 |
+| 阅读器 | 7 种模式（翻页/连续/瀑布、横竖、RTL）、双页拆分、点击分区、自动阅读、亮度、音量键、继续阅读位置 |
 | 阅读交互 | 整阅读窗口九宫格；进入正文菜单隐藏，中心唤出，菜单外点仅关闭不翻页（参考 Legado-E 默认行为，UI 为自有） |
 | 下载 | 前台/后台下载队列、并发与进度、断点续传校验、后台任务租约 |
 | 缓存 | 持久化图片缓存、容量上限与 LRU、统计与清理（不影响下载/历史） |
-| 数据 | 收藏/历史/阅读统计/追更、WebDAV 阅读数据备份入口 |
+| 数据 | 本地与网络收藏、历史与继续阅读位置、追更；不收集阅读时长/次数统计 |
 | 界面 | 统一浅灰画布、白色圆角分组卡片、固定方框原生矢量图标、悬浮底部导航 |
 
 尚未完成与已知限制见 [docs/FEATURE_PARITY.md](docs/FEATURE_PARITY.md) 与 [docs/HANDOVER.md](docs/HANDOVER.md)。
@@ -53,6 +53,24 @@ $env:DEVECO_SDK_HOME = "$deveco\sdk"
 $env:PATH = "$deveco\tools\node;$deveco\tools\ohpm\bin;$deveco\tools\hvigor\bin;$deveco\jbr\bin;$env:PATH"
 hvigorw --mode module -p product=default -p module=entry@default -p buildMode=debug assembleHap --no-daemon
 ```
+
+### 一键构建并安装到手机
+
+```powershell
+.\tools\deploy.ps1                      # 构建 + 覆盖安装（默认不启动应用）
+.\tools\deploy.ps1 -SkipBuild           # 直接装上次构建的签名包
+.\tools\deploy.ps1 -WaitSeconds 120     # 先等手机接入
+.\tools\deploy.ps1 -Launch              # 装完顺手启动
+```
+
+也可以直接双击 `tools\deploy.cmd`（参数同样可用）。
+
+脚本行为：检测 DevEco 与设备 → 可选构建 → 打印包名/体积/SHA-256 → `hdc install -r` 覆盖安装 →
+必须匹配到 `install bundle successfully` 才算成功，否则以非零退出并指向日志。
+**从不卸载、不清数据；不加 `-Launch` 就不会打开应用。**
+
+> 脚本会先把工作目录切到项目根（`hvigor` 按当前目录找 `hvigor/hvigor-config.json5`，双击 `deploy.cmd` 时默认在 `tools\`），
+> 构建失败会直接打印日志里的 ERROR 行，而不是只给一个日志路径。
 
 ### 签名说明（重要）
 

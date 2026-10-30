@@ -17,12 +17,14 @@ const context = vm.createContext({
     // Production asks the scroller whether the flow already reached the end,
     // and may nudge the viewport by a pixel delta.
     // Tests flip this to simulate reaching the end of a continuous flow.
+    currentOffset() { return { xOffset: 100, yOffset: 100 }; }
     isAtEnd() { return globalThis.__listAtEnd === true; }
     scrollBy(x, y) { calls.push(['scrollBy', x, y]); }
   },
   History: class {}, ComicType: { fromKey: () => ({ value: 1 }) },
   HistoryDao: { save: h => { saves.push(h); return Promise.resolve(); } },
-  ReaderSettings: { resolve: () => active, setActive: async (id, key, name, value) => {
+  ReaderSettings: { resolve: () => active, set: async (scope, id, key, name, value) => {
+    assert.deepEqual([scope,id,key,name], ['comic','comic','fixture','readerMode']);
     if (failWrite) throw new Error('full disk');
     active = Object.assign(new context.Options(), active, { [name]: value });
   } },
@@ -41,7 +43,8 @@ const context = vm.createContext({
   // source/image identities remain this suite's contract.
   ReaderWindowChrome: class { enter() { return Promise.resolve(); } leave() { return Promise.resolve(); } }
 });
-const logic = read('entry/src/main/ets/features/ReaderModes.ets') + '\n' +
+const logic = read('entry/src/main/ets/features/ReaderWorkload.ets') + '\n' +
+  read('entry/src/main/ets/features/ReaderModes.ets') + '\n' +
   read('entry/src/main/ets/features/ReaderSpreads.ets') + '\n' +
   read('entry/src/main/ets/features/ReaderRenderSource.ets') + '\n' +
   read('entry/src/main/ets/features/ReaderVolumeKeys.ets') + '\n' +
@@ -63,6 +66,7 @@ function page(mode = 'galleryLeftToRight', imageCount = 11, size = 3, first = fa
   p.images = Array.from({ length: imageCount }, (_, index) => `source-${index}`);
   p.chapterIds = ['chapter-A', 'chapter-B']; p.epId = 'chapter-A';
   p.sourceKey = 'fixture'; p.comicId = 'comic'; p.mode = mode;
+  p.viewportWidth = 600; p.viewportHeight = 900;
   active = new context.Options(); active.readerMode = mode;
   active.readerScreenPicNumberForPortrait = size; active.readerScreenPicNumberForLandscape = 5;
   active.showSingleImageOnFirstPage = first; p.options = active; p.rebuildPresentation();

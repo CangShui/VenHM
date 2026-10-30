@@ -17,8 +17,6 @@ export class History {
   page: number = 1;
   group?: number;
   maxPage?: number;
-  /** On save this is a delta; on read this is the accumulated duration. */
-  readDurationMs: number = 0;
 
   get sourceKey(): string {
     return this.storedSourceKey || (this.type.isLocal ? 'local' : `type:${this.type.value}`);
@@ -32,7 +30,7 @@ export class History {
 
 export class HistoryDao {
   private static readonly columns: string =
-    'id,type,source_key,ep_id,title,subtitle,cover,time,ep,page,max_page,chapter_group,read_duration_ms';
+    'id,type,source_key,ep_id,title,subtitle,cover,time,ep,page,max_page,chapter_group';
   private static listeners: Array<() => void> = [];
 
   static addListener(listener: () => void): void {
@@ -62,7 +60,7 @@ export class HistoryDao {
   static async save(history: History): Promise<void> {
     if (history.id.length === 0 || !Number.isFinite(history.ep) || history.ep < 1 ||
         !Number.isFinite(history.page) || history.page < 1 ||
-        !Number.isFinite(history.time) || !Number.isFinite(history.readDurationMs)) {
+        !Number.isFinite(history.time)) {
       throw new Error('无效的阅读进度');
     }
     if (history.storedSourceKey.length > 0 &&
@@ -70,18 +68,16 @@ export class HistoryDao {
       throw new Error('历史记录的漫画源与类型不一致');
     }
     Database.rdb.executeSync(
-      'INSERT INTO history (' + HistoryDao.columns + ') VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?) ' +
+      'INSERT INTO history (' + HistoryDao.columns + ') VALUES (?,?,?,?,?,?,?,?,?,?,?,?) ' +
       'ON CONFLICT(id,type) DO UPDATE SET ' +
       "source_key=CASE WHEN excluded.source_key='' THEN history.source_key ELSE excluded.source_key END," +
       'ep_id=COALESCE(excluded.ep_id,history.ep_id),' +
       'title=excluded.title,subtitle=excluded.subtitle,cover=excluded.cover,' +
       'time=excluded.time,ep=excluded.ep,page=excluded.page,max_page=excluded.max_page,' +
-      'chapter_group=excluded.chapter_group,' +
-      'read_duration_ms=history.read_duration_ms+excluded.read_duration_ms',
+      'chapter_group=excluded.chapter_group',
       [history.id, history.type.value, history.storedSourceKey, history.epId ?? null,
         history.title, history.subtitle, history.cover, history.time, Math.floor(history.ep),
-        Math.floor(history.page), history.maxPage ?? null, history.group ?? null,
-        Math.max(0, history.readDurationMs)]);
+        Math.floor(history.page), history.maxPage ?? null, history.group ?? null]);
     HistoryDao.changed();
   }
 
@@ -152,7 +148,6 @@ export class HistoryDao {
     history.maxPage = result.isColumnNull(maxPage) ? undefined : result.getLong(maxPage);
     const group = result.getColumnIndex('chapter_group');
     history.group = result.isColumnNull(group) ? undefined : result.getLong(group);
-    history.readDurationMs = result.getLong(result.getColumnIndex('read_duration_ms'));
     return history;
   }
 }

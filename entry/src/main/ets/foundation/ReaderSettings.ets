@@ -142,7 +142,11 @@ export class ReaderSettings {
     let min: number = 0; let max: number = 0;
     if (name === 'readerScreenPicNumberForPortrait' || name === 'readerScreenPicNumberForLandscape') { min = 1; max = 5; }
     else if (name === 'readerSideMargin') { min = 0; max = 30; }
-    else if (name === 'autoPageTurningInterval') { min = 1; max = 20; }
+    else if (name === 'autoPageTurningInterval') {
+      if (typeof value !== 'number' || !Number.isFinite(value) || value < 0.1 || value > 10 ||
+        Math.abs(value * 10 - Math.round(value * 10)) > 0.000001) { throw new Error('每页停留时间必须为0.1–10秒，步长0.1秒'); }
+      return Math.round(value * 10) / 10;
+    }
     else if (name === 'readerBrightness') { min = 20; max = 100; }
     else if (name === 'autoScrollSpeed') { min = 10; max = 1000; }
     else if (name === 'autoScrollFrequency') { min = 1; max = 10; }
@@ -203,9 +207,12 @@ export class ReaderSettings {
     // Earlier HM exposed a different interval key; preserve an explicitly saved value.
     const legacy = Settings.getInt('autoReadIntervalSeconds', -1);
     const interval = ReaderSettings.raw('autoPageTurningInterval', comicId, sourceKey, includeDevice);
-    if (interval === undefined && legacy >= 1 && legacy <= 60) {
-      result.autoPageTurningInterval = legacy;
-    } else { result.autoPageTurningInterval = ReaderSettings.integer('autoPageTurningInterval', 5, comicId, sourceKey, includeDevice); }
+    const savedInterval = interval === undefined ? (legacy >= 1 && legacy <= 60 ? legacy :
+      Settings.getInt('autoPageTurningInterval', 5)) : interval;
+    // Old versions allowed 20/30/60 seconds. Clamp their stored values on read;
+    // new writes use the explicit 0.1-second schema and never round to integer.
+    result.autoPageTurningInterval = typeof savedInterval === 'number' && Number.isFinite(savedInterval) ?
+      Math.round(Math.max(0.1, Math.min(10, savedInterval)) * 10) / 10 : 5;
     result.autoReadingAcrossChapters = ReaderSettings.boolean('autoReadingAcrossChapters', true, comicId, sourceKey, includeDevice);
     result.enableTapToTurnPages = ReaderSettings.boolean('enableTapToTurnPages', true, comicId, sourceKey, includeDevice);
     result.reverseTapToTurnPages = ReaderSettings.boolean('reverseTapToTurnPages', false, comicId, sourceKey, includeDevice);

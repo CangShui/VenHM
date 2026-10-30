@@ -1,5 +1,5 @@
 'use strict';
-// Host-only production ArkTS DAL/services/session with real SQLite and fixture files.
+// Current scope: ordinary local favorites, follow updates and network favorites. Retired picture-only cases removed.
 // No SDK/device/accounts/network/app userdata; adapters only map platform APIs to host fixtures.
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),vm=require('node:vm'),assert=require('node:assert/strict');
 const {DatabaseSync}=require('node:sqlite');const {stripTypeScriptTypes}=require('node:module');
@@ -8,66 +8,47 @@ const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const clean=p=>read(p).replace(/^import[\s\S]*?;\r?\n/gm,'').replace(/\bexport /g,'');
 fs.writeFileSync(log,'Production collection DAL/services/session. Actual isolated SQLite + fixture files, controlled source callbacks; no SDK/device/live account/network.\n');
 const sqlite=new DatabaseSync(path.join(temp,'fixture.sqlite'));let openCount=0;
-const rdb={executeSql:async(sql,args=[])=>sqlite.prepare(sql).run(...args),querySql:async(sql,args=[])=>{
+const rdb={executeSync:(sql,args=[])=>sqlite.prepare(sql).run(...args),executeSql:async(sql,args=[])=>sqlite.prepare(sql).run(...args),querySql:async(sql,args=[])=>{
  const stmt=sqlite.prepare(sql),names=stmt.columns().map(c=>c.name),rows=stmt.all(...args);let i=-1;
- return {goToNextRow:()=>++i<rows.length,getColumnIndex:n=>names.indexOf(n),getString:c=>String(rows[i][names[c]]??''),getLong:c=>Number(rows[i][names[c]]),close:()=>{}};
+ return {goToFirstRow:()=>{i=0;return rows.length>0},goToNextRow:()=>++i<rows.length,getColumnIndex:n=>names.indexOf(n),getString:c=>String(rows[i][names[c]]??''),getLong:c=>Number(rows[i][names[c]]),close:()=>{}};
 }};
-const sources=new Map();const calls=[];let pipelineFailure=false;
-const hostfs={OpenMode:{CREATE:1,EXCL:2,WRITE_ONLY:4},accessSync:p=>fs.existsSync(p),mkdirSync:(p,r)=>fs.mkdirSync(p,{recursive:r}),statSync:p=>fs.statSync(p),
- open:async p=>({fd:fs.openSync(p,'wx')}),write:async(fd,bytes)=>fs.writeSync(fd,Buffer.from(bytes)),fsync:async fd=>fs.fsyncSync(fd),close:async file=>fs.closeSync(file.fd),unlink:async p=>fs.unlinkSync(p)};
+const sources=new Map();const calls=[];
 const ctx=vm.createContext({Error,Map,Set,Promise,Date,JSON,Number,Math,ArrayBuffer,Uint8Array,
  relationalStore:{SecurityLevel:{S1:1},getRdbStore:async()=>{openCount++;return rdb}},
- AppContext:{context:{},filesDir:temp},Log:{info:()=>{},audit:()=>{}},fs:hostfs,util:{generateRandomUUID:()=>require('node:crypto').randomUUID()},
- SourceManager:{find:k=>sources.get(k)},ImageRequests:{resolve:async(source,url,thumb,id,ep,trace)=>{calls.push([source.key,url,thumb,id,ep]);return {url}}},
- ImagePipeline:{fetch:async()=>{if(pipelineFailure)throw Error('secret=https://fixture.invalid/?token=private');return new Uint8Array([137,80,78,71,7,8,9]).buffer}}
+ AppContext:{context:{},filesDir:temp},Log:{info:()=>{},audit:()=>{},warn:()=>{}},
+ SourceManager:{find:k=>sources.get(k)}
 });
 vm.runInContext(stripTypeScriptTypes([
  'entry/src/main/ets/foundation/Extensions.ets','entry/src/main/ets/model/Comic.ets','entry/src/main/ets/model/ComicDetails.ets',
  'entry/src/main/ets/model/Res.ets','entry/src/main/ets/storage/Database.ets','entry/src/main/ets/source/AuthLogScope.ets',
- 'entry/src/main/ets/storage/PictureFavoritesDao.ets','entry/src/main/ets/features/PictureFavorites.ets',
+ 'entry/src/main/ets/model/ComicType.ets','entry/src/main/ets/storage/FavoritesDao.ets',
  'entry/src/main/ets/storage/FollowUpdatesDao.ets','entry/src/main/ets/features/FollowUpdates.ets',
  'entry/src/main/ets/source/ComicSource.ets','entry/src/main/ets/source/JsFavoritesAdapter.ets','entry/src/main/ets/features/NetworkFavoritesSession.ets'
-].map(clean).join('\n'),{mode:'transform'})+'\nglobalThis.T={Database,PictureFavorite,PictureFavoritesDao,PictureFavorites,FollowUpdate,FollowUpdatesDao,FollowUpdates,ComicDetails,ComicChapters,ComicSource,Res,JsFavoritesAdapter,NetworkFavoritesSession};',ctx);
+].map(clean).join('\n'),{mode:'transform'})+'\nglobalThis.T={Database,FavoriteItem,FavoritesDao,FollowUpdate,FollowUpdatesDao,FollowUpdates,ComicDetails,ComicChapters,ComicSource,Res,JsFavoritesAdapter,NetworkFavoritesSession};',ctx);
 const T=ctx.T,ok=(v,s)=>T.Res.ok(v,s),defer=()=>{let resolve;return {promise:new Promise(r=>resolve=r),resolve:v=>resolve(v)}};
 ctx.JsEngine={callJson:async code=>vm.runInContext(code,ctx)};
 vm.runInContext('ComicSource.sources={};',ctx);
 let count=0;async function test(name,fn){await fn();count++;fs.appendFileSync(log,'PASS '+name+'\n')}
 (async()=>{
  await test('production DB initializes once and own tables preserve existing history/favorite records',async()=>{
-  await Promise.all([T.PictureFavoritesDao.init(),T.FollowUpdatesDao.init()]);assert.equal(openCount,1);
+  await Promise.all([T.Database.init(),T.FollowUpdatesDao.init()]);assert.equal(openCount,1);
   sqlite.prepare("INSERT INTO history(id,type,title,time) VALUES ('fixture',1,'untouched',1)").run();
   sqlite.prepare("INSERT INTO favorites(id,type,name,time) VALUES ('fixture',1,'untouched','1')").run();
-  await T.PictureFavoritesDao.init();await T.FollowUpdatesDao.init();
+  await T.Database.init();await T.FollowUpdatesDao.init();
   assert.equal(sqlite.prepare('SELECT count(*) n FROM history').get().n,1);assert.equal(sqlite.prepare('SELECT count(*) n FROM favorites').get().n,1);
  });
- await test('picture copies processed bytes with opaque owned filename and composite identity, restart metadata',async()=>{
-  sources.set('a',{key:'a'});sources.set('b',{key:'b'});
-  await T.PictureFavorites.save('a','same','ep',1,'Title','https://fixture.invalid/?token=private');
-  await T.PictureFavorites.save('b','same','ep',1,'Other','https://fixture.invalid/b');
-  await T.PictureFavorites.save('a','same','other',1,'Chapter','https://fixture.invalid/c');
-  const rows=await T.PictureFavoritesDao.list();assert.equal(rows.length,3);
-  const a=rows.find(r=>r.sourceKey==='a'&&r.epId==='ep');assert.match(a.fileName,/^[a-f0-9]{32}\.image$/);
-  assert.deepEqual([...fs.readFileSync(T.PictureFavorites.ownedPath(a.fileName))],[137,80,78,71,7,8,9]);
-  assert.deepEqual(calls[0].slice(0,5),['a','https://fixture.invalid/?token=private',false,'same','ep']);
-  const persisted=sqlite.prepare('SELECT * FROM picture_favorites').all();assert.doesNotMatch(JSON.stringify(persisted),/https:|token|private/);
-  await assert.rejects(()=>T.PictureFavorites.save('a','same','ep',1,'Title','https://fixture.invalid'),/已收藏/);
-  const reopen=new DatabaseSync(path.join(temp,'fixture.sqlite'));assert.equal(reopen.prepare('SELECT count(*) n FROM picture_favorites').get().n,3);reopen.close();
- });
- await test('picture explicit confirmation and validated owned paths forbid traversal and stale file deletion',async()=>{
-  const a=await T.PictureFavoritesDao.find('a','same','ep',1);await assert.rejects(()=>T.PictureFavorites.remove(a,false),/确认/);
-  for(const bad of ['../original.jpg','a/b.image','C:\\original','a'.repeat(32)+'.image/../other'])assert.throws(()=>T.PictureFavorites.ownedPath(bad));
-  const outside=path.join(temp,'original.jpg');fs.writeFileSync(outside,'original');
-  const bad=new T.PictureFavorite();Object.assign(bad,{sourceKey:'a',comicId:'bad',epId:'',page:1,fileName:'../original.jpg'});await T.PictureFavoritesDao.put(bad);
-  await assert.rejects(()=>T.PictureFavorites.remove(bad,true),/非图片收藏/);assert.equal(fs.readFileSync(outside,'utf8'),'original');
-  await T.PictureFavoritesDao.remove(bad);
-  const stale=Object.assign(new T.PictureFavorite(),a,{fileName:'0'.repeat(32)+'.image'});await assert.rejects(()=>T.PictureFavorites.remove(stale,true),/变化/);
-  const oldPath=T.PictureFavorites.ownedPath(a.fileName);await T.PictureFavorites.remove(a,true);assert.equal(fs.existsSync(oldPath),false);
-  assert.equal((await T.PictureFavoritesDao.list()).length,2);assert.equal(fs.readFileSync(outside,'utf8'),'original');
- });
- await test('failed image pipeline creates no metadata/file and redacts source URL exception',async()=>{
-  pipelineFailure=true;const before=fs.readdirSync(T.PictureFavorites.directory).length;
-  await assert.rejects(()=>T.PictureFavorites.save('a','fail','',2,'Fail','https://fixture.invalid/private'),e=>!e.message.includes('private'));
-  pipelineFailure=false;assert.equal(await T.PictureFavoritesDao.find('a','fail','',2),undefined);assert.equal(fs.readdirSync(T.PictureFavorites.directory).length,before);
+ await test('ordinary local favorite folders/add/dedup/copy/remove preserve source identity',async()=>{
+   await T.FavoritesDao.createFolder('retained-folder');
+   const item=new T.FavoriteItem();Object.assign(item,{id:'local-favorite',name:'Local retained',sourceKey:'local',folder:'retained-folder',time:'2026-01-01'});
+   assert.equal(await T.FavoritesDao.add(item),true);assert.equal(await T.FavoritesDao.add(item),false);
+   assert.equal((await T.FavoritesDao.list('retained-folder'))[0].sourceKey,'local');
+   await T.FavoritesDao.createFolder('copy-folder');
+   assert.equal(await T.FavoritesDao.copyFavorite('retained-folder','copy-folder',item.id,item.type.value),true);
+   await T.FavoritesDao.remove(item.id,item.type.value,'retained-folder');
+   assert.equal(await T.FavoritesDao.isFavoriteIn('retained-folder',item.id,item.type.value),false);
+   assert.equal(await T.FavoritesDao.isFavoriteIn('copy-folder',item.id,item.type.value),true);
+   await T.FavoritesDao.removeEverywhere(item.id,item.type.value);
+   assert.equal(await T.FavoritesDao.isFavorite(item.id,item.type.value),false);
  });
  const detail=(ids,date='2026-01-01')=>{const d=new T.ComicDetails();d.chapters=T.ComicChapters.flatOf(new Map(ids.map(id=>[id,'Chapter '+id])));d.updateTime=date;return d};
  await test('follow subscribe is local only, first check baseline not unread; changes/readmark/failure persist',async()=>{
@@ -116,5 +97,5 @@ let count=0;async function test(name,fn){await fn();count++;fs.appendFileSync(lo
  });
  assert.equal(sqlite.prepare('SELECT title FROM history WHERE id=?').get('fixture').title,'untouched');
  assert.equal(sqlite.prepare('SELECT name FROM favorites WHERE id=?').get('fixture').name,'untouched');
- console.log(`PASS ${count} production collection DAL/service/session fixture cases; no SDK/device/network acceptance.`);
+ console.log(`PASS ${count} retained local favorites/follow/network collection DAL/service/session cases (no picture-favorite or backup cases); no SDK/device/network acceptance.`);
 })().catch(e=>{fs.appendFileSync(log,e.stack+'\n');console.error(e);process.exitCode=1}).finally(()=>{sqlite.close();if(temp.startsWith(os.tmpdir()+path.sep+'venera-collections-'))fs.rmSync(temp,{recursive:true,force:true})});

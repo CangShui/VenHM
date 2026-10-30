@@ -61,6 +61,17 @@ function recordCheckpoints(e,into){
     const written=writeSync(path,body);
     if(typeof body==='string'&&path.endsWith('downloads.json.tmp')){
       const ledger=JSON.parse(body);
+      for(const task of ledger){
+        let verified=0;
+        for(let chapter=0;chapter<=task.chapter&&chapter<task.chapterIds.length;chapter++){
+          const count=chapter===task.chapter?task.page:task.chapterPageCounts[chapter];
+          for(let page=1;page<=count;page++){
+            assert.ok(e.files.has(pagePath(task,chapter+1,page)),`persisted prefix missing chapter ${chapter+1} page ${page}`);
+            verified++;
+          }
+        }
+        assert.equal(task.savedPages,verified,'every persisted saved page belongs to the on-disk contiguous prefix');
+      }
       if(Array.isArray(ledger)&&ledger.length>0){
         into.push({chapter:ledger[0].chapter,page:ledger[0].page,saved:ledger[0].savedPages});
       }
@@ -199,15 +210,15 @@ async function waitFor(predicate,label){
     assert.equal(task.chapter,1,'chapter rolled over after the last page');
     assert.equal(task.page,0);
     assert.deepEqual([1,2,3].map(page=>e.files.has(pagePath(task,1,page))),[true,true,true]);
-    // Persisted checkpoints advance one page at a time, never by a jump.
+    // Each persisted batch is bounded and disk-prefix verified by recordCheckpoints above.
     for(let index=1;index<checkpoints.length;index++){
       const previous=checkpoints[index-1],current=checkpoints[index];
-      assert.ok(current.saved<=previous.saved+1,`savedPages jumped ${previous.saved} -> ${current.saved}`);
-      if(current.chapter===previous.chapter){assert.ok(current.page<=previous.page+1,`page jumped ${previous.page} -> ${current.page}`);}
+      assert.ok(current.saved<=previous.saved+e.Queue.PAGE_WORKERS,`savedPages exceeded a batch ${previous.saved} -> ${current.saved}`);
+      if(current.chapter===previous.chapter){assert.ok(current.page<=previous.page+e.Queue.PAGE_WORKERS,`page exceeded a batch ${previous.page} -> ${current.page}`);}
       else{assert.equal(current.chapter,previous.chapter+1,'chapters advance one at a time');}
     }
     assert.deepEqual(checkpoints.map(entry=>`${entry.chapter}/${entry.page}`).filter((value,index,all)=>all.indexOf(value)===index),
-      ['0/0','0/1','0/2','0/3','1/0']);
+      ['0/0','0/3','1/0']);
 
     // A failed earlier page must never let the later pages of the same batch be checkpointed.
     const failed=installSource(downloads(),1,3),failedTask=await failed.Queue.add('fixture','comicF');
@@ -256,7 +267,7 @@ async function waitFor(predicate,label){
     let decoding=0;
     late.ctx.image.createImageSource=()=>({
       getImageInfo:async ()=>{decoding++;await decode.promise;return {size:{width:10,height:20},mimeType:'image/png'}},
-      createPixelMap:async()=>({release:async()=>{}}),
+      createPixelMap:async()=>({getImageInfo:async()=>({size:{width:10,height:20}}),release:async()=>{}}),
       release:async()=>{}
     });
     const lateRun=late.Queue.resume(lateTask.id);

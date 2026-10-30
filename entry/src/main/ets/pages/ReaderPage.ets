@@ -14,13 +14,12 @@ import { ReaderSpread, ReaderSpreads } from '../features/ReaderSpreads';
 import { AppInit } from '../foundation/AppInit';
 import { AppContext } from '../foundation/AppContext';
 import { Log } from '../foundation/Log';
-import { ReadingClock, ReadingPosition } from '../features/ReadingPosition';
-import { ChapterInfo, ReaderModes } from '../features/ReaderModes';
+import { ReadingPosition } from '../features/ReadingPosition';
+import { ChapterInfo, ReaderModes, READER_MODES } from '../features/ReaderModes';
 import { ChapterEntry, ChapterSection, ChapterNavigation } from '../features/ChapterNavigation';
 import { ReaderRenderItem, ReaderRenderSource } from '../features/ReaderRenderSource';
 import { ReaderVolumeKeys } from '../features/ReaderVolumeKeys';
-import { ReadingStatsDao } from '../storage/ReadingStatsDao';
-import { PictureFavorites } from '../features/PictureFavorites';
+import { ReaderWorkload } from '../features/ReaderWorkload';
 import batteryInfo from '@ohos.batteryInfo';
 import { ReaderWindowChrome } from '../components/ReaderWindowChrome';
 import { ReaderClickZones, ReaderCanvasGesture } from '../components/ReaderClickZones';
@@ -80,6 +79,9 @@ struct ReaderPage {
   @State error: string = '';
   @State mode: string = 'waterfallTopToBottom';
   @State showChapters: boolean = false;
+  @State showSpeedMenu: boolean = false;
+  @State showModeMenu: boolean = false;
+  @State speedDraft: number = 5;
   @State autoReading: boolean = false;
   @State zoomed: boolean = false;
   @State zoomReset: number = 0;
@@ -95,7 +97,6 @@ struct ReaderPage {
 
   private swiperController: SwiperController = new SwiperController();
   private listScroller: Scroller = new Scroller();
-  private clock: ReadingClock = new ReadingClock();
   private cover: string = '';
   private subtitle: string = '';
   private requestedEpId?: string;
@@ -104,11 +105,14 @@ struct ReaderPage {
   private resumeRequested: boolean = false;
   private modeInitialized: boolean = false;
   private loadVersion: number = 0;
+  /** Runtime-only resource lease, never persisted or used for statistics. */
+  private readonly workloadOwner: string = `reader-window-${Date.now()}-${Math.random()}`;
   private disposed: boolean = false;
   @State private visible: boolean = true;
   @State progressReady: boolean = false;
   private lastSavedChapter: number = -1;
   private lastSavedPage: number = -1;
+  private progressWriteVersion: number = 0;
   private progressTimer: number = -1;
   private restorePage: number = -1;
   private volumeKeys?: ReaderVolumeKeys;
@@ -120,10 +124,7 @@ struct ReaderPage {
   @State private pressX: number = 50;
   @State private pressY: number = 50;
   @State private clockInfo: string = '';
-  @State private collectingImage: boolean = false;
   private infoTimer: number = -1;
-  private statsSession: string = `reader-${Date.now()}-${Math.floor(Math.random() * 1000000000)}`;
-  private statsSequence: number = 0;
 
   aboutToAppear(): void {
     AppContext.ensureInitialized(this.getUIContext().getHostContext());
@@ -153,9 +154,7 @@ struct ReaderPage {
     this.enterReaderFullscreen();
     this.reloadSettings();
     this.startReaderInfo();
-    if (this.progressReady && !this.loading && !this.disposed) {
-      this.clock.start(Date.now());
-    }
+
   }
 
   onPageHide(): void {
@@ -182,12 +181,16 @@ struct ReaderPage {
   private dismissReaderMenu(): void {
     this.cancelCanvasTap();
     this.showChapters = false;
+    this.showSpeedMenu = false;
+    this.showModeMenu = false;
     this.toolbarVisible = false;
     this.menuTransitionUntil = Date.now() + 180;
   }
 
   private revealReaderMenu(): void {
     this.cancelCanvasTap();
+    this.showSpeedMenu = false;
+    this.showModeMenu = false;
     this.toolbarVisible = true;
     this.menuTransitionUntil = Date.now() + 180;
     // autoStep pauses while this overlay is visible; its user's running intent
@@ -201,6 +204,11 @@ struct ReaderPage {
   }
 
   onBackPress(): boolean {
+    if (this.showSpeedMenu || this.showModeMenu) {
+      this.showSpeedMenu = false;
+      this.showModeMenu = false;
+      return true;
+    }
     if (this.showChapters || this.toolbarVisible) { this.dismissReaderMenu(); return true; }
     if (this.autoReading) { this.stopAutoRead('用户返回停止自动阅读'); return true; }
     return false;
@@ -348,7 +356,6 @@ struct ReaderPage {
     this.lastSavedChapter = -1;
     this.lastSavedPage = -1;
     if (this.visible) {
-      this.clock.start(Date.now());
     }
     this.saveProgress();
   }
@@ -413,10 +420,10 @@ struct ReaderPage {
   }
 
   /** Page-turn callbacks schedule metadata only; HistoryDao performs synchronous disk IO. */
-  private saveProgress(pauseClock: boolean = false): void {
-    if (pauseClock) {
+  private saveProgress(flushNow: boolean = false): void {
+    if (flushNow) {
       if (this.progressTimer >= 0) { clearTimeout(this.progressTimer); this.progressTimer = -1; }
-      this.flushProgress(true);
+      this.flushProgress();
       return;
     }
     if (this.progressTimer >= 0 || !this.progressReady || this.disposed) { return; }
@@ -426,16 +433,15 @@ struct ReaderPage {
     }, 500);
   }
 
-  private flushProgress(pauseClock: boolean = false): void {
+  private flushProgress(): void {
     const now = Date.now();
-    const duration = this.clock.take(now, pauseClock);
     const chapter = this.currentChapterIndex();
     if (!this.progressReady || chapter < 0 || this.images.length === 0 ||
       this.currentPage < 0 || this.currentPage >= this.images.length) {
       return;
     }
-    // Unchanged page is NOT enough to skip: exit must flush the last interval.
-    if (this.currentPage === this.lastSavedPage && chapter === this.lastSavedChapter && duration === 0) {
+    // Only save the position needed to resume; no reading-time or event statistics.
+    if (this.currentPage === this.lastSavedPage && chapter === this.lastSavedChapter ) {
       return;
     }
     const history = new History();
@@ -450,13 +456,14 @@ struct ReaderPage {
     history.ep = chapter + 1;
     history.page = this.currentPage + 1;
     history.maxPage = this.images.length;
-    history.readDurationMs = duration;
     this.lastSavedPage = this.currentPage;
     this.lastSavedChapter = chapter;
-    try { ReadingStatsDao.record(history, `${this.statsSession}:${++this.statsSequence}`); }
-    catch (error) { Log.warn('ReaderPage', 'reading statistics write failed; history still saved'); }
+    const writeVersion = ++this.progressWriteVersion;
     HistoryDao.save(history).catch((error: Object) => {
-      Log.warn('ReaderPage', `save history failed: ${error}`);
+      if (writeVersion === this.progressWriteVersion) {
+        this.lastSavedPage = -1; this.lastSavedChapter = -1;
+      }
+      Log.warn('ReaderPage', 'resume position save failed; next flush may retry');
       if (!this.disposed) {
         promptAction.showToast({ message: '阅读进度保存失败，请检查存储空间。' });
       }
@@ -685,6 +692,43 @@ struct ReaderPage {
     this.listScroller.scrollBy(vertical ? 0 : sign * distance, vertical ? sign * distance : 0);
   }
 
+  private setBrightnessValue(percent: number): void {
+    const val = Math.max(0.1, Math.min(1.0, percent / 100));
+    this.brightnessTail = this.brightnessTail.then(async (): Promise<void> => {
+      if (this.disposed || !this.visible) { return; }
+      if (this.brightnessWindow === undefined) {
+        const host = await window.getLastWindow(AppContext.context);
+        if (this.disposed || !this.visible) { return; }
+        this.brightnessWindow = host;
+        this.oldBrightness = host.getWindowProperties().brightness;
+      }
+      await this.brightnessWindow.setWindowBrightness(val);
+      this.readerBrightness = val;
+    }).catch((error: Object) => { Log.warn('ReaderPage', 'slider brightness setting failed'); });
+  }
+
+  private openAutoSpeedMenu(): void {
+    this.cancelCanvasTap();
+    this.speedDraft = Math.round(Math.max(0.1, Math.min(10, this.options.autoPageTurningInterval)) * 10) / 10;
+    this.showSpeedMenu = true;
+  }
+
+  private selectAutoSpeed(seconds: number): void {
+    if (!Number.isFinite(seconds) || this.disposed || !this.visible || this.loading || !this.progressReady) { return; }
+    const selected = Math.round(Math.max(0.1, Math.min(10, seconds)) * 10) / 10;
+    this.stopAutoRead('调整每页停留时间');
+    this.options.autoPageTurningInterval = selected;
+    this.speedDraft = selected;
+    // Apply this reading session's speed without mutating global/device prefs.
+    this.dismissReaderMenu();
+    this.toggleAutoRead();
+  }
+
+  private async selectComicMode(targetMode: string): Promise<void> {
+    this.showModeMenu = false;
+    await this.setMode(targetMode);
+  }
+
   private async turnReaderChapter(offset: number): Promise<void> {
     const next = this.currentChapterIndex() + offset;
     if (next < 0 || next >= this.chapterIds.length) { return; }
@@ -758,7 +802,6 @@ struct ReaderPage {
       this.leavingReader = false;
       if (!this.disposed) {
         this.visible = true;
-        if (this.progressReady && !this.loading) { this.clock.start(Date.now()); }
         Log.error('ReaderPage', 'cannot return to comic details');
         promptAction.showToast({ message: '无法打开漫画详情，请重试。' });
       }
@@ -849,14 +892,13 @@ struct ReaderPage {
       return;
     }
     if (this.scrolling || this.layoutPending || !this.visibleImagesReady()) { return; }
-    if (this.isVerticalFlow()) {
-      if (!this.listScroller.isAtEnd()) {
-        const distance = this.options.autoScrollStyle === 'smooth' ? this.options.autoScrollSpeed / 10 : this.options.autoScrollDistance;
-        // Upstream distances are physical px; Scroller uses vp lengths.
-        this.listScroller.scrollBy(0, px2vp(distance)); return;
-      }
-      if (this.options.autoReadingAcrossChapters && this.currentChapterIndex() + 1 < this.chapterIds.length) { await this.switchChapter(1); }
-      else { this.stopAutoRead('连续阅读已到末尾'); }
+    if (!ReaderModes.isGallery(this.mode)) {
+      const position = this.listScroller.currentOffset();
+      const reversed = ReaderModes.isReversed(this.mode);
+      const atEnd = reversed ? position.xOffset <= 0 : this.listScroller.isAtEnd();
+      if (atEnd && !this.options.autoReadingAcrossChapters) { this.stopAutoRead('连续阅读已到末尾'); return; }
+      if (atEnd && this.currentChapterIndex() + 1 >= this.chapterIds.length) { this.stopAutoRead('已到最后一章末页'); return; }
+      this.turnReaderViewport(1);
       return;
     }
     const next = this.adjacentSource(1);
@@ -880,10 +922,10 @@ struct ReaderPage {
     this.autoReading = true;
     this.autoTrace = `reader-auto-${Date.now()}`;
     const interval = this.options.autoPageTurningInterval;
-    const seconds = Number.isFinite(interval) ? Math.max(1, Math.min(60, interval)) : 5;
+    const seconds = Number.isFinite(interval) ? Math.max(0.1, Math.min(10, interval)) : 5;
     Log.audit(this.autoTrace, '自动阅读开始', `间隔=${seconds}秒；后台/缩放/加载期间不翻页`);
     this.syncAutoKeepScreenOn();
-    const delay = this.isVerticalFlow() ? (this.options.autoScrollStyle === 'smooth' ? 100 : 1000 / this.options.autoScrollFrequency) : seconds * 1000;
+    const delay = Math.round(seconds * 1000);
     this.autoTimer = setInterval(() => { this.autoStep().catch((error: Object) => { this.stopAutoRead('自动滚动不可用'); }); }, delay);
   }
 
@@ -922,7 +964,7 @@ struct ReaderPage {
     if (normalized === this.mode || this.settingsSaving) { return; }
     this.settingsSaving = true;
     try {
-      await ReaderSettings.setActive(this.comicId, this.sourceKey, 'readerMode', normalized);
+      await ReaderSettings.set('comic', this.comicId, this.sourceKey, 'readerMode', normalized);
       if (!this.disposed) { this.applySettings(ReaderSettings.resolve(this.comicId, this.sourceKey)); }
     } catch (error) {
       Log.error('ReaderPage', `reader mode persistence failed: ${String(error)}`);
@@ -1014,7 +1056,7 @@ struct ReaderPage {
   private syncVolumeKeys(): void {
     if (this.volumeKeys === undefined && this.visible && !this.disposed && this.progressReady && !this.loading && this.error.length === 0) {
       this.volumeKeys = new ReaderVolumeKeys((offset: number): void => {
-        if (!this.visible || this.disposed || this.loading || !this.progressReady || this.toolbarVisible || this.showChapters || this.zoomed || this.collectingImage) { return; }
+        if (!this.visible || this.disposed || this.loading || !this.progressReady || this.toolbarVisible || this.showChapters || this.zoomed) { return; }
         this.stopAutoRead('音量键翻页'); this.stepPage(offset);
       });
     }
@@ -1026,6 +1068,7 @@ struct ReaderPage {
   }
   private enterReaderFullscreen(): void {
     if (!this.visible || this.disposed || this.leavingReader) { return; }
+    ReaderWorkload.setReaderVisible(true, this.workloadOwner);
     if (this.windowChrome === undefined) { this.windowChrome = new ReaderWindowChrome(); }
     const owner = this.windowChrome;
     owner.enter(AppContext.context).then(() => {
@@ -1039,8 +1082,10 @@ struct ReaderPage {
   }
 
   private releaseReaderControls(): void {
+    ReaderWorkload.setReaderVisible(false, this.workloadOwner);
     this.cancelCanvasTap(); this.canvasGesture?.cancel();
     this.toolbarVisible = false; this.showChapters = false;
+    this.showSpeedMenu = false; this.showModeMenu = false;
     const owner = this.windowChrome;
     if (owner !== undefined) {
       owner.leave().then(() => {
@@ -1095,31 +1140,15 @@ struct ReaderPage {
   }
   private endImageLongPress(): void { this.pressImage = -1; this.refreshZoomState(); }
   private async showImageMenu(actual: number): Promise<void> {
-    if (actual < 0 || actual >= this.images.length || !this.visible || this.collectingImage) { return; }
-    this.stopAutoRead('打开图片菜单');
+    if (actual < 0 || actual >= this.images.length || !this.visible || this.disposed) { return; }
+    this.stopAutoRead('打开阅读操作');
     try {
       const choice = await promptAction.showActionMenu({ title: `第 ${actual + 1} 页`, buttons: [
-        { text: '收藏此图片', color: '#1E88E5' }, { text: '阅读设置', color: '#333333' }, { text: '阅读统计', color: '#333333' } ] });
+        { text: '阅读设置', color: '#333333' }, { text: '自动翻页速度', color: '#1E88E5' } ] });
       if (!this.visible || this.disposed) { return; }
-      if (choice.index === 0) { await this.collectPicture(actual); }
-      else if (choice.index === 1) { this.openReaderSettings(); }
-      else if (choice.index === 2) { this.openStatistics(); }
-    } catch (error) { /* User cancellation has no effect. */ }
-  }
-  private async collectPicture(actual: number): Promise<void> {
-    if (this.collectingImage || actual < 0 || actual >= this.images.length || !this.visible || this.loading) { return; }
-    this.collectingImage = true; this.stopAutoRead('用户收藏图片');
-    try {
-      await PictureFavorites.save(this.sourceKey, this.comicId, this.epId, actual + 1, this.title, this.images[actual]);
-      if (!this.disposed) { promptAction.showToast({ message: '图片已收藏' }); }
-    } catch (error) {
-      if (!this.disposed) { promptAction.showToast({ message: '图片收藏失败，请检查网络或存储后重试。' }); }
-      Log.warn('ReaderPage', 'explicit picture favorite failed');
-    } finally { this.collectingImage = false; }
-  }
-  private openStatistics(): void {
-    this.stopAutoRead('打开阅读统计');
-    router.pushUrl({ url: 'pages/StatisticsPage' }).catch((error: Object) => { promptAction.showToast({ message: '无法打开阅读统计' }); });
+      if (choice.index === 0) { this.openReaderSettings(); }
+      else { this.revealReaderMenu(); this.openAutoSpeedMenu(); }
+    } catch (error) { /* Explicit user cancellation does nothing. */ }
   }
 
   /** "第 n/N 章 · 章节名" — the bottom bar carries the page counter instead. */
@@ -1183,16 +1212,93 @@ struct ReaderPage {
     .borderRadius({ topLeft: 24, topRight: 24 }).clip(true)
   }
 
+  /** Popups in the center of the screen for auto speed and reader mode selection */
+  @Builder
+  speedMenuOverlay() {
+    Column({ space: 18 }) {
+      Text('自动翻页').fontSize(18).fontWeight(FontWeight.Bold).fontColor('#F1F4FA').width('100%')
+      Text(`每页停留 ${this.speedDraft.toFixed(1)} 秒`).fontSize(24).fontWeight(FontWeight.Medium)
+        .fontColor('#A9CDFF').width('100%').textAlign(TextAlign.Center)
+      Slider({ value: this.speedDraft, min: 0.1, max: 10, step: 0.1 })
+        .width('100%').height(44).selectedColor('#087FF5').trackColor('#3A404D').blockColor('#FFFFFF')
+        .onChange((value: number, mode: SliderChangeMode) => {
+          if (Number.isFinite(value)) { this.speedDraft = Math.round(Math.max(0.1, Math.min(10, value)) * 10) / 10; }
+        })
+      Row() {
+        Text('0.1s').fontSize(12).fontColor('#A7B1C1').layoutWeight(1)
+        Text('10s').fontSize(12).fontColor('#A7B1C1')
+      }.width('100%')
+      Text('连续/瀑布模式每次前进一屏。图片未就绪、滚动或缩放时等待，避免跳过未显示内容。')
+        .fontSize(12).fontColor('#A7B1C1').width('100%').lineHeight(19)
+      Row({ space: 10 }) {
+        Button('取消').height(44).layoutWeight(1).fontSize(14).fontColor('#F1F4FA')
+          .backgroundColor('#2B3039').borderRadius(12).onClick(() => { this.showSpeedMenu = false; })
+        Button(this.autoReading ? '应用速度' : '开始翻页').height(44).layoutWeight(1).fontSize(14).fontColor('#FFFFFF')
+          .backgroundColor('#087FF5').borderRadius(12).enabled(this.progressReady && !this.loading)
+          .onClick(() => { this.selectAutoSpeed(this.speedDraft); })
+      }.width('100%')
+      if (this.autoReading) {
+        Button('停止自动翻页').height(44).width('100%').fontSize(14).fontColor('#FFC6C6')
+          .backgroundColor('#452B31').borderRadius(12).onClick(() => { this.stopAutoRead('用户停止自动翻页'); this.dismissReaderMenu(); })
+      }
+    }.width('86%').constraintSize({ maxWidth: 440 }).padding(20).backgroundColor('#F2191D24')
+      .borderRadius(20).border({ width: 1, color: '#3A404D' }).shadow({ radius: 24, color: '#80000000' })
+      .hitTestBehavior(HitTestMode.Block)
+  }
+
+  @Builder
+  modeMenuOverlay() {
+    Column({ space: 12 }) {
+      Text('翻页模式（仅对当前漫画有效）').fontSize(16).fontWeight(FontWeight.Bold).fontColor('#F1F4FA').width('100%')
+      ForEach(READER_MODES, (m: string) => {
+        Row() {
+          Text(ReaderModes.label(m))
+            .fontSize(14)
+            .fontColor(this.mode === m ? '#087FF5' : '#F1F4FA')
+            .fontWeight(this.mode === m ? FontWeight.Medium : FontWeight.Regular)
+            .layoutWeight(1)
+          if (this.mode === m) {
+            Text('当前').fontSize(12).fontColor('#087FF5')
+          }
+        }
+        .width('100%')
+        .height(44)
+        .padding({ left: 14, right: 14 })
+        .backgroundColor(this.mode === m ? '#29394E' : '#2B3039')
+        .borderRadius(12)
+        .onClick(() => {
+          this.selectComicMode(m);
+        })
+      }, (m: string) => `mode-${m}`)
+      Button('关闭')
+        .width('100%')
+        .height(40)
+        .fontSize(13)
+        .fontColor('#F1F4FA')
+        .backgroundColor('#2B3039')
+        .borderRadius(12)
+        .onClick(() => { this.showModeMenu = false; })
+    }
+    .width('86%')
+    .padding(20)
+    .backgroundColor('#F2191D24')
+    .borderRadius(20)
+    .border({ width: 1, color: '#3A404D' })
+    .shadow({ radius: 24, color: '#80000000' })
+  }
+
   /** A single bottom overlay. It never participates in the image canvas layout. */
   @Builder
   bottomBar() {
     Scroll() {
       Column({ space: 12 }) {
         Row().width(36).height(4).borderRadius(2).backgroundColor('#69717F').alignSelf(ItemAlign.Center)
+
+        // Top Row: [返回] | Title & Chapter | [详情]
         Row({ space: 10 }) {
           Button('返回').height(44).fontSize(13).fontColor('#F1F4FA').backgroundColor('#2B3039')
             .borderRadius(14).padding({ left: 16, right: 16 }).onClick(() => { this.returnToPrevious(); })
-          Column({ space: 5 }) {
+          Column({ space: 4 }) {
             Text(this.title).fontSize(15).fontWeight(FontWeight.Medium).fontColor('#F1F4FA')
               .maxLines(1).textOverflow({ overflow: TextOverflow.Ellipsis }).width('100%')
             Text(this.chapterLabel()).fontSize(12).fontColor('#A7B1C1').maxLines(1)
@@ -1201,13 +1307,13 @@ struct ReaderPage {
             .onClick(() => {
               if (this.progressReady && !this.loading) { this.openReaderChapterMenu(); }
             })
-          Button('收起').height(44).fontSize(13).fontColor('#C4D9FA').backgroundColor('#2B3039')
-            .borderRadius(14).padding({ left: 14, right: 14 }).onClick(() => { this.dismissReaderMenu(); })
+          Button('详情').height(44).fontSize(13).fontColor('#C4D9FA').backgroundColor('#2B3039')
+            .borderRadius(14).padding({ left: 16, right: 16 })
+            .enabled(!this.leavingReader && this.sourceKey.length > 0 && this.comicId.length > 0)
+            .onClick(() => { this.dismissReaderMenu(); this.openComicDetails(); })
         }.width('100%')
-        Row() {
-          Text(this.options.showPageNumberInReader ? this.pageCounter() : '').fontSize(13).fontColor('#DDE5F1').layoutWeight(1)
-          if (this.options.enableClockAndBatteryInfoInReader) { Text(this.clockInfo).fontSize(11).fontColor('#9DAABB') }
-        }.width('100%')
+
+        // Chapter Nav Row: [上一章] [目录] [下一章]
         Row({ space: 8 }) {
           Button('上一章').height(44).fontSize(13).fontColor('#F2F3F5').backgroundColor('#2B3039').borderRadius(14).layoutWeight(1)
             .enabled(!this.loading && this.progressReady).onClick(() => { this.switchChapter(-1); })
@@ -1216,39 +1322,48 @@ struct ReaderPage {
           Button('下一章').height(44).fontSize(13).fontColor('#F2F3F5').backgroundColor('#2B3039').borderRadius(14).layoutWeight(1)
             .enabled(!this.loading && this.progressReady).onClick(() => { this.switchChapter(1); })
         }.width('100%')
-        Flex({ wrap: FlexWrap.Wrap }) {
-          Button('‹页').height(42).fontSize(12).fontColor('#C4D9FA').backgroundColor('#2B3039').borderRadius(13)
-            .margin({ right: 8, bottom: 8 }).enabled(this.progressReady && !this.loading && this.adjacentSource(-1) >= 0)
-            .onClick(() => { this.stepPage(-1); })
-          Button('页›').height(42).fontSize(12).fontColor('#C4D9FA').backgroundColor('#2B3039').borderRadius(13)
-            .margin({ right: 8, bottom: 8 }).enabled(this.progressReady && !this.loading && this.adjacentSource(1) >= 0)
-            .onClick(() => { this.stepPage(1); })
-          Button(this.autoReading ? '暂停' : '自动').height(42).fontSize(12).fontColor('#C4D9FA').backgroundColor('#2B3039').borderRadius(13)
-            .margin({ right: 8, bottom: 8 }).enabled(!this.loading && this.progressReady).onClick(() => { this.dismissReaderMenu(); this.toggleAutoRead(); })
-          Button(ReaderModes.label(this.mode)).height(42).fontSize(12).fontColor('#C4D9FA').backgroundColor('#2B3039').borderRadius(13)
-            .margin({ right: 8, bottom: 8 }).enabled(!this.loading && this.progressReady && !this.settingsSaving)
-            .onClick(() => { this.setMode(ReaderModes.nextMode(this.mode)); })
-          Button('设置').height(42).fontSize(12).fontColor('#C4D9FA').backgroundColor('#2B3039').borderRadius(13)
-            .margin({ right: 8, bottom: 8 }).enabled(!this.settingsSaving).onClick(() => { this.dismissReaderMenu(); this.openReaderSettings(); })
-          Button(this.readerBrightness < 0 ? '亮度' : `${Math.round(this.readerBrightness * 100)}%`)
-            .height(42).fontSize(12).fontColor('#C4D9FA').backgroundColor('#2B3039').borderRadius(13)
-            .margin({ right: 8, bottom: 8 }).onClick(() => { this.cycleBrightness(); })
-          Button('详情').height(42).fontSize(12).fontColor('#C4D9FA').backgroundColor('#2B3039').borderRadius(13)
-            .margin({ right: 8, bottom: 8 }).enabled(!this.leavingReader && this.sourceKey.length > 0 && this.comicId.length > 0)
-            .onClick(() => { this.dismissReaderMenu(); this.openComicDetails(); })
-          Button(this.collectingImage ? '收藏中…' : '收藏图片').height(42).fontSize(12).fontColor('#C4D9FA').backgroundColor('#2B3039').borderRadius(13)
-            .margin({ right: 8, bottom: 8 }).enabled(this.progressReady && !this.loading && !this.collectingImage)
-            .onClick(() => { this.collectPicture(this.currentPage); })
-          Button('图片菜单').height(42).fontSize(12).fontColor('#C4D9FA').backgroundColor('#2B3039').borderRadius(13)
-            .margin({ right: 8, bottom: 8 }).enabled(this.progressReady && !this.loading)
-            .onClick(() => { this.showImageMenu(this.currentPage); })
-          Button('统计').height(42).fontSize(12).fontColor('#C4D9FA').backgroundColor('#2B3039').borderRadius(13)
-            .margin({ bottom: 8 }).onClick(() => { this.openStatistics(); })
+
+        // Action Row: [设置] [自动翻页] [翻页模式]
+        Row({ space: 8 }) {
+          Button('设置').height(44).fontSize(13).fontColor('#F2F3F5').backgroundColor('#2B3039').borderRadius(14).layoutWeight(1)
+            .enabled(!this.settingsSaving).onClick(() => { this.dismissReaderMenu(); this.openReaderSettings(); })
+          Button(this.autoReading ? `自动 (${this.options.autoPageTurningInterval}s)` : '自动翻页')
+            .height(44).fontSize(13).fontColor(this.autoReading ? '#A9CDFF' : '#F2F3F5')
+            .backgroundColor(this.autoReading ? '#29394E' : '#2B3039').borderRadius(14).layoutWeight(1)
+            .enabled(!this.loading && this.progressReady).onClick(() => {
+              this.openAutoSpeedMenu();
+            })
+          Button('翻页模式').height(44).fontSize(13).fontColor('#F2F3F5').backgroundColor('#2B3039').borderRadius(14).layoutWeight(1)
+            .enabled(!this.loading && this.progressReady && !this.settingsSaving)
+            .onClick(() => {
+              this.showModeMenu = true;
+            })
         }.width('100%')
+
+        // Bottom Row: Brightness Slider
+        Row({ space: 10 }) {
+          Text('亮度').fontSize(12).fontColor('#A7B1C1')
+          Slider({
+            value: this.readerBrightness < 0 ? 50 : Math.round(this.readerBrightness * 100),
+            min: 10,
+            max: 100,
+            step: 1
+          })
+            .layoutWeight(1)
+            .selectedColor('#087FF5')
+            .trackColor('#3A404D')
+            .blockColor('#FFFFFF')
+            .onChange((val: number, mode: SliderChangeMode) => {
+              this.setBrightnessValue(val);
+            })
+          Text(`${this.readerBrightness < 0 ? '跟随' : Math.round(this.readerBrightness * 100) + '%'}`)
+            .fontSize(12).fontColor('#C4D9FA').width(36).textAlign(TextAlign.End)
+        }.width('100%').padding({ left: 4, right: 4, top: 4 })
+
         if (this.volumeError.length > 0) { Text(this.volumeError).fontSize(11).fontColor('#FFCA80').width('100%') }
         if (this.immersiveError.length > 0) { Text(this.immersiveError).fontSize(11).fontColor('#FFCA80').width('100%') }
       }.width('100%').padding({ left: 18, right: 18, top: 12, bottom: 28 }).alignItems(HorizontalAlign.Start)
-    }.width('100%').constraintSize({ maxHeight: this.landscape ? '76%' : '58%' })
+    }.width('100%').constraintSize({ maxHeight: this.landscape ? '76%' : '60%' })
       .backgroundColor('#F2191D24').borderRadius({ topLeft: 24, topRight: 24 })
       .scrollBar(BarState.Off)
       .transition(TransitionEffect.move(TransitionEdge.BOTTOM).combine(TransitionEffect.OPACITY)
@@ -1436,6 +1551,20 @@ struct ReaderPage {
         Column().width('100%').height('100%').backgroundColor('#45000000')
           .onClick(() => { this.dismissReaderMenu(); })
         this.chapterListOverlay()
+      }
+      if (this.showSpeedMenu) {
+        Stack({ alignContent: Alignment.Center }) {
+          Column().width('100%').height('100%').backgroundColor('#66000000')
+            .hitTestBehavior(HitTestMode.Block).onClick(() => { this.showSpeedMenu = false; })
+          this.speedMenuOverlay()
+        }.width('100%').height('100%')
+      }
+      if (this.showModeMenu) {
+        Stack({ alignContent: Alignment.Center }) {
+          Column().width('100%').height('100%').backgroundColor('#66000000')
+            .hitTestBehavior(HitTestMode.Block).onClick(() => { this.showModeMenu = false; })
+          this.modeMenuOverlay()
+        }.width('100%').height('100%')
       }
     }.width('100%').height('100%').backgroundColor(Color.Black)
       .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])

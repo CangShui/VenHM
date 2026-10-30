@@ -9,12 +9,15 @@ import { Log } from '../foundation/Log';
 import { VeneraUiDialog } from '../components/UiDialog';
 import { UiBridge } from '../source/UiBridge';
 import { UiTheme, UiIcon } from '../components/UiKit';
+import { ShelfCommands } from '../features/ShelfCommands';
 
 /** Presentation shell: original four tab identities and routes are unchanged. */
 @Entry
 @Component
 struct Index {
   @State currentIndex: number = 0;
+  @State private hostRevision: number = 0;
+  @State private hostVisible: boolean = true;
   private tabsController: TabsController = new TabsController();
 
   aboutToAppear(): void {
@@ -28,6 +31,9 @@ struct Index {
       Log.error('Index', `init failed: ${error}`);
     });
   }
+
+  onPageShow(): void { this.hostVisible = true; this.hostRevision++; }
+  onPageHide(): void { this.hostVisible = false; }
 
   @Builder
   sourceDialog() {
@@ -54,6 +60,10 @@ struct Index {
       Button({ type: ButtonType.Circle }) { UiIcon({ name: 'history', iconSize: 21 }) }
         .width(44).height(44).backgroundColor(UiTheme.surface).accessibilityText('历史').id('action_history')
         .onClick(() => { this.openPage('pages/HistoryPage'); })
+      Button({ type: ButtonType.Circle }) { UiIcon({ name: 'plus', iconSize: 21 }) }
+        .width(44).height(44).backgroundColor(UiTheme.surface).accessibilityText('新建收藏夹').id('action_new_folder')
+        .visibility(this.currentIndex === 1 ? Visibility.Visible : Visibility.None)
+        .onClick(() => { ShelfCommands.newFolder(); })
       Button({ type: ButtonType.Circle }) { UiIcon({ name: 'search', iconSize: 21 }) }
         .width(44).height(44).backgroundColor(UiTheme.surface).accessibilityText('搜索').id('action_search')
         .onClick(() => { this.openPage('pages/SearchPage'); })
@@ -107,13 +117,14 @@ struct Index {
         Tabs({ barPosition: BarPosition.End, controller: this.tabsController }) {
           TabContent() {
             HomeView({
+              hostRevision: this.hostRevision, active: this.hostVisible && this.currentIndex === 0,
               onOpenTab: (index: number) => {
                 this.currentIndex = index;
                 this.tabsController.changeIndex(index);
               }
             })
           }.tabBar(this.tabBar('首页', 0))
-          TabContent() { BookshelfView() }.tabBar(this.tabBar('收藏', 1))
+          TabContent() { BookshelfView({ hostRevision: this.hostRevision, active: this.hostVisible && this.currentIndex === 1 }) }.tabBar(this.tabBar('收藏', 1))
           TabContent() { ExploreView() }.tabBar(this.tabBar('探索', 2))
           TabContent() { CategoryView() }.tabBar(this.tabBar('分类', 3))
         }.barHeight(0).onChange((index: number) => { this.currentIndex = index; })

@@ -9,6 +9,7 @@ import { SourceManager } from '../source/SourceManager';
 import { ComicCell, EmptyView, ErrorView, LoadingView } from '../components/ComicWidgets';
 import { AppInit } from '../foundation/AppInit';
 import { Log } from '../foundation/Log';
+import { ShelfCommands } from './ShelfCommands';
 import { LocalLibrarySignal } from './LocalLibrarySignal';
 
 /**
@@ -32,11 +33,13 @@ export struct BookshelfView {
   @State panelMode: string = '';
   @State draft: string = '';
   @State panelError: string = '';
-  @State multiSelect: boolean = false;
-  @State selectedKeys: string[] = [];
   @State busy: boolean = false;
 
+  @Prop @Watch('onHostChanged') hostRevision: number = 0;
+  @Prop @Watch('onHostChanged') active: boolean = true;
   private visible: boolean = false;
+  private appeared: boolean = false;
+  private refreshToken: number = 0;
   private disposed: boolean = false;
   private reloadToken: number = 0;
   private localToken: number = 0;
@@ -46,28 +49,41 @@ export struct BookshelfView {
     }
   };
   private readonly onLocalLibraryChanged: () => void = () => { this.reloadLocalComics(); };
+  private readonly onNewFolderCommand: () => void = () => { this.openNewFolderEditor(); };
 
   aboutToAppear(): void {
+    this.appeared = true;
     this.disposed = false;
+    this.visible = this.active;
     FavoritesDao.addListener(this.onChanged);
     LocalLibrarySignal.addListener(this.onLocalLibraryChanged);
+    ShelfCommands.addListener(this.onNewFolderCommand);
     this.refresh();
   }
 
   /** Download completed or was deleted: the sandbox folder list changed. */
   private async reloadLocalComics(): Promise<void> {
     const token = ++this.localToken;
+    if (!this.appeared || this.disposed || !this.active || !this.visible) { return; }
     try {
+      await AppInit.init();
+      if (!this.appeared || this.disposed || !this.active || !this.visible || token !== this.localToken) { return; }
       const local = SourceManager.find('local');
       if (local === undefined) { return; }
       const explore = local.explorePages.length > 0 ? local.explorePages[0] : undefined;
       if (explore === undefined || explore.loadPage === undefined) { return; }
       const result = await explore.loadPage(1);
-      if (this.disposed || token !== this.localToken) { return; }
+      if (!this.appeared || this.disposed || !this.active || !this.visible || token !== this.localToken) { return; }
       this.localComics = result.dataOrNull ?? [];
     } catch (error) {
       Log.warn('BookshelfView', `local comics refresh failed: ${error}`);
     }
+  }
+
+  private onHostChanged(): void {
+    this.visible = this.active;
+    this.localToken++; this.reloadToken++; this.refreshToken++;
+    if (this.appeared && !this.disposed && this.active) { this.refresh(); }
   }
 
   onPageShow(): void {
@@ -77,18 +93,24 @@ export struct BookshelfView {
 
   onPageHide(): void {
     this.visible = false;
+    this.localToken++; this.reloadToken++; this.refreshToken++;
   }
 
   aboutToDisappear(): void {
+    this.appeared = false;
+    this.refreshToken++;
     this.disposed = true;
     this.visible = false;
     this.reloadToken++;
     this.localToken++;
     FavoritesDao.removeListener(this.onChanged);
     LocalLibrarySignal.removeListener(this.onLocalLibraryChanged);
+    ShelfCommands.removeListener(this.onNewFolderCommand);
   }
 
   async refresh(): Promise<void> {
+    const request = ++this.refreshToken;
+    if (!this.appeared || this.disposed || !this.active || !this.visible) { return; }
     this.loading = true;
     this.error = '';
     try {
@@ -96,27 +118,23 @@ export struct BookshelfView {
       // can be built before preferences/RDB are ready. Awaiting here is a no-op
       // once initialization has completed.
       await AppInit.init();
+      if (!this.appeared || this.disposed || !this.active || !this.visible || request !== this.refreshToken) { return; }
       await this.reloadFavorites();
-      const local = SourceManager.find('local');
-      if (local !== undefined) {
-        const explore = local.explorePages.length > 0 ? local.explorePages[0] : undefined;
-        if (explore !== undefined && explore.loadPage !== undefined) {
-          const result = await explore.loadPage(1);
-          this.localComics = result.dataOrNull ?? [];
-        }
-      }
+      if (!this.appeared || this.disposed || !this.active || !this.visible || request !== this.refreshToken) { return; }
+      await this.reloadLocalComics();
     } catch (error) {
       this.error = error instanceof Error ? error.message : String(error);
       Log.error('BookshelfView', this.error);
     } finally {
-      this.loading = false;
+      if (request === this.refreshToken && this.appeared) { this.loading = false; }
     }
   }
 
   private async reloadFavorites(): Promise<void> {
     const token = ++this.reloadToken;
+    if (!this.appeared || this.disposed || !this.active || !this.visible) { return; }
     const folders = await FavoritesDao.listFolders();
-    if (this.disposed || token !== this.reloadToken) {
+    if (!this.appeared || this.disposed || !this.active || !this.visible || token !== this.reloadToken) {
       return;
     }
     this.folders = folders;
@@ -125,34 +143,14 @@ export struct BookshelfView {
       this.currentFolder = folders[0].name;
     }
     const items = await FavoritesDao.list(this.currentFolder);
-    if (this.disposed || token !== this.reloadToken) {
+    if (!this.appeared || this.disposed || !this.active || !this.visible || token !== this.reloadToken) {
       return;
     }
     this.favorites = items;
-    const valid = new Set<string>(items.map((item: FavoriteItem) => this.keyOf(item)));
-    this.selectedKeys = this.selectedKeys.filter((key: string) => valid.has(key));
-    if (this.selectedKeys.length === 0) {
-      this.multiSelect = false;
-    }
   }
 
   private keyOf(item: FavoriteItem): string {
     return `${item.type.value}:${item.id}`;
-  }
-
-  private isSelected(item: FavoriteItem): boolean {
-    return this.selectedKeys.indexOf(this.keyOf(item)) >= 0;
-  }
-
-  private selectedItems(): FavoriteItem[] {
-    return this.favorites.filter((item: FavoriteItem) => this.isSelected(item));
-  }
-
-  private toggleSelected(item: FavoriteItem): void {
-    const key = this.keyOf(item);
-    this.selectedKeys = this.selectedKeys.indexOf(key) >= 0
-      ? this.selectedKeys.filter((value: string) => value !== key)
-      : this.selectedKeys.concat([key]);
   }
 
   private currentFolderLabel(): string {
@@ -171,6 +169,46 @@ export struct BookshelfView {
       .catch((error: Object) => {
         promptAction.showToast({ message: `打开失败: ${error}` });
       });
+  }
+
+  /** Opened from the shared "+" button; also resets any half-typed rename. */
+  private openNewFolderEditor(): void {
+    this.panelMode = 'new';
+    this.draft = '';
+    this.panelError = '';
+  }
+
+  /** Long press on a folder chip: the destructive/reorder actions live here. */
+  private async folderMenu(folder: FavoriteFolder): Promise<void> {
+    this.currentFolder = folder.name;
+    this.panelMode = '';
+    const name = folder.displayName;
+    try {
+      const result = await promptAction.showActionMenu({
+        title: name,
+        buttons: [
+          { text: '重命名', color: '#0A59F7' },
+          { text: '前移', color: '#0A59F7' },
+          { text: '后移', color: '#0A59F7' },
+          { text: '删除此收藏夹', color: '#D93025' }
+        ]
+      });
+      if (folder.name.length === 0 && (result.index === 0 || result.index === 3)) {
+        promptAction.showToast({ message: '默认收藏夹不能重命名或删除' });
+        return;
+      }
+      if (result.index === 0) {
+        this.panelMode = 'rename';
+        this.draft = folder.name;
+        this.panelError = '';
+      } else if (result.index === 1) {
+        this.moveFolder(-1);
+      } else if (result.index === 2) {
+        this.moveFolder(1);
+      } else if (result.index === 3) {
+        this.confirmDeleteFolder();
+      }
+    } catch (error) { /* user cancelled the long-press menu */ }
   }
 
   // ---- folder operations ----
@@ -258,61 +296,6 @@ export struct BookshelfView {
 
   // ---- comic operations ----
 
-  private async deleteSelected(): Promise<void> {
-    const items = this.selectedItems();
-    if (items.length === 0) {
-      return;
-    }
-    try {
-      const result = await promptAction.showDialog({
-        title: `移除 ${items.length} 条收藏`,
-        message: `将从「${this.currentFolderLabel()}」移除选中的 ${items.length} 条收藏，其它收藏夹中的相同漫画不受影响。`,
-        buttons: [
-          { text: '取消', color: '#666666' },
-          { text: '移除', color: '#D93025' }
-        ]
-      });
-      if (result.index !== 1) {
-        return;
-      }
-      this.busy = true;
-      await FavoritesDao.batchDelete(this.currentFolder, items);
-      this.selectedKeys = [];
-      this.multiSelect = false;
-      await this.reloadFavorites();
-      promptAction.showToast({ message: `已移除 ${items.length} 条` });
-    } catch (error) {
-      promptAction.showToast({ message: `移除失败: ${error}` });
-    } finally {
-      this.busy = false;
-    }
-  }
-
-  private async transferSelected(target: string, copy: boolean): Promise<void> {
-    const items = this.selectedItems();
-    if (items.length === 0 || target === this.currentFolder) {
-      this.panelMode = '';
-      return;
-    }
-    try {
-      this.busy = true;
-      const count = copy
-        ? await FavoritesDao.batchCopy(this.currentFolder, target, items)
-        : await FavoritesDao.batchMove(this.currentFolder, target, items);
-      this.selectedKeys = [];
-      this.multiSelect = false;
-      this.panelMode = '';
-      await this.reloadFavorites();
-      promptAction.showToast({
-        message: count === 0 ? '目标收藏夹中已存在这些漫画' : `${copy ? '已复制' : '已移动'} ${count} 条`
-      });
-    } catch (error) {
-      promptAction.showToast({ message: `操作失败: ${error}` });
-    } finally {
-      this.busy = false;
-    }
-  }
-
   @Builder
   folderBar() {
     Scroll() {
@@ -327,11 +310,10 @@ export struct BookshelfView {
             .borderRadius(18)
             .onClick(() => {
               this.currentFolder = folder.name;
-              this.selectedKeys = [];
-              this.multiSelect = false;
               this.panelMode = '';
               this.reloadFavorites();
             })
+            .gesture(LongPressGesture({ repeat: false }).onAction(() => { this.folderMenu(folder); }))
         }, (folder: FavoriteFolder) => folder.name)
       }
       .padding({ left: 20, right: 20 })
@@ -378,78 +360,6 @@ export struct BookshelfView {
   }
 
   @Builder
-  actionBar() {
-    Flex({ wrap: FlexWrap.Wrap }) {
-      Text('新建收藏夹')
-        .fontSize(13).fontColor(UiTheme.accent).height(42).padding({ left: 10, right: 10 }).borderRadius(13).backgroundColor(UiTheme.surface).margin({ right: 4, bottom: 4 })
-        .onClick(() => {
-          this.panelMode = this.panelMode === 'new' ? '' : 'new';
-          this.draft = '';
-          this.panelError = '';
-        })
-      Text('重命名')
-        .fontSize(13)
-        .fontColor(this.currentFolder.length === 0 ? '#BBBBBB' : UiTheme.accent).height(42).padding({ left: 10, right: 10 }).borderRadius(13).backgroundColor(UiTheme.surface).margin({ right: 4, bottom: 4 })
-        .onClick(() => {
-          if (this.currentFolder.length === 0) {
-            promptAction.showToast({ message: '默认收藏夹不能重命名' });
-            return;
-          }
-          this.panelMode = this.panelMode === 'rename' ? '' : 'rename';
-          this.draft = this.currentFolder;
-          this.panelError = '';
-        })
-      Text('删除夹')
-        .fontSize(13)
-        .fontColor(this.currentFolder.length === 0 ? '#BBBBBB' : UiTheme.danger).height(42).padding({ left: 10, right: 10 }).borderRadius(13).backgroundColor(UiTheme.surface).margin({ right: 4, bottom: 4 })
-        .onClick(() => {
-          if (this.currentFolder.length === 0) {
-            promptAction.showToast({ message: '默认收藏夹不能删除' });
-            return;
-          }
-          this.confirmDeleteFolder();
-        })
-      Text('前移')
-        .fontSize(13).fontColor(UiTheme.accent).height(42).padding({ left: 10, right: 10 }).borderRadius(13).backgroundColor(UiTheme.surface).margin({ right: 4, bottom: 4 })
-        .onClick(() => { this.moveFolder(-1); })
-      Text('后移')
-        .fontSize(13).fontColor(UiTheme.accent).height(42).padding({ left: 10, right: 10 }).borderRadius(13).backgroundColor(UiTheme.surface).margin({ right: 4, bottom: 4 })
-        .onClick(() => { this.moveFolder(1); })
-      Text(this.multiSelect ? '退出多选' : '多选')
-        .fontSize(13).fontColor(UiTheme.accent).height(42).padding({ left: 10, right: 10 }).borderRadius(13).backgroundColor(UiTheme.surface).margin({ right: 4, bottom: 4 })
-        .onClick(() => {
-          this.multiSelect = !this.multiSelect;
-          if (!this.multiSelect) {
-            this.selectedKeys = [];
-          }
-        })
-    }
-    .width('100%')
-    .padding({ left: 20, right: 20, bottom: 6 })
-  }
-
-  @Builder
-  selectionBar() {
-    Flex({ wrap: FlexWrap.Wrap }) {
-      Text(`已选 ${this.selectedKeys.length}`).fontSize(13).fontColor(UiTheme.secondary)
-      Text('移动').fontSize(13).fontColor(UiTheme.accent).height(42).padding({ left: 10, right: 10 }).borderRadius(13).backgroundColor(UiTheme.surface).margin({ right: 4, bottom: 4 })
-        .onClick(() => { this.panelMode = this.panelMode === 'move' ? '' : 'move'; })
-      Text('复制').fontSize(13).fontColor(UiTheme.accent).height(42).padding({ left: 10, right: 10 }).borderRadius(13).backgroundColor(UiTheme.surface).margin({ right: 4, bottom: 4 })
-        .onClick(() => { this.panelMode = this.panelMode === 'copy' ? '' : 'copy'; })
-      Text('移除').fontSize(13).fontColor('#D93025')
-        .onClick(() => { this.deleteSelected(); })
-      Text('全选').fontSize(13).fontColor(UiTheme.accent).height(42).padding({ left: 10, right: 10 }).borderRadius(13).backgroundColor(UiTheme.surface).margin({ right: 4, bottom: 4 })
-        .onClick(() => {
-          this.selectedKeys = this.favorites.map((item: FavoriteItem) => this.keyOf(item));
-        })
-      Text('取消').fontSize(13).fontColor(UiTheme.secondary)
-        .onClick(() => { this.selectedKeys = []; })
-    }
-    .width('100%')
-    .padding({ left: 20, right: 20, bottom: 6 })
-  }
-
-  @Builder
   panel() {
     Column({ space: 8 }) {
       if (this.panelMode === 'new' || this.panelMode === 'rename') {
@@ -475,25 +385,6 @@ export struct BookshelfView {
             .onClick(() => { this.panelMode = ''; this.panelError = ''; })
         }
         .width('100%')
-      } else {
-        Text(this.panelMode === 'move' ? '移动到收藏夹' : '复制到收藏夹')
-          .fontSize(14).fontWeight(FontWeight.Medium).width('100%')
-        ForEach(this.folders, (folder: FavoriteFolder) => {
-          Row() {
-            Text(folder.displayName).fontSize(14).layoutWeight(1)
-            Text(folder.name === this.currentFolder ? '（当前）' : '')
-              .fontSize(12).fontColor(UiTheme.muted)
-          }
-          .width('100%')
-          .padding({ top: 8, bottom: 8 })
-          .onClick(() => {
-            this.transferSelected(folder.name, this.panelMode === 'copy');
-          })
-        }, (folder: FavoriteFolder) => `target-${folder.name}`)
-        Button('取消').attributeModifier(UiStyles.secondary)
-          .fontSize(13).height(44)
-          .backgroundColor('#F1F3F5').fontColor('#333333')
-          .onClick(() => { this.panelMode = ''; })
       }
       if (this.panelError.length > 0) {
         Text(this.panelError).fontSize(12).fontColor('#D93025').width('100%')
@@ -521,30 +412,14 @@ export struct BookshelfView {
               }
             })
           } else {
-            Stack({ alignContent: Alignment.TopEnd }) {
-              ComicCell({
-                title: item.title,
-                subtitle: item.subtitle,
-                coverUrl: item.cover,
-                sourceKey: item.sourceKey,
-                comicId: item.id,
-                onTapCell: () => {
-                  if (this.multiSelect) {
-                    this.toggleSelected(item as FavoriteItem);
-                  } else {
-                    this.openComic(item, item.sourceKey);
-                  }
-                }
-              })
-              if (this.multiSelect) {
-                Text(this.isSelected(item as FavoriteItem) ? '✓' : '○')
-                  .fontSize(16)
-                  .fontColor(this.isSelected(item as FavoriteItem) ? '#0A59F7' : '#999999')
-                  .backgroundColor('#FFFFFF')
-                  .borderRadius(10)
-                  .padding({ left: 6, right: 6, top: 2, bottom: 2 })
-              }
-            }
+            ComicCell({
+              title: item.title,
+              subtitle: item.subtitle,
+              coverUrl: item.cover,
+              sourceKey: item.sourceKey,
+              comicId: item.id,
+              onTapCell: () => { this.openComic(item, item.sourceKey); }
+            })
           }
         }
       }, (item: Comic) => `${isLocal ? 'local' : item.sourceKey}@${item.id}`)
@@ -560,17 +435,6 @@ export struct BookshelfView {
   build() {
     Column() {
       this.segmentBar()
-      Row({ space: 8 }) {
-        Button('网络收藏').attributeModifier(UiStyles.quiet).layoutWeight(1).onClick(() => {
-          router.pushUrl({ url: 'pages/NetworkFavoritesPage' }).catch(() => { promptAction.showToast({ message: '打开网络收藏失败' }); });
-        })
-        Button('图片收藏').attributeModifier(UiStyles.quiet).layoutWeight(1).onClick(() => {
-          router.pushUrl({ url: 'pages/PictureFavoritesPage' }).catch(() => { promptAction.showToast({ message: '打开图片收藏失败' }); });
-        })
-        Button('手动追更').attributeModifier(UiStyles.quiet).layoutWeight(1).onClick(() => {
-          router.pushUrl({ url: 'pages/FollowUpdatesPage' }).catch(() => { promptAction.showToast({ message: '打开追更失败' }); });
-        })
-      }.width('100%').padding({ left: 20, right: 20, bottom: 8 })
 
       if (this.loading) {
         LoadingView({ message: '正在加载书架…' })
@@ -585,10 +449,6 @@ export struct BookshelfView {
           .layoutWeight(1)
       } else if (this.segmentIndex === 0) {
         this.folderBar()
-        this.actionBar()
-        if (this.multiSelect) {
-          this.selectionBar()
-        }
         if (this.panelMode.length > 0) {
           this.panel()
         }

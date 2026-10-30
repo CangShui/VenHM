@@ -7,9 +7,7 @@
     "pages/ImageViewerPage",
     "pages/CommentsPage",
     "pages/NetworkFavoritesPage",
-    "pages/PictureFavoritesPage",
     "pages/FollowUpdatesPage",
-    "pages/StatisticsPage",
     "pages/ReaderPage",
     "pages/ReaderSettingsPage",
     "pages/CacheSettingsPage",
@@ -21,7 +19,6 @@
     "pages/HistoryPage",
     "pages/UsabilityPage",
     "pages/DownloadsPage",
-    "pages/SyncPage",
     "pages/SourceAccountPage",
     "pages/SourceWebLoginPage"
   ]

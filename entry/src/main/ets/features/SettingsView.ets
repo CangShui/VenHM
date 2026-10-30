@@ -43,21 +43,13 @@ export struct SettingsView {
             .backgroundColor(UiTheme.dangerSoft).borderRadius(UiTheme.cardRadius)
         }
 
-        this.groupHeader('阅读与统计')
+        this.groupHeader('阅读')
         Column() {
           UiSettingsRow({
-            title: '阅读器设置', subtitle: '阅读模式、每屏图片与宽图拆分', icon: 'book', divider: true,
+            title: '阅读器设置', subtitle: '阅读模式、每屏图片与宽图拆分', icon: 'book',
             onTap: () => {
               router.pushUrl({ url: 'pages/ReaderSettingsPage' }).catch((error: Object) => {
                 promptAction.showToast({ message: '打开阅读设置失败，请稍后重试' });
-              });
-            }
-          })
-          UiSettingsRow({
-            title: '阅读统计', subtitle: '查看阅读记录与阅读时长', icon: 'chart', tint: '#7A64CB', tone: '#F0EBFC',
-            onTap: () => {
-              router.pushUrl({ url: 'pages/StatisticsPage' }).catch(() => {
-                promptAction.showToast({ message: '打开阅读统计失败，请稍后重试' });
               });
             }
           })
@@ -103,30 +95,10 @@ export struct SettingsView {
             }
           })
           UiSettingsRow({
-            title: '图片收藏', subtitle: '收集喜欢的漫画画面', icon: 'image', tint: '#BA73B8', tone: '#F8ECF7', divider: true,
-            onTap: () => {
-              router.pushUrl({ url: 'pages/PictureFavoritesPage' }).catch(() => {
-                promptAction.showToast({ message: '打开图片收藏失败，请稍后重试' });
-              });
-            }
-          })
-          UiSettingsRow({
-            title: '追更', subtitle: '查看关注漫画的更新', icon: 'refresh', tint: '#05AA7B', tone: '#E5F7F1',
+            title: '本地收藏', subtitle: '收藏漫画并检查更新', icon: 'refresh', tint: '#05AA7B', tone: '#E5F7F1',
             onTap: () => {
               router.pushUrl({ url: 'pages/FollowUpdatesPage' }).catch(() => {
-                promptAction.showToast({ message: '打开追更失败，请稍后重试' });
-              });
-            }
-          })
-        }.width('100%').backgroundColor(UiTheme.surface).borderRadius(UiTheme.cardRadius).clip(true)
-
-        this.groupHeader('数据与备份')
-        Column() {
-          UiSettingsRow({
-            title: 'WebDAV 阅读数据备份', subtitle: '备份收藏与历史，或下载并合并', icon: 'cloud', tint: '#6487CF', tone: '#EDF2FF',
-            onTap: () => {
-              router.pushUrl({ url: 'pages/SyncPage' }).catch((error: Object) => {
-                promptAction.showToast({ message: String(error) });
+                promptAction.showToast({ message: '打开本地收藏失败，请稍后重试' });
               });
             }
           })

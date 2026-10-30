@@ -86,6 +86,7 @@ export struct SearchView {
     this.filterLoading = false;
     SelectedSource.unsubscribe(this.subscription); this.subscription = 0;
     this.session.invalidatePending();
+    this.loading = false; this.loadingMore = false;
     this.aggregate.cancel();
   }
 
@@ -247,8 +248,16 @@ export struct SearchView {
   }
 
   private async loadMore(): Promise<void> {
+    if (this.disposed || this.aggregated || this.selectedSourceKey !== this.session.sourceKey ||
+      SourceManager.find(this.session.sourceKey) === undefined) { return; }
     const pending = this.session.more(); this.mirror();
     if (await pending) { this.mirror(); }
+  }
+
+  private reachEnd(): void {
+    // Do not let layout/reach-end callbacks repeatedly retry a failed or stalled page.
+    // The explicit more/retry control remains available even for a short first page.
+    if (this.session.error.length === 0 && !this.session.autoPaused) { this.loadMore(); }
   }
 
   private openComic(comic: Comic): void {
@@ -420,13 +429,21 @@ export struct SearchView {
                 sourceKey: item.sourceKey, comicId: item.id, onTapCell: () => { this.openComic(item); } })
             }
           }, (item: Comic) => `${item.sourceKey}@${item.id}`)
+          GridItem() {
+            Column({ space: 10 }) {
+              if (this.error.length > 0) {
+                Text(this.error).fontColor('#D93025').fontSize(12).width('100%').textAlign(TextAlign.Center)
+              }
+              Text(`已加载 ${this.results.length} 条`).fontSize(12).fontColor(UiTheme.muted)
+              Button(this.loadingMore ? '加载中…' : (this.ended ? '已到末页' : (this.error.length > 0 ? '重试加载更多' : '加载更多')))
+                .attributeModifier(UiStyles.secondary).enabled(!this.loadingMore && !this.ended)
+                .onClick(() => { this.loadMore(); })
+            }.width('100%').padding({ top: 10, bottom: 28 }).alignItems(HorizontalAlign.Center)
+          }.columnStart(0).columnEnd(2)
         }.columnsTemplate('1fr 1fr 1fr').columnsGap(10).rowsGap(14)
           .padding({ left: 20, right: 20, bottom: 12 }).width('100%').layoutWeight(1)
-          .onReachEnd(() => { this.loadMore(); })
-        if (this.error.length > 0) { Text(this.error).fontColor('#D93025').fontSize(12).padding(8) }
-        Text(`已加载 ${this.results.length} 条`).fontSize(12).fontColor(UiTheme.muted).padding(4)
-        Button(this.loadingMore ? '加载中…' : (this.ended ? '已到末页' : '加载更多')).attributeModifier(UiStyles.secondary).margin({ bottom: 16 })
-          .enabled(!this.loadingMore && !this.ended).onClick(() => { this.loadMore(); })
+          .onReachEnd(() => { this.reachEnd(); })
+
       }
     }.width('100%').height('100%').backgroundColor(UiTheme.page)
   }

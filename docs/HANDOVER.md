@@ -1,7 +1,62 @@
-﻿# Venera HM 交接文档：环境 + 继续任务
+# Venera HM 交接文档：环境 + 继续任务
 
 > 目的：任何人（或下一轮的我）读完这份文档就能接着干，不用重新摸索环境、不用重跑一遍踩坑。
-> 最后核对：2026-10-23（Legado-E默认九宫格交互适配）。**用户已授权学习并部署；代码、54套回归和SDK完成。用户确认重连授权后，新包已成功覆盖安装；保留数据，未启动/截图/点击，用户自行测试。**
+> 最后核对：2026-10-30（VenHM 1.0.6 移除书架多选 + 部署脚本加固）。**1.0.6已构建（63套回归通过）但当时手机离线，尚未安装**；1.0.5已装。阅读统计/时长、WebDAV、图片收藏保持退役。
+
+## 2026-10-30 追加：书架多选移除 + deploy 脚本加固
+
+[BookshelfView](<../entry/src/main/ets/features/BookshelfView.ets>)：**多选整体删除**（按钮、`multiSelect`/`selectedKeys` 状态、勾选叠加层、移动/复制/移除批量操作及 panel 对应分支全部移除），收藏格点击直接打开漫画。收藏夹长按菜单与顶栏“+”保持不变。
+
+[deploy.ps1](<../tools/deploy.ps1>) 修复真实故障：双击 `deploy.cmd` 时 CWD 在 `tools\`，hvigor 去 `tools\hvigor\` 找配置 → `00304004 Not Found`。现在脚本先 `Set-Location` 到项目根并校验 `hvigor/hvigor-config.json5`；另外重置 `$LASTEXITCODE`、打印构建目录、失败时打印日志尾部 15 行、成功但只有 unsigned 包时提示配置签名、`-SkipBuild` 缺包时给出指引。已从 `tools\` 实测完整构建+安装成功。
+
+包：[1.0.6](<../dist/venhm-1.0.6-no-multiselect-20261030-signed.hap>) SHA256 `2518ED2EDFD23CD9D57D50BCE44AA083C5748F68925CDE22C92B416CA6F52BB6`，8,049,857字节，[审计](<../logs/ui-detail-bookshelf-20261030/artifact-106.json>) 状态 `BUILT_NOT_INSTALLED_DEVICE_OFFLINE`。
+设备重新接入后运行 `.\tools\deploy.ps1 -SkipBuild`（或双击 deploy.cmd）即可安装。**未验证真机渲染。**
+
+## 2026-10-30：详情收藏按钮、书架工具栏、结果页页脚
+
+**[ComicDetailsPage](<../entry/src/main/ets/pages/ComicDetailsPage.ets>)**：删除右上角孤立“收藏”文字钮。[CollectionActionsPanel](<../entry/src/main/ets/components/CollectionActionsPanel.ets>)改为一个等宽 Row：**本地收藏**（真实收藏动作，父页切换收藏夹面板）+ **网络收藏**，两者同高同级；不再有“收藏”与“本地收藏”两个说法。
+
+**[BookshelfView](<../entry/src/main/ets/features/BookshelfView.ets>)**：移除顶栏“网络收藏/本地收藏”两按钮，移除“新建收藏夹/重命名/删除夹/前移/后移”内联按钮；`+` 移到[顶栏](<../entry/src/main/ets/pages/Index.ets>)与搜索图标同排（仅书架Tab可见）经[ShelfCommands](<../entry/src/main/ets/features/ShelfCommands.ets>)打开新建面板；重命名/前移/后移/删除改为**长按收藏夹**弹出的菜单，默认收藏夹禁止重命名/删除。多选保留。
+
+**结果页页脚**：探索/搜索/分类的“已加载 N 条 / 加载更多 / 已到末页 / 重试”改为 Grid 内 `GridItem().columnStart(0).columnEnd(2)` 整行页脚，**随内容滚动到末尾才出现**，不再常驻固定在瀑布流下方。
+
+[10项界面契约](<../tools/ui_layout_entries_cases.js>)覆盖上述结构（含命令总线去重、页脚必须在Grid内）；63套全量门禁与负向对照通过。包：[1.0.5](<../dist/venhm-1.0.5-ui-entries-20261030-signed.hap>) SHA256 `AA97A16FA44D3098A1340E7495D8DCCE9E57C68A1653804970F0AAC2A84C0E54`，8,083,200字节，[审计](<../logs/ui-detail-bookshelf-20261030/artifact.json>)记录已安装未启动。
+**未验证：**真机渲染、长按菜单手感、页脚滚动观感；不得声称已实测。
+
+以下为 1.0.4 及更早记录。
+
+## 2026-10-29 后续：账号页误报修复 + 手动追更并入本地收藏（1.0.4）
+
+**账号页“源未声明账号功能”根因（已复现）：** [SourceAccountPage](<../entry/src/main/ets/pages/SourceAccountPage.ets>)只读路由参数`key`，而[网络收藏页](<../entry/src/main/ets/pages/NetworkFavoritesPage.ets>)与[收藏面板](<../entry/src/main/ets/components/CollectionActionsPanel.ets>)传的是`sourceKey`，于是key为空→`SourceManager.find('')`为undefined→提示被错误归因成“未声明账号”。EHentai/Komiic本身有登录声明。
+现在两种参数都接受；空参数、源未加载、源确实无登录三种情况给出不同提示，不再互相冒充。
+另修注册表陈旧：[SourceManager](<../entry/src/main/ets/source/SourceManager.ets>)同key改为替换新实例，新增`reloadInstalled()`；[源仓库安装](<../entry/src/main/ets/pages/SourceRepositoryPage.ets>)后立即重新解析注册，装完无需重启（此前装了脚本却要重启才生效，且旧实例会压住新能力）。
+
+**手动追更→本地收藏：** 新增[LocalFavorites](<../entry/src/main/ets/features/LocalFavorites.ets>)作为唯一集合语义：收藏即建立更新跟踪；从最后一个收藏夹移除才停止跟踪；旧追更记录幂等并入默认收藏夹（不重复、不改已有文件夹）。[详情页收藏](<../entry/src/main/ets/pages/ComicDetailsPage.ets>)已接入track/syncRemoval；书架与设置统一显示“本地收藏”，与“网络收藏”并列；[追更页](<../entry/src/main/ets/pages/FollowUpdatesPage.ets>)改为本地收藏与更新管理，不再有独立“手动追更”开关。仍只在用户点击时联网检查，无后台定时、无阅读统计。
+
+[62套本地门禁](<../logs/account-localfav-final-20261029/summary.json>)与负向对照通过；新增[16项账号入口/本地收藏合同](<../tools/account_and_local_favorites_cases.js>)，含参数兼容、原因区分、实例替换、幂等迁移与最后一份才取消跟踪。[SDK构建](<../logs/account-localfav-20261029/sdk-build-final.log>)退出0。
+[1.0.4包](<../dist/venhm-1.0.4-account-localfav-20261029-signed.hap>) SHA256 `522505D0FC11ECCAF377391ACC43A20F59B5FFB3AE26741984A441E40A3E6493`，8,077,646字节；[审计](<../logs/account-localfav-20261029/artifact.json>)已同步覆盖安装成功/未启动，[安装回执](<../logs/venhm-104-account-localfav-install-20261029.log>)明确成功。
+**未验证：**真实账号登录（0次）、站点Cookie/Web流程、真机点击与UI观感；不要在无授权时安装/推送/发布，不要git add -A提交本机签名。
+
+以下为 1.0.3 及更早记录。
+
+## 2026-10-29 最新：隐私精简、分页、本地实时刷新、下载阅读让位
+
+详见[本轮八项实现/证据/边界](<PRIVACY_PAGINATION_20261029.md>)。
+
+- 速度中部菜单改0.1–10秒/步长0.1滑块；确认前仅草稿，确认后实际100–10000ms定时并关闭菜单；所有连续模式按停留时间一屏一屏前进。旧1–20/30/60秒读取时夹到10秒，设置页不取整丢失0.1。
+- 正文模式选择明确写ReaderSettings.set('comic',...,'readerMode',...)，不再用会落到全局/设备的setActive。模式其他漫画不受影响。
+- 搜索/探索/tag滚到底分页、更多/重试，0总页数视为未知、短页不视为结尾、去重/重复页暂停/游标/切源刷新与晚到保护。**部分源探索首页是有意的小预览；通用mixed区块仍有旧load(0)限制，本轮没有宣称泛化修复。**
+- 8个退役源文件/3路由/入口及统计时长SQL/Clock删除。升级只drop五个精确旧功能表，history不重建；旧duration支持则drop、不支持则清零。仅继续阅读位置/历史排序保留，无累计时长/次数。Log audit/info/debug不再输出/落盘，旧自有诊断log清理；warn/error仅系统HiLog。
+- 旧图片副本仅精确picture_favorites目录中UUID.image普通非link文件清理；未知文件/子目录/链接保留不猜归属，不触碰local/download/cache。WebDAV只移除唯一持久endpoint偏好。
+- 本地库排除空目录/metadata占位与有精确拥有标记的诊断样本，真实父Index show/hide/Tab props桥接，Home/Bookshelf全部await后门禁和版本防旧结果；Home本地横滑全列表不截前6。没有到手机读取那个“1”的具体路径。
+- 下载复用流水线验证，64x64受限真实解码，去重复全图解码；每批连续已验证前缀写一次ledger，任务并发上限仍3，阅读中下一批每任务1页、离开恢复3。ReaderWorkload按owner幂等；隐藏首页/书架不继续DB/封面工作。受控12页解码调用24→12、ledger约18→10，**不宣称真机FPS/内存测得改善**。
+- 六份已知公开源声明确认：wnacg(4设置/密码登录)、ehentai(3设置/Web+Cookie)、Komiic(无设置/密码)、manwaba/shonen_jump_plus/ykmh(无设置/登录声明)；真实登录测试0，不等于手机当前源总清单。
+
+[61套完整本地门禁汇总](<../logs/privacy-pagination-final-20261029/summary.json>)与负向控制退出0；新增分页49、本地库45、退役迁移11、性能8、速度/隐私13专项。普通收藏/历史/下载/图片/路由回归保留，旧组合download_sync以--downloads-only跑保留下载，未恢复删除的WebDAV；取消历史时长专有期待而不是跳过整套。
+[当前SDK最终构建](<../logs/privacy-pagination-20261029/sdk-build-final2.log>)退出0。[新包](<../dist/venhm-1.0.3-privacy-pagination-20261029-signed.hap>) SHA256 `622DA2D3574EAFFC3DAE1BD233A5F8C10C1BA71C4FF789296B64243D2ED0CF25`，8,069,832字节；[审计](<../logs/privacy-pagination-20261029/artifact.json>)已同步覆盖安装成功/未启动/未发布；[安装回执](<../logs/venhm-103-privacy-pagination-install-20261029.log>)明确成功。
+本机build-profile仍含本地签名并未提交，禁止git add -A或复用此前聊天令牌。**未来只有用户再明确授权才安装/推送/发布；用户自行测试时仍不启动、截图、点击。** 不要运行历史one-shot UI改写脚本恢复退役入口；历史scope guard只对应当轮基线，不可覆盖重录。
+
+以下2026-10-23及更早均为历史记录，旧模块能力/安装状态不覆盖本段。
 
 ## 2026-10-23 最新：参考Legado-E交互，不复制UI
 

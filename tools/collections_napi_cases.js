@@ -79,5 +79,5 @@ let count=0;async function test(name,run){await run();count++;fs.appendFileSync(
   src.isLogged=false;const before=requests.length;assert.equal((await src.favoriteData.loadComic(1,'f')).error,true);assert.equal((await src.favoriteData.addOrDelFavorite('101','f',true)).error,true);assert.equal(requests.length,before);
   assert.doesNotMatch(fs.readFileSync(log,'utf8'),/private-response|opaque-private|Authorization|Bearer/);
  });
- console.log(`PASS ${count} actual NAPI complete-source favorites fixtures; no live account/network/device acceptance.`);
+ console.log(`PASS ${count} actual NAPI complete-source ordinary network-favorites fixtures; no live account/network/device acceptance.`);
 })().catch(e=>{fs.appendFileSync(log,e.stack+'\n');console.error(e);process.exitCode=1});

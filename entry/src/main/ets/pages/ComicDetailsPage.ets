@@ -12,6 +12,7 @@ import { AppInit } from '../foundation/AppInit';
 import { AppContext } from '../foundation/AppContext';
 import { Log } from '../foundation/Log';
 import { DownloadQueue } from '../features/DownloadQueue';
+import { LocalFavorites } from '../features/LocalFavorites';
 import { ChapterNavigation, ChapterSection, ChapterEntry } from '../features/ChapterNavigation';
 import { pasteboard } from '@kit.BasicServicesKit';
 import { DetailTag, TagRouting } from '../features/TagRouting';
@@ -324,6 +325,7 @@ struct ComicDetailsPage {
     try {
       if (this.isMember(folder)) {
         await FavoritesDao.remove(this.comicId, this.typeValue(), folder);
+        await LocalFavorites.syncRemoval(this.sourceKey, this.comicId, this.typeValue());
       } else {
         const details = this.details;
         const item = FavoriteItem.fromComic({
@@ -335,7 +337,8 @@ struct ComicDetailsPage {
           description: details.description ?? '',
           sourceKey: this.sourceKey
         }, folder);
-        await FavoritesDao.add(item);
+        const added = await FavoritesDao.add(item);
+        if (added) { await LocalFavorites.track(this.sourceKey, this.comicId, item.name, item.coverPath); }
       }
       await this.reloadFavorites();
     } catch (error) {
@@ -367,8 +370,9 @@ struct ComicDetailsPage {
         sourceKey: this.sourceKey
       }, '');
       const added = await FavoritesDao.add(item);
+      if (added) { await LocalFavorites.track(this.sourceKey, this.comicId, item.name, item.coverPath); }
       await this.reloadFavorites();
-      promptAction.showToast({ message: added ? '已加入默认收藏夹' : '已在默认收藏夹中' });
+      promptAction.showToast({ message: added ? '已加入本地收藏' : '已在本地收藏中' });
     } catch (error) {
       promptAction.showToast({ message: `收藏操作失败: ${error}` });
     } finally {
@@ -505,25 +509,6 @@ struct ComicDetailsPage {
             router.back();
           } })
         Column({ space: 16 }) {
-        Row() {
-          Blank()
-          Text(this.isFavorite ? '已收藏' : '收藏')
-            .fontSize(14).fontWeight(FontWeight.Medium)
-            .fontColor(this.isFavorite ? UiTheme.success : UiTheme.accent)
-            .height(44).padding({ left: 18, right: 18 }).backgroundColor(this.isFavorite ? '#E5F7F0' : UiTheme.accentSoft).borderRadius(15)
-            .onClick(() => {
-              this.showFolderPanel = !this.showFolderPanel;
-            })
-            .gesture(LongPressGesture().onAction(() => {
-              // Upstream: long press = quick add to the configured folder.
-              this.quickFavorite();
-            }))
-        }.width('100%')
-
-        if (this.showFolderPanel) {
-          this.favoritePanel()
-        }
-
         if (this.loading) {
           LoadingView({ message: '正在加载详情…' }).width('100%').padding(24)
         } else if (this.error.length > 0) {
@@ -613,7 +598,12 @@ struct ComicDetailsPage {
             }
           }.width('100%').padding(20).backgroundColor(UiTheme.surface).borderRadius(UiTheme.cardRadius)
           CollectionActionsPanel({ sourceKey: this.sourceKey, comicId: this.comicId,
-            title: this.details?.title || this.title, cover: this.details?.cover || this.cover })
+            title: this.details?.title || this.title, cover: this.details?.cover || this.cover,
+            localFavoriteLabel: this.isFavorite ? '已加入本地收藏' : '本地收藏',
+            onLocalFavorite: () => { this.showFolderPanel = !this.showFolderPanel; } })
+          if (this.showFolderPanel) {
+            this.favoritePanel()
+          }
           if (this.thumbnails.length > 0 || !this.thumbnailsEnded || this.thumbnailsError.length > 0) {
             Column({ space: 14 }) {
               Text('预览（点击放大，不加载完整章节）').fontSize(16).fontWeight(FontWeight.Medium).fontColor(UiTheme.ink).width('100%')

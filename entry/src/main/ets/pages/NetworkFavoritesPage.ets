@@ -131,7 +131,7 @@ struct NetworkFavoritesPage {
               .height(44).font({ size: 14 }).fontColor(UiTheme.ink)
           }
           Button('当前源账号 / 登录').attributeModifier(UiStyles.secondary).onClick(() => {
-            router.pushUrl({ url: 'pages/SourceAccountPage', params: { sourceKey: this.sourceKey } })
+            router.pushUrl({ url: 'pages/SourceAccountPage', params: { key: this.sourceKey } })
               .catch(() => { this.error = '打开账号失败'; });
           })
         }.padding(20).width('100%').alignItems(HorizontalAlign.Start).backgroundColor(UiTheme.surface).borderRadius(UiTheme.cardRadius)

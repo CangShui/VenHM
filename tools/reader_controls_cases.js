@@ -6,21 +6,23 @@ fs.mkdirSync(path.dirname(log),{recursive:true});fs.writeFileSync(log,'[请求�
 const read=p=>fs.readFileSync(path.join(root,p),'utf8').replace(/^import .*;\r?\n/gm,'').replace(/\bexport /g,'');
 const raw=read('entry/src/main/ets/pages/ReaderPage.ets');
 const reader=(raw.slice(0,raw.indexOf('  @Builder'))+'}').replace(/@Entry\s*|@Component\s*|@State\s*/g,'').replace('struct ReaderPage','class ReaderPage');
-const controls=[],timers=new Map(),history=[];
+const controls=[],timers=new Map(),history=[],timerDelays=[];
 const ctx=vm.createContext({
   SwiperController:class{changeIndex(i){controls.push(['swiper',i])}},
-  Scroller:class{scrollToIndex(i){controls.push(['list',i])}},
-  ReaderSettings:{resolve:()=>({readerMode:'galleryRightToLeft'}),setActive:async()=>{}},History:class{},ComicType:{fromKey:()=>({value:1})},HistoryDao:{save:async h=>history.push(h)},
+  Scroller:class{scrollToIndex(i){controls.push(['list',i])}currentOffset(){return {xOffset:100,yOffset:100}}isAtEnd(){return false}scrollBy(x,y){controls.push(['scrollBy',x,y])}},
+  ReaderSettings:{resolve:()=>({readerMode:'galleryRightToLeft'}),set:async()=>{}},History:class{},ComicType:{fromKey:()=>({value:1})},HistoryDao:{save:async h=>history.push(h)},
   Log:{audit:(t,s,m)=>fs.appendFileSync(log,`TraceID=${t} [${s}] ${m}\n`),warn:()=>{},error:()=>{}},
   AppContext:{context:{}},window:{getLastWindow:async()=>({getWindowProperties:()=>({brightness:0.55,isKeepScreenOn:false}),
     setWindowBrightness:async v=>controls.push(['brightness',v]),setWindowKeepScreenOn:async v=>controls.push(['keepScreen',v])})},
-  promptAction:{showToast:()=>{}},setInterval:fn=>{timers.set(1,fn);return 1},clearInterval:id=>timers.delete(id),
+  promptAction:{showToast:()=>{}},setInterval:(fn,delay)=>{timers.set(1,fn);timerDelays.push(delay);return 1},clearInterval:id=>timers.delete(id),
   // Progress writes are coalesced in production; this control-flow suite asserts
   // the resulting record, so run the scheduled flush immediately.
   setTimeout:fn=>{fn();return 1},clearTimeout:()=>{}
 });
 const options=read('entry/src/main/ets/foundation/ReaderSettings.ets').split('class ReaderProfile')[0];
-const logic=read('entry/src/main/ets/features/ReaderModes.ets')+'\n'+read('entry/src/main/ets/features/ReaderSpreads.ets')+'\n'+
+const logic=read('entry/src/main/ets/features/ReaderWorkload.ets')+'\n'+
+  read('entry/src/main/ets/features/ReaderVolumeKeys.ets')+'\n'+
+  read('entry/src/main/ets/features/ReaderModes.ets')+'\n'+read('entry/src/main/ets/features/ReaderSpreads.ets')+'\n'+
   read('entry/src/main/ets/features/ReaderRenderSource.ets')+'\n'+
   read('entry/src/main/ets/features/ReadingPosition.ets')+'\n'+options+'\n'+
   read('entry/src/main/ets/features/ChapterNavigation.ets')+'\n'+reader;
@@ -51,6 +53,23 @@ async function test(name,fn){await fn();count++;fs.appendFileSync(log,`[响应�
   await test('auto reading advances canonical page order',async()=>{
     const p=page();p.toggleAutoRead();await p.autoStep();
     assert.equal(p.currentPage,1);assert.equal(p.autoReading,true);p.stopAutoRead('test');
+  });
+  await test('all seven modes use seconds-based 100ms to 10s delays with finite fallback and clamping',async()=>{
+    const modes=['galleryRightToLeft','galleryLeftToRight','galleryTopToBottom','waterfallTopToBottom',
+      'continuousTopToBottom','continuousLeftToRight','continuousRightToLeft'];
+    for(const mode of modes) for(const [interval,delay] of [[0.1,100],[1.7,1700],[10,10000],[0,100],[50,10000],[NaN,5000]]) {
+      const p=page();p.mode=mode;p.options.autoPageTurningInterval=interval;p.toggleAutoRead();
+      assert.equal(p.autoReading,true,mode);assert.equal(timerDelays.at(-1),delay,mode);
+      p.stopAutoRead('fixture');await p.keepScreenTail;
+    }
+  });
+  await test('continuous turns scroll exactly one viewport in the correct axis/direction without inventing a page',async()=>{
+    for(const [mode,x,y] of [['waterfallTopToBottom',0,900],['continuousTopToBottom',0,900],
+      ['continuousLeftToRight',600,0],['continuousRightToLeft',-600,0]]) {
+      const p=page();p.mode=mode;p.viewportWidth=600;p.viewportHeight=900;controls.length=0;
+      p.turnReaderViewport(1);assert.deepEqual(controls.at(-1),['scrollBy',x,y],mode);
+      assert.equal(p.currentPage,0,'only visibility callbacks advance the stored position');
+    }
   });
   await test('auto reading is paused while zoomed or loading',async()=>{
     const p=page();p.toggleAutoRead();p.zoomed=true;await p.autoStep();assert.equal(p.currentPage,0);

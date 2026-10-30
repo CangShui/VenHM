@@ -9,6 +9,7 @@ import { ImagePipeline } from '../network/ImagePipeline';
 import { ImageTransforms } from '../network/ImageTransforms';
 import { BackgroundDownloadCoordinator } from './BackgroundDownloadCoordinator';
 import { LocalLibrarySignal } from './LocalLibrarySignal';
+import { ReaderWorkload } from './ReaderWorkload';
 
 export class DownloadTask {
   id: string = '';
@@ -319,11 +320,8 @@ export class DownloadQueue {
             if (fs.statSync(path).isFile()) {
               file = fs.openSync(path, fs.OpenMode.READ_ONLY);
               decoder = image.createImageSource(file.fd);
-              const pixel = await decoder.createPixelMap();
-              try {
-                const info = await pixel.getImageInfo();
-                valid = info.size.width > 0 && info.size.height > 0;
-              } finally { await pixel.release(); }
+              await ImagePipeline.validateImage(decoder);
+              valid = true;
             }
           } catch (error) {
             Log.audit(task.id, '检查点图片拒绝', `章=${ch + 1}页=${page + 1}不能读取/解码；不删除文件`);
@@ -644,7 +642,9 @@ export class DownloadQueue {
         if (!fs.accessSync(chapterDir)) { fs.mkdirSync(chapterDir, true); }
         while (task.page < urls.length && DownloadQueue.live(task, generation)) {
           const base = task.page;
-          const end = Math.min(base + DownloadQueue.PAGE_WORKERS, urls.length);
+          // Re-evaluate between batches; do not abort work already in flight on reader entry.
+          const workersPerTask = ReaderWorkload.isReaderVisible() ? 1 : DownloadQueue.PAGE_WORKERS;
+          const end = Math.min(base + workersPerTask, urls.length);
           const outcomes: PageOutcome[] = [];
           for (let index = base; index < end; index++) { outcomes.push(new PageOutcome()); }
           const workers: Promise<void>[] = [];
@@ -659,16 +659,20 @@ export class DownloadQueue {
             Log.audit(id, '并行批次中止', '批次返回时已暂停/取消/退后台；不推进检查点，晚到结果全部丢弃');
             break;
           }
-          // Contiguous commit: only the verified prefix of the batch advances page/savedPages.
-          for (let slot = 0; slot < outcomes.length; slot++) {
-            const outcome = outcomes[slot];
-            if (!outcome.saved) {
-              throw new Error(outcome.error.length > 0 ? outcome.error : '页下载未完成；检查点停在已验证前缀');
-            }
-            task.page = base + slot + 1;
-            task.savedPages++;
+          // One ledger write for the contiguous verified batch prefix (including a partial success).
+          // A crash before this write can leave valid uncheckpointed files, never a checkpoint ahead
+          // of disk. Resume rechecks the recorded prefix and safely redownloads the unrecorded tail.
+          let verified = 0;
+          while (verified < outcomes.length && outcomes[verified].saved) { verified++; }
+          if (verified > 0) {
+            task.page = base + verified;
+            task.savedPages += verified;
             DownloadQueue.persist();
-            Log.audit(id, '下载检查点', `章=${task.chapter + 1}；页=${task.page}/${urls.length}；累计=${task.savedPages}；真实图片已验证`);
+            Log.audit(id, '下载检查点', `章=${task.chapter + 1}；页=${task.page}/${urls.length}；累计=${task.savedPages}；批次已验证=${verified}`);
+          }
+          if (verified < outcomes.length) {
+            const outcome = outcomes[verified];
+            throw new Error(outcome.error.length > 0 ? outcome.error : '页下载未完成；检查点停在已验证前缀');
           }
         }
         if (task.page === urls.length && DownloadQueue.live(task, generation)) {
@@ -734,8 +738,8 @@ export class DownloadQueue {
       try {
         const info = await decoder.getImageInfo();
         if (info.size.width <= 0 || info.size.height <= 0) { throw new Error('图片无法解码'); }
-        const decoded = await decoder.createPixelMap();
-        await decoded.release();
+        // fetch() already performed a real bounded decode after callbacks/transforms, with recovery.
+        // Only inspect original metadata here to choose the file extension; never decode it twice.
         const mime = info.mimeType;
         extension = mime.includes('png') ? 'png' : mime.includes('webp') ? 'webp'
           : mime.includes('gif') ? 'gif' : mime.includes('bmp') ? 'bmp' : 'jpg';
@@ -764,7 +768,8 @@ export class DownloadQueue {
         try {
           if (fs.writeSync(file.fd, bytes) !== bytes.byteLength) { throw new Error('下载图片写入不完整'); }
         } finally { fs.closeSync(file); }
-        // No await between this lease check, rename, and checkpoint: one synchronous commit.
+        // No await between this lease check and atomic rename. The batch checkpoints only
+        // after all workers settle, so a crash may leave safe, uncheckpointed final files.
         if (!DownloadQueue.live(task, generation)) { return; }
         fs.renameSync(`${path}.part`, path);
       } finally {

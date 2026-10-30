@@ -40,6 +40,16 @@ test('every router.pushUrl target is registered and backed by a real page',()=>{
   }
 });
 
+test('retired feature routes stay absent while ordinary favorites/history/download routes remain',()=>{
+  for(const page of ['pages/StatisticsPage','pages/SyncPage','pages/PictureFavoritesPage']) {
+    assert.ok(!pages.includes(page),`retired page is registered: ${page}`);
+    assert.ok(!fs.existsSync(path.join(root,`entry/src/main/ets/${page}.ets`)),`retired page file remains: ${page}`);
+  }
+  for(const page of ['pages/NetworkFavoritesPage','pages/HistoryPage','pages/DownloadsPage','pages/ReaderPage']) {
+    assert.ok(pages.includes(page),`retained route missing: ${page}`);
+  }
+});
+
 test('no source references the removed standalone aggregate page',()=>{
   for(const file of files){
     const code=read(file);
@@ -138,7 +148,7 @@ test('share payload receives the comic id and source domain so the original site
   assert.doesNotMatch(code,/DetailsSharePayload\.create\([^)]*pages\//,'share must never use an app route');
 });
 
-const total=14;
+const total=15;
 assert.equal(count+fail.length,total,`expected ${total} checks, ran ${count+fail.length}`);
 if(fail.length>0){console.error(`UI_CONTRACT_FAIL ${fail.length}/${total}`);process.exitCode=1}
 else console.log(`PASS ${count} production UI-contract/route/shared-source/background checks; no rendering, device or network.`);

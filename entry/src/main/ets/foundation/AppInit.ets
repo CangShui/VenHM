@@ -1,3 +1,5 @@
+import { fileIo as fs } from '@kit.CoreFileKit';
+import { AppContext } from './AppContext';
 import { Settings } from './Settings';
 import { Database } from '../storage/Database';
 import { CookieJar } from '../network/CookieJar';
@@ -41,6 +43,10 @@ export class AppInit {
   private static async run(): Promise<void> {
     const start = Date.now();
     await Settings.init();
+    // The retired backup screen persisted only its endpoint; credentials were
+    // session-only. Remove that one known key, preserving all reader settings.
+    await Settings.remove('webdavEndpoint');
+    AppInit.removeRetiredPictureCopies();
     await Database.init();
     await CookieJar.init();
     try {
@@ -74,6 +80,40 @@ export class AppInit {
     SourceSelfTest.run().catch((error: Object) => {
       Log.warn('AppInit', `self test failed: ${error}`);
     });
+  }
+
+  /** Upgrade-only cleanup of the old module's exact private folder/UUID format.
+   * No recursive deletion: unknown entries, directories and links are not owned.
+   * The old implementation had no marker file; do not infer ownership by prefix.
+   */
+  static removeRetiredPictureCopies(): void {
+    const root = AppContext.filesDir;
+    if (!root.startsWith('/') || root.endsWith('/') || root.includes('\\') || root.includes('//') ||
+      root.split('/').some((part: string) => part === '..' || part === '.')) {
+      Log.warn('AppInit', 'retired image cleanup skipped: invalid sandbox root');
+      return;
+    }
+    if (!fs.accessSync(root)) { return; }
+    if (fs.lstatSync(root).isSymbolicLink() || !fs.statSync(root).isDirectory()) {
+      Log.warn('AppInit', 'retired image cleanup skipped: unsafe sandbox root');
+      return;
+    }
+    const directory = `${root}/picture_favorites`;
+    if (!fs.accessSync(directory)) { return; }
+    if (fs.lstatSync(directory).isSymbolicLink() || !fs.statSync(directory).isDirectory()) {
+      Log.warn('AppInit', 'retired image cleanup skipped: unsafe legacy directory');
+      return;
+    }
+    for (const name of fs.listFileSync(directory)) {
+      // Exact old UUID-derived file format. No separators, nesting or arbitrary suffixes.
+      if (!/^[a-f0-9]{32}\.image$/.test(name)) { continue; }
+      const file = `${directory}/${name}`;
+      if (fs.lstatSync(file).isSymbolicLink() || !fs.statSync(file).isFile()) { continue; }
+      // Absolute path was verified under the trusted context root and exact owned directory.
+      fs.unlinkSync(file);
+    }
+    // Never rmdir: that SDK operation can recurse; leave an empty harmless folder.
+    // I/O errors propagate for startup retry instead of silently stranding known copies.
   }
 
   static get isReady(): boolean {

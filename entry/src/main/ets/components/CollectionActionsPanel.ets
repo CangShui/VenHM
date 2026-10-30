@@ -1,7 +1,5 @@
 import { promptAction, router } from '@kit.ArkUI';
 import { SourceManager } from '../source/SourceManager';
-import { FollowUpdates } from '../features/FollowUpdates';
-import { FollowUpdatesDao } from '../storage/FollowUpdatesDao';
 import { UiTheme, UiIcon } from './UiKit';
 import { UiStyles } from './UiModifiers';
 
@@ -13,37 +11,16 @@ export struct CollectionActionsPanel {
   @Prop title: string = '';
   @Prop cover: string = '';
   @Prop favId: string = '';
+  /** Local favourite is the primary action; the detail page owns its folder UI. */
+  @Prop localFavoriteLabel: string = '本地收藏';
+  onLocalFavorite?: () => void;
   @State expanded: boolean = false;
   @State folders: string[] = [];
   @State folderNames: string[] = [];
   @State favorited: string[] = [];
   @State folderId: string = '';
-  @State following: boolean = false;
   @State busy: boolean = false;
   @State status: string = '';
-
-  aboutToAppear(): void { this.refreshFollowing(); }
-
-  private async refreshFollowing(): Promise<void> {
-    try { this.following = await FollowUpdatesDao.find(this.sourceKey, this.comicId) !== undefined; }
-    catch (error) { this.status = '本地追更状态加载失败'; }
-  }
-
-  private async toggleFollow(): Promise<void> {
-    if (this.busy) { return; }
-    this.busy = true;
-    try {
-      if (this.following) {
-        await FollowUpdatesDao.unfollow(this.sourceKey, this.comicId);
-        this.status = '已取消本地追更';
-      } else {
-        await FollowUpdates.follow(this.sourceKey, this.comicId, this.title, this.cover);
-        this.status = '已加入手动追更；首次检查建立基线，不会误报更新';
-      }
-      await this.refreshFollowing();
-    } catch (error) { this.status = '追更保存失败，请重试'; }
-    finally { this.busy = false; }
-  }
 
   private async openNetwork(): Promise<void> {
     if (this.busy) { return; }
@@ -103,14 +80,15 @@ export struct CollectionActionsPanel {
       Row({ space: 12 }) {
         Stack() { UiIcon({ name: 'bookmark', color: '#8A68C7', iconSize: 22 }) }
           .width(44).height(44).borderRadius(15).backgroundColor('#F0EAFA')
-        Text('收藏与追更').fontSize(17).fontWeight(FontWeight.Medium).fontColor(UiTheme.ink)
+        Text('收藏').fontSize(17).fontWeight(FontWeight.Medium).fontColor(UiTheme.ink)
       }.width('100%')
-      Flex({ wrap: FlexWrap.Wrap }) {
-        Button('网络收藏').attributeModifier(UiStyles.secondary).margin({ right: 8, bottom: 8 }).onClick(() => { this.openNetwork(); }).enabled(!this.busy)
-        Button(this.following ? '取消追更' : '手动追更').attributeModifier(this.following ? UiStyles.danger : UiStyles.quiet).height(44).margin({ right: 8, bottom: 8 }).onClick(() => { this.toggleFollow(); }).enabled(!this.busy)
-        Button('追更列表').attributeModifier(UiStyles.secondary).margin({ right: 8, bottom: 8 }).onClick(() => {
-          router.pushUrl({ url: 'pages/FollowUpdatesPage' }).catch(() => { this.status = '打开追更失败'; });
-        })
+      Row({ space: 10 }) {
+        Button(this.localFavoriteLabel).attributeModifier(UiStyles.primary)
+          .height(44).layoutWeight(1).enabled(!this.busy)
+          .onClick(() => { this.onLocalFavorite?.(); })
+        Button('网络收藏').attributeModifier(UiStyles.secondary)
+          .height(44).layoutWeight(1).enabled(!this.busy)
+          .onClick(() => { this.openNetwork(); })
       }.width('100%')
       if (this.expanded) {
         Divider().color(UiTheme.line)
@@ -128,7 +106,7 @@ export struct CollectionActionsPanel {
           Button('添加到远端').attributeModifier(UiStyles.quiet).height(44).margin({ right: 8, bottom: 8 }).enabled(!this.busy).onClick(() => { this.mutate(true); })
           Button('从远端移除').attributeModifier(UiStyles.danger).margin({ right: 8, bottom: 8 }).enabled(!this.busy).onClick(() => { this.mutate(false); })
           Button('登录').attributeModifier(UiStyles.secondary).margin({ right: 8, bottom: 8 }).onClick(() => {
-            router.pushUrl({ url: 'pages/SourceAccountPage', params: { sourceKey: this.sourceKey } })
+            router.pushUrl({ url: 'pages/SourceAccountPage', params: { key: this.sourceKey } })
               .catch(() => { this.status = '打开账号失败'; });
           })
         }.width('100%')

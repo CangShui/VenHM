@@ -67,14 +67,14 @@ struct UsabilityPage {
     }
   }
 
-  private async transferProbe(sync: boolean): Promise<void> {
+  private async transferProbe(): Promise<void> {
     if (this.busy) { return; }
     this.busy = true;
     this.error = '';
     this.reports = [];
     try {
       await AppInit.init();
-      this.reports = sync ? await TransferUsability.sync() : await TransferUsability.download();
+      this.reports = await TransferUsability.download();
     } catch (error) { this.error = String(error); }
     finally { this.busy = false; }
   }
@@ -128,7 +128,7 @@ struct UsabilityPage {
       const id = HistoryUsability.fixtureId();
       const saved = id.length > 0 ? await HistoryDao.find(id, 0) : undefined;
       this.progress = saved === undefined ? '尚无样本阅读进度' :
-        `${saved.description()} · ID=${saved.epId ?? '(旧记录)'} · 时长 ${saved.readDurationMs}ms`;
+        `${saved.description()} · ID=${saved.epId ?? '(旧记录)'}`;
     } catch (error) {
       this.error = String(error);
     }
@@ -276,8 +276,7 @@ struct UsabilityPage {
             Button(this.busy ? '执行中…' : '运行 UI 对话框自检（需手动操作）').attributeModifier(UiStyles.secondary)
               .width('100%').height(56).labelStyle({ maxLines: 2 }).enabled(!this.busy)
               .onClick(() => { this.runUi(); })
-            Button('运行离线下载回归').attributeModifier(UiStyles.secondary).width('100%').enabled(!this.busy).onClick(() => { this.transferProbe(false); })
-            Button('运行离线同步回归').attributeModifier(UiStyles.secondary).width('100%').enabled(!this.busy).onClick(() => { this.transferProbe(true); })
+            Button('运行离线下载回归').attributeModifier(UiStyles.secondary).width('100%').enabled(!this.busy).onClick(() => { this.transferProbe(); })
           }.width('100%').padding(20).backgroundColor(UiTheme.surface).borderRadius(UiTheme.cardRadius)
 
           UiSectionHeading({ title: '联网与公开模板诊断' })

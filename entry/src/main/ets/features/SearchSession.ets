@@ -13,6 +13,8 @@ export class SearchSession {
   sourceKey: string = '';
   page: number = 0;
   ended: boolean = false;
+  /** A duplicate-only page is not proof of EOF; require an explicit next attempt. */
+  autoPaused: boolean = false;
   private version: number = 0;
   private source?: ComicSource;
   private keyword: string = '';
@@ -39,6 +41,7 @@ export class SearchSession {
     this.cursor = undefined;
     this.options = [];
     this.ended = false;
+    this.autoPaused = false;
   }
 
   async start(source: ComicSource, keyword: string, options: string[] = []): Promise<boolean> {
@@ -86,10 +89,13 @@ export class SearchSession {
       if (result.error) {
         throw new Error(result.errorMessage ?? '搜索失败');
       }
-      const items = result.dataOrNull ?? [];
+      const items = result.dataOrNull;
+      if (items === undefined) { throw new Error('源未返回有效列表，请重试'); }
       let added = 0;
       const merged: Comic[] = append ? this.results.slice() : [];
       for (const comic of items) {
+        if (comic.id.length === 0) { throw new Error('列表缺少稳定漫画ID，请重试'); }
+        if (comic.sourceKey.length === 0) { comic.sourceKey = source.key; }
         if (!merged.some((existing: Comic) => existing.id === comic.id && existing.sourceKey === comic.sourceKey)) {
           merged.push(comic);
           added++;
@@ -101,9 +107,13 @@ export class SearchSession {
       const next = result.subDataString;
       const repeated = append && search.cursorOnly && next === this.cursor;
       this.cursor = next;
-      const max = typeof result.subData === 'number' ? result.subData as number : undefined;
-      this.ended = items.length === 0 || (append && added === 0) || repeated ||
-        (search.cursorOnly ? next === undefined || next.length === 0 : max !== undefined && this.page >= max);
+      // A positive finite maxPage is authoritative. 0 means unknown (not EOF),
+      // and neither a short page nor a duplicate-only page proves the last page.
+      const max = next === undefined ? NaN : Number(next);
+      this.ended = items.length === 0 || repeated ||
+        (search.cursorOnly ? next === undefined || next.length === 0 :
+          Number.isFinite(max) && max > 0 && this.page >= max);
+      this.autoPaused = !this.ended && added === 0;
       Log.audit(trace, '响应返回', `接收=${items.length}；新增=${added}；累计=${merged.length}；结束=${this.ended}`);
       return true;
     } catch (error) {

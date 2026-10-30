@@ -140,7 +140,7 @@ const folder=t=>`/app/files/local_comics/${t.id}`;
   });
   await test('delete waits for asynchronous decoder release; old decoder cannot write after task removal',async()=>{
     const e=downloads(),task=await e.Queue.add('fixture','comic'),gate=deferred();let decoding=false;
-    e.ctx.image.createImageSource=()=>({getImageInfo:async()=>{decoding=true;await gate.promise;return {size:{width:10,height:20},mimeType:'image/png'}},createPixelMap:async()=>({release:async()=>{}}),release:async()=>{}});
+    e.ctx.image.createImageSource=()=>({getImageInfo:async()=>{decoding=true;await gate.promise;return {size:{width:10,height:20},mimeType:'image/png'}},createPixelMap:async()=>({getImageInfo:async()=>({size:{width:10,height:20}}),release:async()=>{}}),release:async()=>{}});
     const run=e.Queue.resume(task.id);await tick();assert.equal(decoding,true);
     const deletion=e.Queue.deleteTask(task.id);await tick();assert.equal(e.deleted.length,0);gate.resolve();await run;await deletion;
     assert.equal(e.writes.some(p=>p.endsWith('.part')),false);assert.equal(e.Queue.tasks.length,0);

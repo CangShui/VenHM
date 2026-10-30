@@ -31,7 +31,7 @@ const ctx = vm.createContext({
   router: { getState: () => stack.at(-1), getStateByIndex: i => stack[i - 1],
     back: () => calls.push(['back']), replaceUrl: async p => { if (failRoute) throw Error('route failure'); calls.push(['replace', p]); } }
 });
-const helpers = ['ReaderTapPolicy', 'ReaderGesturePolicy', 'ReaderModes', 'ReaderSpreads', 'ReaderRenderSource', 'ReaderVolumeKeys', 'ReadingPosition', 'ReaderImageLayout']
+const helpers = ['ReaderTapPolicy', 'ReaderGesturePolicy', 'ReaderModes', 'ReaderSpreads', 'ReaderRenderSource', 'ReaderVolumeKeys', 'ReaderWorkload', 'ReadingPosition', 'ReaderImageLayout']
   .map(name => read(`entry/src/main/ets/features/${name}.ets`)).join('\n') + '\n' +
   read('entry/src/main/ets/components/ReaderClickZones.ets');
 vm.runInContext(stripTypeScriptTypes(helpers + '\n' + options + '\n' + reader + '\n' + image, { mode: 'transform' }) +
@@ -120,9 +120,9 @@ const touch = (type, x = 20, y = 20, fingers = 1) => ({ type, touches: Array.fro
     assert.equal(p.scaleValue,2); assert.equal(calls.length,0); p.handleDoubleTap(); assert.equal(p.scaleValue,1);
   });
   await test('matching immediate details predecessor uses Back only after progress and cleanup', async () => {
-    const p=page(); p.clock.start(now); now+=20; stack=[{index:1,name:'ComicDetailsPage',path:'pages/ComicDetailsPage',params:{sourceKey:'source',comicId:'comic'}},{index:2,name:'ReaderPage'}];
+    const p=page(); now+=20; stack=[{index:1,name:'ComicDetailsPage',path:'pages/ComicDetailsPage',params:{sourceKey:'source',comicId:'comic'}},{index:2,name:'ReaderPage'}];
     p.autoReading=true; p.autoTimer=1; await p.openComicDetails(); assert.deepEqual(calls,[['back']]); assert.equal(p.autoReading,false);
-    assert.equal(saves.at(-1).readDurationMs,20); assert.equal(p.visible,false);
+    assert.equal(saves.at(-1).page,1); assert.equal('readDurationMs' in saves.at(-1),false); assert.equal(p.visible,false);
   });
   await test('SDK file-name route identity includes js/ets extension even with directory-only path', async()=>{
     for(const name of ['ComicDetailsPage.js','ComicDetailsPage.ets']){

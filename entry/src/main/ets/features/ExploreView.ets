@@ -29,8 +29,9 @@ export struct ExploreView {
   @State comics: Comic[] = [];
   @State loading: boolean = false;
   @State error: string = '';
-  @State currentPage: number = 1;
+  @State currentPage: number = 0;
   @State hasMore: boolean = true;
+  private autoPaused: boolean = false;
   @State ready: boolean = false;
 
   @State selectedSourceKey: string = '';
@@ -103,15 +104,23 @@ export struct ExploreView {
   private loadFirstPage(): void {
     if (!this.initialized) { this.aboutToAppear(); return; }
     this.comics = [];
-    this.currentPage = 1;
+    this.currentPage = 0;
     this.hasMore = true;
+    this.autoPaused = false;
     this.nextCursor = undefined;
     this.loadPage(1);
   }
 
   private async loadPage(page: number): Promise<void> {
-    if (page > 1 && (this.loading || !this.hasMore)) { return; }
+    if (this.disposed || page < 1 ||
+      (page > 1 && (this.loading || !this.hasMore || this.currentPage < 1 || page !== this.currentPage + 1))) { return; }
+    const sourceKey = this.selectedSourceKey;
+    const pageIndex = this.pageIndex;
     const version = ++this.version;
+    if (page === 1) {
+      this.comics = []; this.currentPage = 0; this.nextCursor = undefined;
+      this.hasMore = true; this.autoPaused = false;
+    }
     const trace = `explore-${Date.now()}-${version}`;
     this.loading = true;
     this.error = '';
@@ -133,14 +142,17 @@ export struct ExploreView {
         // Parent adapter calls a cursor-only source's first loadNext(null), not page number 1.
         result = await explore.loadPage(page);
       }
-      if (this.disposed || version !== this.version) { return; }
+      if (this.disposed || version !== this.version || sourceKey !== this.selectedSourceKey ||
+        pageIndex !== this.pageIndex || source !== this.currentSource()) { return; }
       if (result.error) {
         throw new Error(this.diagnostic(result.errorMessage ?? '探索加载失败，请重试'));
       }
-      const items = result.dataOrNull ?? [];
+      const items = result.dataOrNull;
+      if (items === undefined) { throw new Error('源未返回有效列表，请重试'); }
       const merged: Comic[] = page === 1 ? [] : this.comics.slice();
       let added: number = 0;
       for (const comic of items) {
+        if (comic.id.length === 0) { throw new Error('列表缺少稳定漫画ID，请重试'); }
         if (comic.sourceKey.length === 0) { comic.sourceKey = source.key; }
         if (!merged.some((existing: Comic) => existing.id === comic.id && existing.sourceKey === comic.sourceKey)) {
           merged.push(comic); added++;
@@ -152,14 +164,14 @@ export struct ExploreView {
       if (explore.cursorOnly) {
         this.hasMore = next !== undefined && next.length > 0 && next !== this.nextCursor;
         this.nextCursor = next;
-      } else if (next !== undefined) {
-        const max = Number(next);
-        this.hasMore = !isNaN(max) && page < max;
       } else {
-        this.hasMore = items.length > 0;
+        const max = next === undefined ? NaN : Number(next);
+        // 0/absent/non-finite maxPage is unknown, not a one-page contract.
+        this.hasMore = !(Number.isFinite(max) && max > 0 && page >= max);
       }
-      this.hasMore = this.hasMore && added > 0 &&
+      this.hasMore = this.hasMore && items.length > 0 &&
         (explore.cursorOnly || explore.type === ExplorePageType.multiPageComicList);
+      this.autoPaused = this.hasMore && added === 0;
       Log.audit(trace, '探索响应返回', `条数=${items.length}；更多=${this.hasMore}`);
     } catch (error) {
       if (this.disposed || version !== this.version) { return; }
@@ -167,6 +179,12 @@ export struct ExploreView {
       Log.audit(trace, '探索异常', '未记录请求/正文；可以重试');
     } finally {
       if (!this.disposed && version === this.version) { this.loading = false; }
+    }
+  }
+
+  private reachEnd(): void {
+    if (!this.loading && this.currentPage > 0 && this.error.length === 0 && !this.autoPaused) {
+      this.loadPage(this.currentPage + 1);
     }
   }
 
@@ -277,26 +295,18 @@ export struct ExploreView {
               })
             }
           }, (item: Comic) => `${item.sourceKey}@${item.id}`)
-
-          if (this.hasMore) {
-            GridItem() {
-              Column() {
-                if (this.loading) {
-                  LoadingProgress().width(28).height(28)
-                } else {
-                  Text('加载更多')
-                    .fontSize(13)
-                    .fontColor('#0A59F7')
-                    .onClick(() => {
-                      this.loadPage(this.currentPage + 1);
-                    })
-                }
+          GridItem() {
+            Column({ space: 10 }) {
+              if (this.error.length > 0) {
+                Text(this.error).fontSize(12).fontColor('#D93025').width('100%').textAlign(TextAlign.Center)
               }
-              .width('100%')
-              .height(80)
-              .justifyContent(FlexAlign.Center)
-            }
-          }
+              Text(`已加载 ${this.comics.length} 条`).fontSize(12).fontColor(UiTheme.muted)
+              Button(this.loading ? '加载中…' : (!this.hasMore ? '已到末页' : (this.error.length > 0 ? '重试加载更多' : '加载更多')))
+                .attributeModifier(UiStyles.secondary).enabled(!this.loading && this.hasMore)
+                .onClick(() => { this.loadPage(this.currentPage + 1); })
+            }.width('100%').padding({ top: 10, bottom: 28 }).alignItems(HorizontalAlign.Center)
+          }.columnStart(0).columnEnd(2)
+
         }
         .columnsTemplate('1fr 1fr 1fr')
         .columnsGap(10)
@@ -304,11 +314,8 @@ export struct ExploreView {
         .padding({ left: 20, right: 20, bottom: 12 })
         .width('100%')
         .layoutWeight(1)
-        if (this.error.length > 0) {
-          Text(this.error).fontSize(12).fontColor('#D93025').padding(8)
-          Button('重试加载更多').enabled(!this.loading)
-            .onClick(() => { this.loadPage(this.currentPage + 1); })
-        }
+        .onReachEnd(() => { this.reachEnd(); })
+
       }
     }
     .width('100%')

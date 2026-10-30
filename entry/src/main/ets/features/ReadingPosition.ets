@@ -41,23 +41,3 @@ export class ReadingPosition {
     return Math.min(Math.floor(page) - 1, Math.floor(pageCount) - 1);
   }
 }
-
-/** Consume disjoint visible-reading intervals, including same-page exit and duplicate lifecycle callbacks. */
-export class ReadingClock {
-  private startedAt: number = -1;
-
-  start(now: number): void {
-    if (this.startedAt < 0) {
-      this.startedAt = now;
-    }
-  }
-
-  take(now: number, pause: boolean): number {
-    if (this.startedAt < 0) {
-      return 0;
-    }
-    const duration = Math.max(0, now - this.startedAt);
-    this.startedAt = pause ? -1 : Math.max(now, this.startedAt);
-    return duration;
-  }
-}

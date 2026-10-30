@@ -5,7 +5,7 @@ import { Database } from '../storage/Database';
 import { History, HistoryDao } from '../storage/HistoryDao';
 import { ComicType } from '../model/ComicType';
 import { HistoryNavigation } from './HistoryNavigation';
-import { ReadingPosition, ReadingClock } from './ReadingPosition';
+import { ReadingPosition } from './ReadingPosition';
 import { ImageLoader } from '../network/ImageLoader';
 import { Log } from '../foundation/Log';
 
@@ -32,7 +32,6 @@ export class HistoryUsability {
     record.ep = 2;
     record.page = 2;
     record.time = Date.now();
-    record.readDurationMs = 10;
     // Refuse accidental collisions instead of replacing anything pre-existing.
     HistoryUsability.check(await HistoryDao.find(id, record.type.value) === undefined, '测试标识冲突');
     try {
@@ -42,7 +41,6 @@ export class HistoryUsability {
       const writes: Promise<void>[] = [];
       for (let index = 0; index < 12; index++) {
         record.page = index + 1;
-        record.readDurationMs = 5;
         writes.push(HistoryDao.save(record));
       }
       await Promise.all(writes);
@@ -51,8 +49,8 @@ export class HistoryUsability {
       if (saved === undefined) {
         throw new Error('历史未持久化');
       }
-      HistoryUsability.check(saved.page === 12 && saved.readDurationMs === 70,
-        '快速翻页丢失进度或阅读时长');
+      HistoryUsability.check(saved.page === 12,
+        '快速翻页丢失继续阅读进度');
       HistoryUsability.check(saved.storedSourceKey === source && saved.epId === 'chapter-2', '源或章节ID丢失');
       HistoryUsability.check(saved.maxPage === undefined && saved.group === undefined, 'NULL字段语义改变');
       const rows = await Database.query('SELECT read_episode FROM history WHERE id = ? AND type = ?',
@@ -62,7 +60,7 @@ export class HistoryUsability {
       } finally {
         rows.close();
       }
-      reports.push('PASS · 快速连续12次保存：末页12、时长70ms、源/章节ID/NULL/已读章节保留');
+      reports.push('PASS · 快速连续12次保存：末页12、源/章节ID/NULL/旧章节字段保留');
 
       const legacy = new History();
       legacy.type = ComicType.fromKey('correct_source');
@@ -88,15 +86,10 @@ export class HistoryUsability {
       HistoryUsability.check(ReadingPosition.pageIndex(3, 4) === 2 &&
         ReadingPosition.pageIndex(99, 4) === 3 && ReadingPosition.pageIndex(1, 0) === -1,
         '页码边界失败');
-      const clock = new ReadingClock();
-      clock.start(1000);
-      HistoryUsability.check(clock.take(1050, false) === 50 && clock.take(1100, true) === 50 &&
-        clock.take(1150, true) === 0, '同页退出或重复退出时长失败');
-      reports.push('PASS · 稳定ID/旧索引/空ID/失效章节/页码越界/阅读时长无重复');
+      reports.push('PASS · 稳定ID/旧索引/空ID/失效章节/页码越界');
 
       // NULL distinguishes a legacy record from a legitimate empty chapter ID.
       record.epId = '';
-      record.readDurationMs = 0;
       await HistoryDao.save(record);
       const implicit = await HistoryDao.find(id, record.type.value);
       HistoryUsability.check(implicit?.epId === '', '空ID被误当成缺失字段');

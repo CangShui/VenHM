@@ -38,7 +38,18 @@ struct SourceAccountPage {
     this.disposed = false;
     AppContext.ensureInitialized(this.getUIContext().getHostContext());
     const params = router.getParams() as Record<string, Object>;
-    const key = typeof params?.['key'] === 'string' ? params['key'] as string : '';
+    // Entries from network favourites / collection panel pass 'sourceKey',
+    // the source manager passes 'key'. Accept either instead of silently
+    // looking up an empty source key.
+    const rawKey = params?.['key'];
+    const rawSourceKey = params?.['sourceKey'];
+    const key = typeof rawKey === 'string' && rawKey.length > 0 ? rawKey
+      : (typeof rawSourceKey === 'string' ? rawSourceKey : '');
+    if (key.length === 0) {
+      this.error = '没有收到漫画源标识，请从源管理或书架重新进入';
+      this.loading = false;
+      return;
+    }
     this.load(key);
   }
   aboutToDisappear(): void { this.disposed = true; this.version++; }
@@ -49,9 +60,14 @@ struct SourceAccountPage {
     try {
       await AppInit.init();
       if (this.disposed || version !== this.version) { return; }
-      this.source = SourceManager.find(key);
-      if (this.source?.account === undefined) { throw new Error('源未声明账号功能'); }
-      this.cookieValues = (this.source.account.cookieFields ?? []).map((): string => '');
+      const source = SourceManager.find(key);
+      if (source === undefined) {
+        // A stale registry or a not-yet-parsed script is NOT "no account".
+        throw new Error('漫画源尚未加载完成，请返回源管理刷新后重试');
+      }
+      this.source = source;
+      if (source.account === undefined) { throw new Error('该源未声明登录功能'); }
+      this.cookieValues = (source.account.cookieFields ?? []).map((): string => '');
     } catch (error) { if (!this.disposed) { this.error = String(error); } }
     finally { if (!this.disposed && version === this.version) { this.loading = false; } }
   }

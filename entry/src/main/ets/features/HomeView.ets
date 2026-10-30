@@ -28,6 +28,10 @@ export struct HomeView {
   @State localComics: Comic[] = [];
   @State loading: boolean = true;
   onOpenTab?: (index: number) => void;
+  @Prop @Watch('onHostChanged') hostRevision: number = 0;
+  @Prop @Watch('onHostChanged') active: boolean = true;
+  private appeared: boolean = false;
+  private reloadId: number = 0;
 
   private historyRefreshId: number = 0;
   private readonly onHistoryChanged: () => void = () => { this.reloadHistory(); };
@@ -35,12 +39,15 @@ export struct HomeView {
   private readonly onLocalLibraryChanged: () => void = () => { this.reloadLocal(); };
 
   aboutToAppear(): void {
+    this.appeared = true;
     HistoryDao.addListener(this.onHistoryChanged);
     LocalLibrarySignal.addListener(this.onLocalLibraryChanged);
     this.reload();
   }
 
   aboutToDisappear(): void {
+    this.appeared = false;
+    this.reloadId++;
     HistoryDao.removeListener(this.onHistoryChanged);
     LocalLibrarySignal.removeListener(this.onLocalLibraryChanged);
     this.historyRefreshId++;
@@ -50,13 +57,16 @@ export struct HomeView {
   /** Refresh only the sandbox local-comic list (download add/remove). */
   private async reloadLocal(): Promise<void> {
     const requestId = ++this.localRefreshId;
+    if (!this.appeared || !this.active) { return; }
     try {
+      await AppInit.init();
+      if (!this.appeared || !this.active || requestId !== this.localRefreshId) { return; }
       const local = SourceManager.find('local');
-      if (local === undefined || local.explorePages.length === 0) { return; }
+      if (local === undefined || local.explorePages.length === 0) { this.localComics = []; return; }
       const explore = local.explorePages[0];
       if (explore.loadPage === undefined) { return; }
       const result = await explore.loadPage(1);
-      if (requestId === this.localRefreshId) {
+      if (this.appeared && this.active && requestId === this.localRefreshId) {
         this.localComics = result.dataOrNull ?? [];
       }
     } catch (error) {
@@ -66,9 +76,10 @@ export struct HomeView {
 
   private async reloadHistory(): Promise<void> {
     const requestId = ++this.historyRefreshId;
+    if (!this.appeared || !this.active) { return; }
     try {
       const items = await HistoryDao.list(10);
-      if (requestId === this.historyRefreshId) {
+      if (this.appeared && this.active && requestId === this.historyRefreshId) {
         this.history = items;
       }
     } catch (error) {
@@ -76,24 +87,28 @@ export struct HomeView {
     }
   }
 
+  private onHostChanged(): void {
+    this.historyRefreshId++; this.localRefreshId++; this.reloadId++;
+    if (this.appeared && this.active) { this.reload(); }
+  }
+
   async reload(): Promise<void> {
+    const request = ++this.reloadId;
+    if (!this.appeared || !this.active) { return; }
     this.loading = true;
     try {
       await AppInit.init();
-      this.history = await HistoryDao.list(10);
-      this.favorites = await FavoritesDao.list();
-      const local = SourceManager.find('local');
-      if (local !== undefined && local.explorePages.length > 0) {
-        const explore = local.explorePages[0];
-        if (explore.loadPage !== undefined) {
-          const result = await explore.loadPage(1);
-          this.localComics = result.dataOrNull ?? [];
-        }
-      }
+      if (!this.appeared || !this.active || request !== this.reloadId) { return; }
+      const history = await HistoryDao.list(10);
+      if (!this.appeared || !this.active || request !== this.reloadId) { return; }
+      const favorites = await FavoritesDao.list();
+      if (!this.appeared || !this.active || request !== this.reloadId) { return; }
+      this.history = history; this.favorites = favorites;
+      await this.reloadLocal();
     } catch (error) {
-      Log.error('HomeView', `${error}`);
+      Log.error('HomeView', 'home refresh unavailable');
     } finally {
-      this.loading = false;
+      if (request === this.reloadId && this.appeared) { this.loading = false; }
     }
   }
 
@@ -190,6 +205,21 @@ export struct HomeView {
     }.padding({ left: 20, right: 20 }).width('100%')
   }
 
+  @Builder
+  localStrip() {
+    Scroll() {
+      Row({ space: 12 }) {
+        ForEach(this.localComics, (item: Comic) => {
+          Column() {
+            ComicCell({ title: item.title, subtitle: item.subtitle, coverUrl: item.cover,
+              sourceKey: 'local', comicId: item.id,
+              onTapCell: () => { this.openComic('local', item.id, item.title, item.cover); } })
+          }.width(116)
+        }, (item: Comic) => `local@${item.id}`)
+      }.padding({ left: 20, right: 20 })
+    }.scrollable(ScrollDirection.Horizontal).scrollBar(BarState.Off).width('100%')
+  }
+
   build() {
     Column() {
       Scroll() {
@@ -224,13 +254,13 @@ export struct HomeView {
             // ---- local comics ----
             this.sectionHeader(`本地漫画（${this.localComics.length}）`, '', 1)
             if (this.localComics.length === 0) {
-              Text('把图片放进沙箱 local_comics/<漫画名>/ 后回到书架刷新。')
+              Text('本地暂无可阅读漫画。下载保存图片后会自动出现在这里。')
                 .fontSize(13)
                 .fontColor(UiTheme.muted)
                 .width('100%')
                 .padding({ left: 20, right: 20, bottom: 24 })
             } else {
-              this.comicGrid(this.localComics.slice(0, 6), true)
+              this.localStrip()
             }
 
             Row().height(UiTheme.bottomInset)

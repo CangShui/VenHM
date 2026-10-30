@@ -40,10 +40,10 @@ async function test(name,run){await run();count++;fs.appendFileSync(log,`[响应
     await s.start({key:'a',search:{loadPage:async(k,p)=>ok(p===1?[item('one')]:[])}},'q');
     await s.more();assert.equal(s.results.length,1);assert.equal(s.ended,true);
   });
-  await test('duplicate-only page stops without duplicate grid keys',async()=>{
+  await test('duplicate-only page pauses auto paging without claiming EOF or duplicate grid keys',async()=>{
     const s=new ctx.Session();
     await s.start({key:'a',search:{loadPage:async()=>ok([item('one'),item('one')])}},'q');
-    await s.more();assert.equal(s.results.length,1);assert.equal(s.ended,true);
+    await s.more();assert.equal(s.results.length,1);assert.equal(s.ended,false);assert.equal(s.autoPaused,true);
   });
   await test('append failure preserves state and retries same page',async()=>{
     const s=new ctx.Session();let fail=true;const calls=[];

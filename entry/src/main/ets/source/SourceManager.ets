@@ -74,13 +74,26 @@ export class SourceManager {
     return SourceManager.loadErrors;
   }
 
+  /** Register, replacing an older instance of the same key with the new one. */
   static register(source: ComicSource): void {
-    const existing = SourceManager.find(source.key);
-    if (existing !== undefined) {
-      Log.warn('SourceManager', `source ${source.key} already registered`);
-      return;
+    const index = SourceManager.sources.findIndex((item: ComicSource) => item.key === source.key);
+    if (index >= 0) {
+      SourceManager.sources.splice(index, 1);
     }
     SourceManager.sources.push(source);
+  }
+
+  /**
+   * Re-parse every installed script (built-in sources stay). Called after the
+   * script set changes so capability changes such as a new account declaration
+   * are visible immediately instead of after a full app restart.
+   */
+  static async reloadInstalled(): Promise<void> {
+    SourceManager.sources.splice(0, SourceManager.sources.length,
+      ...SourceManager.sources.filter((item: ComicSource) => item.key === 'local'));
+    SourceManager.loadErrors = [];
+    await SourceManager.loadInstalledScripts();
+    Log.info('SourceManager', `reloaded installed scripts; ${SourceManager.sources.length} source(s)`);
   }
 
   static unregister(key: string): void {
