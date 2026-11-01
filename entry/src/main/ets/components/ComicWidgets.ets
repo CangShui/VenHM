@@ -120,6 +120,16 @@ export struct AsyncComicImage {
     catch (error) { Log.audit('image-ready', '就绪回调异常', '布局通知失败，未修改图片请求或打印回调数据'); }
   }
 
+  /** Manual retry for a failed page: re-runs the same request path. */
+  private retryImage(): void {
+    if (this.disposed) { return; }
+    this.cancelSingleTap();
+    this.failed = false;
+    this.pixelMap = undefined;
+    this.load();
+    Log.audit('image-retry', '用户重试图片', '重新发起同一次请求；不记录地址与正文');
+  }
+
   private reloadImage(): void {
     // ArkUI can update watched sibling props one by one. Resolve only the final
     // input tuple, and merge the url watcher with aboutToReuse's notification.
@@ -342,9 +352,18 @@ export struct AsyncComicImage {
       } else {
         Column() {
           if (this.failed) {
-            Text('图片加载失败')
-              .fontSize(11)
-              .fontColor('#999999')
+            Column({ space: 8 }) {
+              Text('图片加载失败')
+                .fontSize(11)
+                .fontColor('#999999')
+              Button('重试')
+                .fontSize(12)
+                .height(32)
+                .padding({ left: 16, right: 16 })
+                .backgroundColor('#E8EEF7')
+                .fontColor('#0A59F7')
+                .onClick(() => { this.retryImage(); })
+            }
           } else {
             LoadingProgress()
               .width(24)

@@ -9,7 +9,7 @@ const rawReader=read('entry/src/main/ets/pages/ReaderPage.ets'),reader=(rawReade
 const options=read('entry/src/main/ets/foundation/ReaderSettings.ets').split('class ReaderProfile')[0];
 let now=1000,sequence=0,timers=new Map(),calls=[],saves=[],scrollerState={x:0,y:0,atEnd:false};
 const c=vm.createContext({Date:class extends Date{static now(){return now}},setTimeout:(fn,delay)=>{const id=++sequence;timers.set(id,{fn,at:now+delay});return id},clearTimeout:id=>timers.delete(id),setInterval:()=>1,clearInterval(){},
- SwiperController:class{changeIndex(i){calls.push(['swiper',i])}},Scroller:class{scrollToIndex(i,animate,align){calls.push(['list',i,align])}currentOffset(){return {xOffset:scrollerState.x,yOffset:scrollerState.y}}isAtEnd(){return scrollerState.atEnd}scrollBy(x,y){calls.push(['scrollBy',x,y]);scrollerState.x+=x;scrollerState.y+=y}},
+ SwiperController:class{changeIndex(i){calls.push(['swiper',i])}},Scroller:class{scrollToIndex(i,animate,align){calls.push(['list',i,align])}currentOffset(){return {xOffset:scrollerState.x,yOffset:scrollerState.y}}isAtEnd(){return scrollerState.atEnd}scrollBy(x,y){calls.push(['scrollBy',x,y]);scrollerState.x+=x;scrollerState.y+=y}scrollPage(o){calls.push(['scrollPage',o.next]);scrollerState.y+=o.next?800:-800}},
  History:class{},ComicType:{fromKey:()=>({value:1})},HistoryDao:{save:async h=>saves.push(h)},ImageFit:{Cover:0},ImageRequestConfig:class{},ImageLoader:{cancelOwned(){}},ReaderSettings:{},AppContext:{context:{},ensureInitialized(){}},
  ReaderWindowChrome:class{enter(){calls.push(['window-enter']);return Promise.resolve()}leave(){calls.push(['window-leave']);return Promise.resolve()}},
  router:{getParams:()=>({}),back:()=>calls.push(['back'])},Log:{audit(){},warn(){},error(){}},promptAction:{showToast(){}},TouchType:{Down:0,Move:1,Up:2,Cancel:3},px2vp:v=>v,batteryInfo:{batterySOC:100},ScrollAlign:{START:0,END:1}});
@@ -85,9 +85,9 @@ const Z=c.Zones;
  });
  await test('continuous modes scroll one visible screen instead of one whole long image',()=>{
   const p=page('continuousTopToBottom');p.onReaderViewportTap(.9,.5);
-  assert.deepEqual(calls.at(-1),['scrollBy',0,800]);assert.equal(p.currentPage,0);
+  assert.deepEqual(calls.at(-1),['scrollPage',true]);assert.equal(p.currentPage,0);
   const q=page('continuousTopToBottom');scrollerState.y=1600;q.onReaderViewportTap(.5,.1);
-  assert.deepEqual(calls.at(-1),['scrollBy',0,-800]);
+  assert.deepEqual(calls.at(-1),['scrollPage',false]);
  });
  await test('scrolling at the top edge switches chapter instead of overscrolling',()=>{
   const p=page('continuousTopToBottom');p.chapterIds=['previous','ch','ch2'];scrollerState={x:0,y:0,atEnd:false};
@@ -98,7 +98,7 @@ const Z=c.Zones;
   const p=page('continuousTopToBottom');scrollerState={x:0,y:400,atEnd:true};
   let switched=0;p.switchChapter=offset=>{switched=offset};
   p.onReaderViewportTap(.9,.5);assert.equal(switched,1);
-  scrollerState={x:0,y:400,atEnd:false};calls=[];p.onReaderViewportTap(.9,.5);assert.equal(calls.at(-1)[0],'scrollBy');
+  scrollerState={x:0,y:400,atEnd:false};calls=[];p.onReaderViewportTap(.9,.5);assert.equal(calls.at(-1)[0],'scrollPage');
  });
  await test('menu is reachable in blank or loading states but paging is gated',()=>{
   const p=page();p.readyImages.clear();p.onReaderViewportTap(.5,.5);assert.equal(p.toolbarVisible,true,'menu needs no loaded image');

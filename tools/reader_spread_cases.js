@@ -20,6 +20,7 @@ const context = vm.createContext({
     currentOffset() { return { xOffset: 100, yOffset: 100 }; }
     isAtEnd() { return globalThis.__listAtEnd === true; }
     scrollBy(x, y) { calls.push(['scrollBy', x, y]); }
+    scrollPage(options) { calls.push(['scrollPage', options.next]); globalThis.__listMoved = true; }
   },
   History: class {}, ComicType: { fromKey: () => ({ value: 1 }) },
   HistoryDao: { save: h => { saves.push(h); return Promise.resolve(); } },
@@ -187,7 +188,7 @@ function page(mode = 'galleryLeftToRight', imageCount = 11, size = 3, first = fa
     p.onImageReady(2, p.renderGeneration, true); assert.equal(p.visibleImagesReady(), true);
     // Continuous flow auto-scrolls while it can still move, like upstream.
     globalThis.__listAtEnd = false; calls.length = 0;
-    await p.autoStep(); assert.equal(p.currentPage, 2); assert.equal(calls.at(-1)[0], 'scrollBy');
+    await p.autoStep(); assert.equal(p.currentPage, 2); assert.equal(calls.at(-1)[0], 'scrollPage');
     // At the end of the flow it stops instead of scrolling further.
     globalThis.__listAtEnd = true; p.options.autoReadingAcrossChapters = false;
     await p.autoStep(); assert.equal(p.autoReading, false); assert.equal(p.currentPage, 2);

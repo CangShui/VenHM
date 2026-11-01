@@ -22,6 +22,7 @@ const ctx = vm.createContext({
     currentOffset() { return { xOffset: 800, yOffset: 1600 }; }
     isAtEnd() { return false; }
     scrollBy(x, y) { calls.push(['scrollBy', x, y]); }
+    scrollPage(options) { calls.push(['scrollPage', options.next]); }
   },
   History: class {}, ComicType: { fromKey: () => ({ value: 1 }) }, HistoryDao: { save: async h => saves.push(h) },
   ImageFit: { Cover: 0 }, ImageRequestConfig: class {}, ImageLoader: { cancelOwned() {} },
@@ -90,7 +91,7 @@ const touch = (type, x = 20, y = 20, fingers = 1) => ({ type, touches: Array.fro
       tick(200);p.onReaderViewportTap(.9,.5); assert.equal(p.currentPage,0); assert.equal(p.toolbarVisible,false);
       tick(200);p.onReaderViewportTap(.9,.5);
       if(mode.startsWith('gallery')){assert.equal(p.currentPage,1);assert.equal(calls.at(-1)[0],'swiper')}
-      else{assert.equal(p.currentPage,0);assert.deepEqual(calls.at(-1),mode==='continuousLeftToRight'?['scrollBy',400,0]:['scrollBy',0,800])}
+      else{assert.equal(p.currentPage,0);assert.deepEqual(calls.at(-1),['scrollPage',true],'flow modes scroll one page forward')}
     }
   });
   await test('zoom/loading/hidden/disposed/scroll/layout/chapter overlay/readiness gates still block page turns', () => {

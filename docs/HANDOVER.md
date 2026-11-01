@@ -1,7 +1,28 @@
 # Venera HM 交接文档：环境 + 继续任务
 
 > 目的：任何人（或下一轮的我）读完这份文档就能接着干，不用重新摸索环境、不用重跑一遍踩坑。
-> 最后核对：2026-10-30（VenHM 1.0.6 已发布 + 原生库路径泄露修复）。**仓库已推送至 `12c8ba1`，GitHub Release [v1.0.6](https://github.com/CangShui/VenHM/releases/tag/v1.0.6) 已发布并附带签名 HAP（SHA256 `CF88D040…C5E13`，与本地一致）。上一版 1.0.5 曾装入实机；1.0.6 因手机离线尚未装机。** 阅读统计/时长、WebDAV、图片收藏保持退役。真实登录仍为 0 次验证。
+> 最后核对：2026-11-02（VenHM 1.0.8 自动进入下一章）。**1.0.8 已构建（65 套回归通过），手机持续离线，未装机；1.0.6 已装并已发布 Release。** 阅读统计/时长、WebDAV、图片收藏保持退役。真实登录仍为 0 次验证。
+
+## 2026-11-02 阅读器：自动进入下一章（1.0.8）
+
+翻到章节最后一页再翻，原本会**静默**换章并闪一次整屏「正在加载章节…」。现在：
+
+- [turnReaderChapter](<../entry/src/main/ets/pages/ReaderPage.ets>) 成功换章后弹一条 1.5 秒提示：标题 ≤24 字显示「已自动进入下一章：<标题>」，否则「已自动进入下一章」。**加载失败不提示**，回退上一章不提示，自动阅读跨章走 `switchChapter` 不走这条路径（避免每章弹一次）。
+- **无缝**：`goToChapter` 在已有页面时置 `chapterTransition`，`build()` 只在「无内容可显示」时才渲染整屏加载页，因此旧章节画面保留到新页面提交；提交后前向换章调用 `scheduleAnchorRestore()` 定位到新章第一页。
+
+测试：[6 项契约](<../tools/reader_chapter_switch_cases.js>) 直接执行生产 `turnReaderChapter`（含失败、回退、长标题分支），其余断言 `goToChapter`/`build` 接线。65 套门禁通过。
+包：[1.0.8](<../dist/venhm-1.0.8-seamless-chapter-20261102-signed.hap>) SHA256 `AD0EABDA…5EA6`，8,070,354 字节，[审计](<../logs/reader-chapter-switch-20261101/artifact.json>) 状态 `BUILT_NOT_INSTALLED_DEVICE_OFFLINE`。**未验证真机过渡观感。**
+
+## 2026-11-01 阅读器：回弹修复、页码滑条、单页重试（1.0.7）
+
+**[回弹](<../entry/src/main/ets/pages/ReaderPage.ets>)**：三个上下模式分别走两条路径——`continuousTopToBottom`/`waterfallTopToBottom` 用 List，`galleryTopToBottom` 用 Swiper。两处都在上下方向关闭了弹簧边缘效果（`EdgeEffect.None`）；同时把点击翻页从 `scrollBy(一整屏)` 换成 `scrollPage({next})`——原来剩不足一屏时会越过边界再被弹回，这正是“翻页后回弹”的来源。方向映射沿用原 `scrollBy` 语义（`next: sign > 0`），右→左模式仍向后翻。
+
+**页码滑条**：位于亮度滑条**上方**，范围 1…图片数，拖动时只更新显示，松手（`End`/`Click`）才调用已有的 `seekPage()` 跳页；单页章节禁用。`seekPage` 自带越界与非整数校验。
+
+**单页重试**：[AsyncComicImage](<../entry/src/main/ets/components/ComicWidgets.ets>) 失败时不再是纯文字，而是居中「重试」按钮；点击清空失败态并重走同一次请求。失败结果不进内存/磁盘缓存（ImageLoader 只在成功时 `remember`/`put`），因此重试是真实重取。
+
+测试：[9 项阅读器契约](<../tools/reader_bounce_slider_retry_cases.js>) 直接执行生产 `turnReaderViewport`（含边界换章、反向模式），其余断言到源码结构。四个原有阅读器夹具补齐了 `scrollPage` 双桩并改断言新行为（未删测试）。64 套门禁通过。
+包：[1.0.7](<../dist/venhm-1.0.7-reader-fixes-20261101-signed.hap>) SHA256 `AC828972…60EE5F`，8,063,908 字节，[审计](<../logs/reader-bounce-page-slider-20261030/artifact.json>) 状态 `BUILT_NOT_INSTALLED_DEVICE_OFFLINE`。**未验证真机滚动手感与重试视觉。**
 
 ## 发布记录（2026-10-30）
 

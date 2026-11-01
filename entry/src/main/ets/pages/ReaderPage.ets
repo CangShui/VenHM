@@ -91,6 +91,10 @@ struct ReaderPage {
   private oldKeepScreenOn: boolean = false;
   private keepScreenTail: Promise<void> = Promise.resolve();
   @State readerBrightness: number = -1;
+  /** 1-based page shown by the page slider; follows the visible page. */
+  @State pageSlider: number = 1;
+  /** True while the next/previous chapter loads over already-rendered pages. */
+  @State chapterTransition: boolean = false;
   private oldBrightness: number = -1;
   private brightnessWindow?: window.Window;
   private brightnessTail: Promise<void> = Promise.resolve();
@@ -345,6 +349,7 @@ struct ReaderPage {
     // still refer to the previous successful chapter, whose history is retained.
     this.epId = epId;
     this.currentPage = pageIndex;
+    this.pageSlider = pageIndex + 1;
     this.images = images;
     this.rebuildPresentation();
     this.restorePage = this.sourceToDisplay(pageIndex);
@@ -379,6 +384,7 @@ struct ReaderPage {
 
   /** Jump straight to a chapter index, used by the chapter list overlay. */
   private async goToChapter(next: number): Promise<void> {
+    const offset = next - this.currentChapterIndex();
     // A second tap cannot start another request or mutate the in-flight target.
     if (this.loading || this.disposed || !this.progressReady) {
       return;
@@ -388,6 +394,9 @@ struct ReaderPage {
       return;
     }
     this.showChapters = false;
+    // The previous chapter stays visible until the new pages are committed, so
+    // an automatic chapter change does not flash a full-screen loader.
+    this.chapterTransition = this.images.length > 0;
     this.resetZoom();
     // DAO writes synchronously before returning its Promise. Flush the OLD
     // chapter before changing the request, and exclude network time from reading.
@@ -406,6 +415,9 @@ struct ReaderPage {
         throw new Error(`漫画源不存在: ${this.sourceKey}`);
       }
       await this.loadPages(source, this.requestedEpId, 1, version);
+      if (this.isCurrentLoad(version) && this.progressReady && this.images.length > 0 && offset > 0) {
+        this.scheduleAnchorRestore();
+      }
     } catch (error) {
       if (this.isCurrentLoad(version)) {
         this.error = error instanceof Error ? error.message : String(error);
@@ -414,6 +426,7 @@ struct ReaderPage {
     } finally {
       if (this.isCurrentLoad(version)) {
         this.loading = false;
+        this.chapterTransition = false;
         this.syncVolumeKeys();
       }
     }
@@ -568,6 +581,7 @@ struct ReaderPage {
       this.resetZoom();
       this.currentPage = actual;
       this.requestedPage = actual + 1;
+      this.pageSlider = actual + 1;
       this.saveProgress();
     }
   }
@@ -578,6 +592,7 @@ struct ReaderPage {
     this.resetZoom();
     this.currentPage = actual;
     this.requestedPage = actual + 1;
+    this.pageSlider = actual + 1;
     const display = this.sourceToDisplay(actual);
     this.restorePage = display;
     this.saveProgress();
@@ -681,15 +696,21 @@ struct ReaderPage {
     // Like Legado's image scroll delegate: one tap scrolls one VISIBLE screen,
     // not one possibly several-screen-tall image. Scroll callbacks save progress.
     const vertical = ReaderModes.isVertical(this.mode);
-    const distance = vertical ? this.viewportHeight : this.viewportWidth;
-    if (!Number.isFinite(distance) || distance <= 0) { return; }
+    if (!Number.isFinite(this.viewportHeight) || this.viewportHeight <= 0 ||
+      !Number.isFinite(this.viewportWidth) || this.viewportWidth <= 0) { return; }
     const position = this.listScroller.currentOffset();
     const axisOffset = vertical ? position.yOffset : position.xOffset;
     const reversed = ReaderModes.isReversed(this.mode);
     const sign = reversed ? -offset : offset;
     if (sign < 0 && axisOffset <= 0) { this.turnReaderChapter(offset); return; }
     if (sign > 0 && this.listScroller.isAtEnd()) { this.turnReaderChapter(offset); return; }
-    this.listScroller.scrollBy(vertical ? 0 : sign * distance, vertical ? sign * distance : 0);
+    // scrollBy(viewport) overshoots when less than one screen is left and the
+    // list then springs back to the edge, which reads as "the page bounced".
+    // scrollPage stops at the boundary instead of overscrolling.
+    this.listScroller.scrollPage({
+      next: sign > 0,
+      animation: this.options.enablePageAnimation
+    });
   }
 
   private setBrightnessValue(percent: number): void {
@@ -709,6 +730,11 @@ struct ReaderPage {
 
   private openAutoSpeedMenu(): void {
     this.cancelCanvasTap();
+    // Drop the bottom bar (and its blocking scrim) before showing the dialog:
+    // two overlapping modal layers left the dialog's own controls unreachable.
+    this.showChapters = false;
+    this.toolbarVisible = false;
+    this.showModeMenu = false;
     this.speedDraft = Math.round(Math.max(0.1, Math.min(10, this.options.autoPageTurningInterval)) * 10) / 10;
     this.showSpeedMenu = true;
   }
@@ -737,6 +763,13 @@ struct ReaderPage {
     await this.switchChapter(offset);
     if (this.disposed || !this.visible || this.loading || !this.progressReady || this.error.length > 0 ||
       this.epId !== target || this.loadVersion !== load + 1 || this.images.length === 0) { return; }
+    if (offset > 0) {
+      const title = this.chapterTitle();
+      promptAction.showToast({
+        message: title.length > 0 && title.length <= 24 ? `已自动进入下一章：${title}` : '已自动进入下一章',
+        duration: 1500
+      });
+    }
     if (offset < 0) {
       this.seekPage(this.images.length - 1);
       if (!ReaderModes.isGallery(this.mode)) {
@@ -1243,7 +1276,10 @@ struct ReaderPage {
       }
     }.width('86%').constraintSize({ maxWidth: 440 }).padding(20).backgroundColor('#F2191D24')
       .borderRadius(20).border({ width: 1, color: '#3A404D' }).shadow({ radius: 24, color: '#80000000' })
-      .hitTestBehavior(HitTestMode.Block)
+      // Default (not Block): the panel must consume taps for itself, but its
+      // children - the slider and both buttons - still have to receive them.
+      // Block made the whole dialog swallow every touch, so it was dead.
+      .hitTestBehavior(HitTestMode.Default)
   }
 
   @Builder
@@ -1340,6 +1376,33 @@ struct ReaderPage {
             })
         }.width('100%')
 
+        // Page Slider: jump straight to a page of this chapter.
+        Row({ space: 10 }) {
+          Text('页码').fontSize(12).fontColor('#A7B1C1')
+          Slider({
+            value: this.pageSlider,
+            min: 1,
+            max: Math.max(1, this.images.length),
+            step: 1
+          })
+            .layoutWeight(1)
+            .selectedColor('#087FF5')
+            .trackColor('#3A404D')
+            .blockColor('#FFFFFF')
+            .enabled(this.images.length > 1 && this.progressReady && !this.loading)
+            .onChange((val: number, mode: SliderChangeMode) => {
+              const target = Math.round(val);
+              if (!Number.isFinite(target)) { return; }
+              this.pageSlider = Math.max(1, Math.min(this.images.length, target));
+              // Jump on release/click only, so dragging does not fight the list.
+              if (mode === SliderChangeMode.End || mode === SliderChangeMode.Click) {
+                this.seekPage(this.pageSlider - 1);
+              }
+            })
+          Text(`${this.images.length === 0 ? 0 : this.pageSlider}/${this.images.length}`)
+            .fontSize(12).fontColor('#C4D9FA').width(46).textAlign(TextAlign.End)
+        }.width('100%').padding({ left: 4, right: 4, top: 4 })
+
         // Bottom Row: Brightness Slider
         Row({ space: 10 }) {
           Text('亮度').fontSize(12).fontColor('#A7B1C1')
@@ -1429,6 +1492,9 @@ struct ReaderPage {
     .constraintSize({ maxWidth: this.isVerticalFlow() && this.options.limitImageWidth ? 900 : undefined })
     .cachedCount(1)
     .listDirection(ReaderModes.isVertical(this.mode) ? Axis.Vertical : Axis.Horizontal)
+    // Up/down modes must stop at the edge; a spring effect looks like a bounce
+    // that undoes the page turn.
+    .edgeEffect(ReaderModes.isVertical(this.mode) ? EdgeEffect.None : EdgeEffect.Spring)
     .enableScrollInteraction(!this.zoomed)
     .onAppear(() => {
       this.restoreWaterfall();
@@ -1507,6 +1573,8 @@ struct ReaderPage {
     .index(this.sourceToDisplay(this.currentPage))
     .duration(this.options.enablePageAnimation ? 200 : 0)
     .loop(false)
+    // No rubber-band when swiping past the first/last page of a chapter.
+    .effectMode(this.mode === 'galleryTopToBottom' ? EdgeEffect.None : EdgeEffect.Spring)
     .disableSwipe(this.zoomed)
     .onAnimationStart(() => { this.scrolling = true; this.cancelCanvasTap(); })
     .onAnimationEnd(() => { this.scrolling = false; })
@@ -1526,7 +1594,7 @@ struct ReaderPage {
       // Stable fullscreen canvas. Menu visibility never changes this subtree's
       // geometry, keys, data source, renderGeneration or image request identity.
       Column() {
-        if (this.loading) {
+        if (this.loading && !(this.chapterTransition && this.images.length > 0)) {
           LoadingView({ message: '正在加载章节…' }).layoutWeight(1).backgroundColor('#F5F5F5')
         } else if (this.error.length > 0) {
           ErrorView({ message: this.error, onRetry: () => { this.retryReaderContent(); } })

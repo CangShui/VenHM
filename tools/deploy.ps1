@@ -151,16 +151,39 @@ if ([string]::IsNullOrWhiteSpace($Device)) {
 Write-Host ('Device: ' + $Device) -ForegroundColor Green
 
 # ---------------------------------------------------------------- install
-Write-Host 'Installing (overwrite, data preserved) ...' -ForegroundColor Cyan
-$arguments = @('-t', $Device, 'install', '-r', ('"' + $hapFull + '"'))
-$process = Start-Process -FilePath $hdc -ArgumentList $arguments -NoNewWindow -Wait -PassThru `
-  -RedirectStandardOutput $installLog -RedirectStandardError $installErr
-$stdout = Get-Content -LiteralPath $installLog -Raw -ErrorAction SilentlyContinue
-$stderr = Get-Content -LiteralPath $installErr -Raw -ErrorAction SilentlyContinue
-$text = '' + $stdout + "`n" + $stderr
-$verified = ($process.ExitCode -eq 0) -and ($text -match '(?i)install bundle successfully') -and
-  ($text -notmatch '(?i)\[Fail\]|Device not found|not connected|connect-key|install failed')
-if (!$verified) { Fail ('install not verified (exit=' + $process.ExitCode + '); see ' + $installLog) }
+# hdc exits 0 even when it fails, and right after a phone reconnects it answers
+# "The communication channel is being established" / "need connect-key" for a
+# few seconds. Those are transient: retry instead of reporting a false failure.
+$attempt = 0
+$verified = $false
+$lastText = ''
+while ($attempt -lt 6 -and !$verified) {
+  $attempt++
+  Write-Host ('Installing (overwrite, data preserved), attempt ' + $attempt + ' ...') -ForegroundColor Cyan
+  $arguments = @('-t', $Device, 'install', '-r', ('"' + $hapFull + '"'))
+  $process = Start-Process -FilePath $hdc -ArgumentList $arguments -NoNewWindow -Wait -PassThru `
+    -RedirectStandardOutput $installLog -RedirectStandardError $installErr
+  $stdout = Get-Content -LiteralPath $installLog -Raw -ErrorAction SilentlyContinue
+  $stderr = Get-Content -LiteralPath $installErr -Raw -ErrorAction SilentlyContinue
+  $lastText = '' + $stdout + "`n" + $stderr
+  if ($lastText -match '(?i)install bundle successfully' -and
+      $lastText -notmatch '(?i)\[Fail\]|Device not found|install failed') {
+    $verified = $true
+    break
+  }
+  $transient = $lastText -match '(?i)E000004|communication channel is being established|need connect-key|not connected'
+  if (!$transient) { break }
+  if ($attempt -lt 6) {
+    Write-Host '  device channel not ready yet; retrying in 3s' -ForegroundColor DarkYellow
+    Start-Sleep -Seconds 3
+    $targets = @(Get-Targets)
+    if ($targets.Count -gt 0) { $Device = $targets[0] }
+  }
+}
+if (!$verified) {
+  $reason = ($lastText -split "`n" | Where-Object { $_ -match '\S' } | Select-Object -First 3) -join ' | '
+  Fail ('install not verified after ' + $attempt + ' attempt(s): ' + $reason + ' [log: ' + $installLog + ']')
+}
 Write-Host 'Install verified: install bundle successfully' -ForegroundColor Green
 
 # ---------------------------------------------------------------- optional launch

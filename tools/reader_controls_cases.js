@@ -9,7 +9,7 @@ const reader=(raw.slice(0,raw.indexOf('  @Builder'))+'}').replace(/@Entry\s*|@Co
 const controls=[],timers=new Map(),history=[],timerDelays=[];
 const ctx=vm.createContext({
   SwiperController:class{changeIndex(i){controls.push(['swiper',i])}},
-  Scroller:class{scrollToIndex(i){controls.push(['list',i])}currentOffset(){return {xOffset:100,yOffset:100}}isAtEnd(){return false}scrollBy(x,y){controls.push(['scrollBy',x,y])}},
+  Scroller:class{scrollToIndex(i){controls.push(['list',i])}currentOffset(){return {xOffset:100,yOffset:100}}isAtEnd(){return false}scrollBy(x,y){controls.push(['scrollBy',x,y])}scrollPage(o){controls.push(['scrollPage',o.next])}},
   ReaderSettings:{resolve:()=>({readerMode:'galleryRightToLeft'}),set:async()=>{}},History:class{},ComicType:{fromKey:()=>({value:1})},HistoryDao:{save:async h=>history.push(h)},
   Log:{audit:(t,s,m)=>fs.appendFileSync(log,`TraceID=${t} [${s}] ${m}\n`),warn:()=>{},error:()=>{}},
   AppContext:{context:{}},window:{getLastWindow:async()=>({getWindowProperties:()=>({brightness:0.55,isKeepScreenOn:false}),
@@ -67,7 +67,7 @@ async function test(name,fn){await fn();count++;fs.appendFileSync(log,`[响应�
     for(const [mode,x,y] of [['waterfallTopToBottom',0,900],['continuousTopToBottom',0,900],
       ['continuousLeftToRight',600,0],['continuousRightToLeft',-600,0]]) {
       const p=page();p.mode=mode;p.viewportWidth=600;p.viewportHeight=900;controls.length=0;
-      p.turnReaderViewport(1);assert.deepEqual(controls.at(-1),['scrollBy',x,y],mode);
+      p.turnReaderViewport(1);assert.deepEqual(controls.at(-1),['scrollPage',mode==='continuousRightToLeft'?false:true],mode);
       assert.equal(p.currentPage,0,'only visibility callbacks advance the stored position');
     }
   });
