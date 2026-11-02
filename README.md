@@ -105,7 +105,7 @@ hvigorw --mode module -p product=default -p module=entry@default -p buildMode=de
 
 ## 许可证
 
-上游 VeneraNext 为 GPL-3.0，本移植工程沿用同一许可，见 [LICENSE](LICENSE)。
+上游 Venera 为 GPL-3.0，本移植工程沿用同一许可，见 [LICENSE](LICENSE)。
 内嵌的 QuickJS、Brotli 等第三方组件保留各自的许可证文本（`entry/src/main/cpp/*/LICENSE`、`entry/src/main/resources/rawfile/licenses/`）。
 
 ## 相关链接
